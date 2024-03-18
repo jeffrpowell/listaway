@@ -1,7 +1,7 @@
 # Use the official Go image to create a build container
 FROM golang:1.17 AS builder
 
-WORKDIR /app
+WORKDIR /workspaces/listaway
 
 # Copy the Go module files
 COPY go.mod .
@@ -22,7 +22,7 @@ FROM alpine:latest
 WORKDIR /root/
 
 # Copy the built executable from the previous stage
-COPY --from=builder /app/listaway .
+COPY --from=builder /workspaces/listaway .
 
 # Run the Go application
 CMD ["./listaway"]
