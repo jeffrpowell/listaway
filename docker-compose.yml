@@ -5,6 +5,5 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    working_dir: ./
     ports:
       - "8080:8080"

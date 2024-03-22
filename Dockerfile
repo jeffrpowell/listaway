@@ -5,7 +5,7 @@ WORKDIR /workspaces/listaway
 
 # Copy the Go module files
 COPY go.mod .
-COPY go.sum .
+#COPY go.sum .
 
 # Download dependencies
 RUN go mod download
@@ -22,7 +22,7 @@ FROM alpine:latest
 WORKDIR /root/
 
 # Copy the built executable from the previous stage
-COPY --from=builder /workspaces/listaway .
+COPY --from=builder /workspaces/listaway/listaway .
 
 # Run the Go application
 CMD ["./listaway"]
