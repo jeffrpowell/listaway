@@ -14,7 +14,7 @@ RUN go mod download
 COPY . .
 
 # Build the Go application
-RUN CGO_ENABLED=0 GOOS=linux go build -o listaway ./cmd/listaway
+RUN CGO_ENABLED=0 GOOS=linux go build -o ./bin/listaway ./cmd/listaway
 
 # Use a minimal base image to run the application
 FROM alpine:latest
@@ -22,7 +22,9 @@ FROM alpine:latest
 WORKDIR /root/
 
 # Copy the built executable from the previous stage
-COPY --from=builder /workspaces/listaway/listaway .
+COPY --from=builder /workspaces/listaway/bin/listaway .
+
+EXPOSE 8080
 
 # Run the Go application
 CMD ["./listaway"]
