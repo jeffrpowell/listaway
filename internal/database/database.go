@@ -14,11 +14,12 @@ func Init() {
 	dbUser := os.Getenv("POSTGRES_USER")
 	dbPassword := os.Getenv("POSTGRES_PASSWORD")
 	dbHost := os.Getenv("POSTGRES_HOST")
-	dbName := os.Getenv("POSTGRES_DATABASE")
+	dbName := os.Getenv("POSTGRES_DB")
 
 	// Construct the connection string
 	connectionString := fmt.Sprintf("postgresql://%s:%s@%s/%s?sslmode=disable", dbUser, dbPassword, dbHost, dbName)
 
+	fmt.Printf("Attempting database connection: %s", connectionString)
 	// Connect to the PostgreSQL database
 	db, err := sql.Open("postgres", connectionString)
 	if err != nil {

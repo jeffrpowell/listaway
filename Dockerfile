@@ -5,7 +5,7 @@ WORKDIR /workspaces/listaway
 
 # Copy the Go module files
 COPY go.mod .
-#COPY go.sum .
+COPY go.sum .
 
 # Download dependencies
 RUN go mod download
@@ -23,6 +23,9 @@ WORKDIR /root/
 
 # Copy the built executable from the previous stage
 COPY --from=builder /workspaces/listaway/bin/listaway .
+
+# Copy over sql files
+COPY --from=builder /workspaces/listaway/db/* ./db/
 
 EXPOSE 8080
 

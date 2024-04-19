@@ -17,7 +17,12 @@
 		"source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" // Binding the host docker socket to the container
 	],
 	// End of Docker-from-Docker recommendations
-	
+	"containerEnv": {
+		"POSTGRES_USER": "postgres",
+		"POSTGRES_PASSWORD": "postgres",
+		"POSTGRES_DB": "postgres",
+		"POSTGRES_HOST": "db"
+	},
 	"customizations": {
 		"vscode": {
 			"extensions": ["golang.go", "cweijan.vscode-postgresql-client2"]
