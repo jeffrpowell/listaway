@@ -1,0 +1,44 @@
+package handlers
+
+import (
+	"fmt"
+	"net/http"
+)
+
+func InitListHandlers() {
+	http.HandleFunc("GET /list/", listGET)
+	http.HandleFunc("/list/{listId}", listHandler)
+}
+
+func listHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "POST":
+		listPOST(w, r)
+	case "DELETE":
+		listDELETE(w, r)
+	case "GET":
+		listGET(w, r)
+	default:
+		http.Error(w, "", http.StatusMethodNotAllowed)
+	}
+}
+
+/* Rename list */
+func listPOST(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello, World!")
+}
+
+/* Delete list */
+func listDELETE(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello, World!")
+}
+
+/* Get all lists of a user */
+func listsGET(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello, World!")
+}
+
+/* Get list-level details */
+func listGET(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello, World!")
+}
