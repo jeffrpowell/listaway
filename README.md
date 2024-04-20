@@ -6,14 +6,16 @@ This self-hostable application allows authenticated users to publish one or more
 
 1. Configure your PostgresDB instance
 ```sql
-CREATE ROLE listaway IN ROLE containers LOGIN PASSWORD 'password';
+--connect to your postgres server with an admin role
+CREATE ROLE listaway LOGIN PASSWORD 'password';
 CREATE DATABASE listaway;
 GRANT CONNECT ON DATABASE listaway TO listaway;
+--connect to your new listaway database with an admin role
+CREATE SCHEMA listaway;
 GRANT CREATE, USAGE ON SCHEMA listaway to listaway;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA listaway TO listaway;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA listaway TO listaway;
---connect to your new listaway database
-CREATE SCHEMA listaway;
+
 ```
 2. Make a `docker-compose.yml` file
 ```yaml

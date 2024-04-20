@@ -6,13 +6,17 @@ import (
 )
 
 func InitItemHandlers() {
-	http.HandleFunc("GET /list/{listId}/item", itemGET)
+	http.HandleFunc("/list/{listId}/item", itemsHandler)
 	http.HandleFunc("/list/{listId}/item/{itemId}", itemHandler)
 }
 
-/* Get all items in a list */
-func listItemGET(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, World!")
+func itemsHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		itemsGET(w, r)
+	default:
+		http.Error(w, "", http.StatusMethodNotAllowed)
+	}
 }
 
 func itemHandler(w http.ResponseWriter, r *http.Request) {
@@ -26,6 +30,11 @@ func itemHandler(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.Error(w, "", http.StatusMethodNotAllowed)
 	}
+}
+
+/* Get all items in a list */
+func itemsGET(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello, World!")
 }
 
 /* Update item */

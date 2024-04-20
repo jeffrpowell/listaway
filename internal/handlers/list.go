@@ -6,8 +6,17 @@ import (
 )
 
 func InitListHandlers() {
-	http.HandleFunc("GET /list/", listGET)
+	http.HandleFunc("/list/", listsHandler)
 	http.HandleFunc("/list/{listId}", listHandler)
+}
+
+func listsHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		listsGET(w, r)
+	default:
+		http.Error(w, "", http.StatusMethodNotAllowed)
+	}
 }
 
 func listHandler(w http.ResponseWriter, r *http.Request) {

@@ -1,26 +1,27 @@
 CREATE TABLE IF NOT EXISTS listaway.list (
     Id SERIAL PRIMARY KEY,
-    UserId BIGINT,
-    Name NVARCHAR,
-    ShareURL NVARCHAR,
-    INDEX UserIdIndex (UserId),
-    INDEX ShareURLIndex (ShareURL)
+    UserId BIGINT NOT NULL,
+    Name VARCHAR NOT NULL,
+    ShareURL VARCHAR
 );
 
+CREATE INDEX ON listaway.list (UserId);
+CREATE INDEX ON listaway.list (ShareURL);
 
 CREATE TABLE IF NOT EXISTS listaway.item (
     Id SERIAL PRIMARY KEY,
-    ListId BIGINT,
-    Name NVARCHAR,
-    URL NVARCHAR,
-    Notes NVARCHAR,
-    Priority INT,
-    INDEX (ListId)
+    ListId BIGINT NOT NULL,
+    Name VARCHAR NOT NULL,
+    URL VARCHAR,
+    Notes VARCHAR,
+    Priority INT
 );
+
+CREATE INDEX ON listaway.item (ListId);
 
 CREATE TABLE IF NOT EXISTS listaway.user (
     Id SERIAL,
-    Email NVARCHAR PRIMARY KEY,
-    Name NVARCHAR,
-    PasswordHash NVARCHAR
+    Email VARCHAR PRIMARY KEY,
+    Name VARCHAR,
+    PasswordHash VARCHAR NOT NULL
 );

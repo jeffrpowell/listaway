@@ -18,9 +18,9 @@
 	],
 	// End of Docker-from-Docker recommendations
 	"containerEnv": {
-		"POSTGRES_USER": "postgres",
-		"POSTGRES_PASSWORD": "postgres",
-		"POSTGRES_DB": "postgres",
+		"POSTGRES_USER": "listaway",
+		"POSTGRES_PASSWORD": "listaway",
+		"POSTGRES_DB": "listaway",
 		"POSTGRES_HOST": "db"
 	},
 	"customizations": {
