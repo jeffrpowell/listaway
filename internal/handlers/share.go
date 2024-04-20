@@ -3,10 +3,12 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
-func InitShareHandlers() {
-	http.HandleFunc("/list/{listId}/share", listShareHandler)
+func InitShareHandlers(r *mux.Router) {
+	r.HandleFunc("/list/{listId}/share", listShareHandler)
 }
 
 func listShareHandler(w http.ResponseWriter, r *http.Request) {

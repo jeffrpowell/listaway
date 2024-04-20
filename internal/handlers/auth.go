@@ -1,12 +1,15 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
+
+	"github.com/gorilla/mux"
+	"github.com/jeffrpowell/listaway/internal/constants"
+	"github.com/jeffrpowell/listaway/internal/handlers/middleware"
 )
 
-func InitAuthHandlers() {
-	http.HandleFunc("/auth/", authHandler)
+func InitAuthHandlers(r *mux.Router) {
+	r.HandleFunc("/auth/", authHandler)
 }
 
 func authHandler(w http.ResponseWriter, r *http.Request) {
@@ -22,10 +25,21 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 
 /* Login */
 func authPOST(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, World!")
+	session, _ := middleware.GetCookieStore().Get(r, constants.COOKIE_SESSION)
+
+	// Authentication goes here
+	// ...
+
+	// Set user as authenticated
+	session.Values["authenticated"] = true
+	session.Save(r, w)
 }
 
 /* Logout */
 func authDELETE(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, World!")
+	session, _ := middleware.GetCookieStore().Get(r, constants.COOKIE_SESSION)
+
+	// Revoke users authentication
+	session.Values["authenticated"] = false
+	session.Save(r, w)
 }

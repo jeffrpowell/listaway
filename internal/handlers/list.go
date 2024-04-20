@@ -3,11 +3,13 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
-func InitListHandlers() {
-	http.HandleFunc("/list/", listsHandler)
-	http.HandleFunc("/list/{listId}", listHandler)
+func InitListHandlers(r *mux.Router) {
+	r.HandleFunc("/list/", listsHandler)
+	r.HandleFunc("/list/{listId}", listHandler)
 }
 
 func listsHandler(w http.ResponseWriter, r *http.Request) {
