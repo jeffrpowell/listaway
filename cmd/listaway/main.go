@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/jeffrpowell/listaway/internal/constants"
 	"github.com/jeffrpowell/listaway/internal/database"
 	"github.com/jeffrpowell/listaway/internal/handlers"
 )
@@ -16,6 +17,7 @@ func main() {
 	fmt.Println()
 	database.Init()
 	fmt.Println("Standing up web server")
+	constants.Init()
 	r := mux.NewRouter()
 	handlers.InitAuthHandlers(r)
 	handlers.InitListHandlers(r)

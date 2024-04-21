@@ -6,26 +6,27 @@ import (
 	"log"
 	"os"
 
+	"github.com/jeffrpowell/listaway/internal/constants"
 	_ "github.com/lib/pq"
 )
 
 func Init() {
 	// Fetch database connection parameters from environment variables
-	dbUser := os.Getenv("POSTGRES_USER")
+	dbUser := os.Getenv(constants.ENV_POSTGRES_USER)
 	if dbUser == "" {
-		dbUser = "listaway"
+		dbUser = constants.DB_DEFAULT_USER
 	}
-	dbPassword := os.Getenv("POSTGRES_PASSWORD")
+	dbPassword := os.Getenv(constants.ENV_POSTGRES_PASSWORD)
 	if dbPassword == "" {
-		dbPassword = "listaway"
+		dbPassword = constants.DB_DEFAULT_PASSWORD
 	}
-	dbHost := os.Getenv("POSTGRES_HOST")
+	dbHost := os.Getenv(constants.ENV_POSTGRES_HOST)
 	if dbHost == "" {
-		dbHost = "localhost"
+		dbHost = constants.DB_DEFAULT_HOST
 	}
-	dbName := os.Getenv("POSTGRES_DB")
+	dbName := os.Getenv(constants.ENV_POSTGRES_DB)
 	if dbName == "" {
-		dbName = "listaway"
+		dbName = constants.DB_DEFAULT_DB
 	}
 
 	// Construct the connection string

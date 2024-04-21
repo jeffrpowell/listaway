@@ -5,7 +5,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/jeffrpowell/listaway/internal/constants"
-	"github.com/jeffrpowell/listaway/internal/handlers/middleware"
 )
 
 func InitAuthHandlers(r *mux.Router) {
@@ -25,7 +24,7 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 
 /* Login */
 func authPOST(w http.ResponseWriter, r *http.Request) {
-	session, _ := middleware.GetCookieStore().Get(r, constants.COOKIE_SESSION)
+	session, _ := constants.COOKIE_STORE.Get(r, constants.COOKIE_NAME_SESSION)
 
 	// Authentication goes here
 	// ...
@@ -37,7 +36,7 @@ func authPOST(w http.ResponseWriter, r *http.Request) {
 
 /* Logout */
 func authDELETE(w http.ResponseWriter, r *http.Request) {
-	session, _ := middleware.GetCookieStore().Get(r, constants.COOKIE_SESSION)
+	session, _ := constants.COOKIE_STORE.Get(r, constants.COOKIE_NAME_SESSION)
 
 	// Revoke users authentication
 	session.Values["authenticated"] = false
