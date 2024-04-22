@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/jeffrpowell/listaway/internal/constants"
+	"github.com/jeffrpowell/listaway/internal/database"
+	"github.com/jeffrpowell/listaway/web"
 )
 
 func init() {
@@ -46,7 +48,10 @@ func listDELETE(w http.ResponseWriter, r *http.Request) {
 
 /* Get all lists of a user */
 func listsGET(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, World!")
+	listsPage := web.ListsPageParams{
+		Lists: database.GetLists(),
+	}
+	web.ListsPage(w, listsPage)
 }
 
 /* Get list-level details */
