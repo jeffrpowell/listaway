@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	_ "embed"
 	"fmt"
 	"log"
 	"os"
@@ -9,6 +10,9 @@ import (
 	"github.com/jeffrpowell/listaway/internal/constants"
 	_ "github.com/lib/pq"
 )
+
+//go:embed init.sql
+var initSQL string
 
 func Init() {
 	// Fetch database connection parameters from environment variables
@@ -40,15 +44,9 @@ func Init() {
 	}
 	defer db.Close()
 
-	// Read SQL file
-	sqlFile, err := os.ReadFile("db/init.sql")
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	// Execute SQL queries
 	fmt.Println("Running database initialization queries")
-	_, err = db.Exec(string(sqlFile))
+	_, err = db.Exec(initSQL)
 	if err != nil {
 		log.Fatal(err)
 	}

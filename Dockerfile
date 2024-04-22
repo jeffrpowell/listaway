@@ -24,9 +24,6 @@ WORKDIR /root/
 # Copy the built executable from the previous stage
 COPY --from=builder /workspaces/listaway/bin/listaway .
 
-# Copy over sql files
-COPY --from=builder /workspaces/listaway/db/* ./db/
-
 EXPOSE 8080
 
 # Run the Go application
