@@ -14,7 +14,7 @@ import (
 //go:embed init.sql
 var initSQL string
 
-func Init() {
+func init() {
 	// Fetch database connection parameters from environment variables
 	dbUser := os.Getenv(constants.ENV_POSTGRES_USER)
 	if dbUser == "" {

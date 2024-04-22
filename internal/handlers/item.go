@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/jeffrpowell/listaway/internal/constants"
 )
 
-func InitItemHandlers(r *mux.Router) {
-	r.HandleFunc("/list/{listId}/item", itemsHandler)
-	r.HandleFunc("/list/{listId}/item/{itemId}", itemHandler)
+func init() {
+	constants.ROUTER.HandleFunc("/list/{listId}/item", itemsHandler)
+	constants.ROUTER.HandleFunc("/list/{listId}/item/{itemId}", itemHandler)
 }
 
 func itemsHandler(w http.ResponseWriter, r *http.Request) {

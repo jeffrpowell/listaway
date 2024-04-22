@@ -3,12 +3,11 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"github.com/jeffrpowell/listaway/internal/constants"
 )
 
-func InitAuthHandlers(r *mux.Router) {
-	r.HandleFunc("/auth/", authHandler)
+func init() {
+	constants.ROUTER.HandleFunc("/auth/", authHandler)
 }
 
 func authHandler(w http.ResponseWriter, r *http.Request) {

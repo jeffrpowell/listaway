@@ -3,11 +3,12 @@ package constants
 import (
 	"os"
 
+	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 )
 
 // Registered environment vars
-const ENV_AUTH_KEY string = "LISTAWAY_AUTH_KEY"
+const ENV_AUTH_KEY string = "LISTAWAY_AUTH_KEY" // key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
 const ENV_POSTGRES_USER string = "POSTGRES_USER"
 const ENV_POSTGRES_PASSWORD string = "POSTGRES_PASSWORD"
 const ENV_POSTGRES_HOST string = "POSTGRES_HOST"
@@ -22,16 +23,16 @@ const DB_TABLE_LIST string = "listaway.list"
 const DB_TABLE_SHARE string = "listaway.share"
 const DB_TABLE_ITEM string = "listaway.item"
 
-// Auth consts
+// Handler consts
 const COOKIE_NAME_SESSION string = "session"
 
 var (
-	// key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
 	authKey                            = []byte(os.Getenv(ENV_AUTH_KEY))
 	COOKIE_STORE *sessions.CookieStore = sessions.NewCookieStore(authKey)
+	ROUTER       *mux.Router           = mux.NewRouter()
 )
 
-func Init() {
+func init() {
 	maxAge := 86400 * 7 // 7 days
 
 	COOKIE_STORE.MaxAge(maxAge)

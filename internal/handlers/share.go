@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/jeffrpowell/listaway/internal/constants"
 )
 
-func InitShareHandlers(r *mux.Router) {
-	r.HandleFunc("/list/{listId}/share", listShareHandler)
+func init() {
+	constants.ROUTER.HandleFunc("/list/{listId}/share", listShareHandler)
 }
 
 func listShareHandler(w http.ResponseWriter, r *http.Request) {
