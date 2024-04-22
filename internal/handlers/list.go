@@ -6,12 +6,13 @@ import (
 
 	"github.com/jeffrpowell/listaway/internal/constants"
 	"github.com/jeffrpowell/listaway/internal/database"
+	"github.com/jeffrpowell/listaway/internal/handlers/middleware"
 	"github.com/jeffrpowell/listaway/web"
 )
 
 func init() {
-	constants.ROUTER.HandleFunc("/list/", listsHandler)
-	constants.ROUTER.HandleFunc("/list/{listId}", listHandler)
+	constants.ROUTER.HandleFunc("/list/", middleware.DefaultMiddleware(listsHandler))
+	constants.ROUTER.HandleFunc("/list/{listId}", middleware.DefaultMiddleware(listHandler))
 }
 
 func listsHandler(w http.ResponseWriter, r *http.Request) {

@@ -1,3 +1,10 @@
 {{define "content"}}
-Rendering the login.html page
+Login
+<form submit="/auth/" method="post">
+    <label for="email">Email</label>
+    <input type="email" />
+    <label for="password">Password</label>
+    <input type="password" />
+    <button type="submit">Login</button>
+</form>
 {{end}}

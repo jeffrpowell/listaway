@@ -13,4 +13,6 @@ func Chain(f http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
 	return f
 }
 
-var DefaultMiddleware = []Middleware{RequireAuth()}
+func DefaultMiddleware(f http.HandlerFunc) http.HandlerFunc {
+	return Chain(f, RequireAuth())
+}
