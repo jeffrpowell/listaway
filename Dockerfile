@@ -14,7 +14,9 @@ RUN go mod download
 COPY . .
 
 # Compile css file from TailwindCSS classes
-COPY tailwindcss /usr/local/bin/
+RUN curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.3/tailwindcss-linux-x64
+RUN chmod +x tailwindcss-linux-x64
+RUN mv tailwindcss-linux-x64 /usr/local/bin/tailwindcss
 RUN tailwindcss -i ./web/root.css -o ./internal/handlers/assets/root.css
 
 # Build the Go application
