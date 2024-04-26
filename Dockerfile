@@ -13,6 +13,12 @@ RUN go mod download
 # Copy the source code
 COPY . .
 
+# Compile css file from TailwindCSS classes
+RUN curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.3/tailwindcss-linux-x64
+RUN chmod +x tailwindcss-linux-x64
+RUN mv tailwindcss-linux-x64 /usr/local/bin/tailwindcss
+RUN tailwindcss -i ./web/root.css -o ./internal/handlers/assets/root.css
+
 # Build the Go application
 RUN CGO_ENABLED=0 GOOS=linux go build -o ./bin/listaway ./cmd/listaway
 
