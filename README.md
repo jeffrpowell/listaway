@@ -35,6 +35,24 @@ POSTGRES_USER=listaway
 POSTGRES_PASSWORD=password
 POSTGRES_HOST=[pghost]
 POSTGRES_DATABASE=listaway
+LISTAWAY_AUTH_KEY=[random alphanumeric 128-character string]
 ```
 4. `docker compose up`
 4. [https://localhost:8080/](https://localhost:8080/)
+
+## Build from source
+This repository is provided with a configured devcontainer available to assist in quickly bootstrapping a local developmment environment suitable to build and run this application locally. 
+
+1. Install Docker, VS Code, and the Dev Containers extension in VS Code
+    * Make sure your Docker engine is running
+2. Click the `><` in the bottom-left corner -> `Reopen in Container`
+
+It is possible to do local development without using the devcontainer. Generally this involves following the steps encoded in the files under the `.devcontainer` folder.
+
+Once you've installed the necessary tooling for this project (notably Go, Postgres, and the TailindCSS Standalone CLI), these steps will get the application server running:
+
+1. `tailwindcss -i web/root.css -o internal/handlers/assets/root.css --watch`
+    * For the devcontainer users, the devcontainer will run this automatically for you
+2. `go run cmd/listaway/main.go`
+    * Or leverage the `launch.json` file in VS Code
+3. The URL of the server is printed to stdout
