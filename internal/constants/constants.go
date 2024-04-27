@@ -21,7 +21,7 @@ const DB_DEFAULT_PASSWORD string = "listaway"
 const DB_DEFAULT_HOST string = "localhost"
 const DB_DEFAULT_DB string = "listaway"
 const DB_TABLE_LIST string = "listaway.list"
-const DB_TABLE_SHARE string = "listaway.share"
+const DB_TABLE_USER string = "listaway.user"
 const DB_TABLE_ITEM string = "listaway.item"
 
 var DB_CONNECTION_STRING string = getDbConnectionString()

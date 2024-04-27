@@ -14,8 +14,9 @@ import (
 //go:embed *
 var htmlFiles embed.FS
 var (
-	login = parse("login.html")
-	lists = parse("lists.html")
+	registerAdmin = parse("registerAdmin.html")
+	login         = parse("login.html")
+	lists         = parse("lists.html")
 )
 
 func minifyTemplates(filenames ...string) (*template.Template, error) {
@@ -45,6 +46,14 @@ func minifyTemplates(filenames ...string) (*template.Template, error) {
 
 func parse(file string) *template.Template {
 	return template.Must(minifyTemplates("root.html", file))
+}
+
+type RegisterAdminParams struct {
+	AdminExists bool
+}
+
+func RegisterAdmin(w io.Writer, params RegisterAdminParams) error {
+	return registerAdmin.Execute(w, params)
 }
 
 func LoginPage(w io.Writer) error {

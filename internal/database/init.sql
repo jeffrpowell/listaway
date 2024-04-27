@@ -23,5 +23,6 @@ CREATE TABLE IF NOT EXISTS listaway.user (
     Id SERIAL,
     Email VARCHAR PRIMARY KEY,
     Name VARCHAR,
-    PasswordHash VARCHAR NOT NULL
+    PasswordHash VARCHAR NOT NULL,
+    Admin BOOLEAN NOT NULL
 );

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/jeffrpowell/listaway/internal/constants"
@@ -49,8 +50,14 @@ func listDELETE(w http.ResponseWriter, r *http.Request) {
 
 /* Get all lists of a user */
 func listsGET(w http.ResponseWriter, r *http.Request) {
+	lists, err := database.GetLists()
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
 	listsPage := web.ListsPageParams{
-		Lists: database.GetLists(),
+		Lists: lists,
 	}
 	web.ListsPage(w, listsPage)
 }
