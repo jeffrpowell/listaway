@@ -9,7 +9,15 @@
 </head>
 <body bg-gray-100>
     <div class="container mx-auto p-4">
-        {{block "content" .}}{{end}}
+        <div class="block md:hidden">
+            {{block "mobile" .}}{{end}}
+        </div>
+        <div class="hidden md:block">
+            {{block "wide" .}}{{end}}
+        </div>
+        <div class="block">
+            {{block "all" .}}{{end}}
+        </div>
     </div>
 </body>
 </html>
