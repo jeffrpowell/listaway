@@ -56,9 +56,7 @@ func listsGET(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
-	listsPage := web.ListsPageParams{
-		Lists: lists,
-	}
+	listsPage := web.ListsPageParams(lists)
 	web.ListsPage(w, listsPage)
 }
 

@@ -52,22 +52,48 @@ func parseSingleLayout(file string) *template.Template {
 	return template.Must(minifyTemplates("root.html", "singleLayout.html", file))
 }
 
-type RegisterAdminParams struct {
+// Register Admin page
+
+type registerAdminParams struct {
 	AdminExists bool
+	ShowNavbar  bool
 }
 
-func RegisterAdmin(w io.Writer, params RegisterAdminParams) error {
+func RegisterAdminParams(adminExists bool) registerAdminParams {
+	return registerAdminParams{
+		AdminExists: adminExists,
+		ShowNavbar:  false,
+	}
+}
+
+func RegisterAdmin(w io.Writer, params registerAdminParams) error {
 	return registerAdmin.Execute(w, params)
 }
 
+// Login page
+
+type loginPageParams struct {
+	ShowNavbar bool
+}
+
 func LoginPage(w io.Writer) error {
-	return login.Execute(w, nil)
+	return login.Execute(w, loginPageParams{ShowNavbar: false})
 }
 
-type ListsPageParams struct {
-	Lists []constants.List
+// Lists page
+
+type listsPageParams struct {
+	Lists      []constants.List
+	ShowNavbar bool
 }
 
-func ListsPage(w io.Writer, params ListsPageParams) error {
+func ListsPageParams(lists []constants.List) listsPageParams {
+	return listsPageParams{
+		Lists:      lists,
+		ShowNavbar: true,
+	}
+}
+
+func ListsPage(w io.Writer, params listsPageParams) error {
 	return lists.Execute(w, params)
 }

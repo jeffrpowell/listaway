@@ -26,9 +26,7 @@ func registerAdminHandler(w http.ResponseWriter, r *http.Request) {
 
 /* Register admin page */
 func registerAdminGET(w http.ResponseWriter, r *http.Request) {
-	params := web.RegisterAdminParams{
-		AdminExists: database.AdminUserExists(),
-	}
+	params := web.RegisterAdminParams(database.AdminUserExists())
 	web.RegisterAdmin(w, params)
 }
 
