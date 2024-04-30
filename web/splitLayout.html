@@ -1,0 +1,8 @@
+{{ define "content" }}
+<div class="block md:hidden">
+    {{block "mobile" .}}{{end}}
+</div>
+<div class="hidden md:block">
+    {{block "wide" .}}{{end}}
+</div>
+{{ end }}
