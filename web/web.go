@@ -4,6 +4,7 @@ import (
 	"embed"
 	"html/template"
 	"io"
+	"log"
 	"path/filepath"
 
 	"github.com/jeffrpowell/listaway/internal/constants"
@@ -66,8 +67,10 @@ func RegisterAdminParams(adminExists bool) registerAdminParams {
 	}
 }
 
-func RegisterAdmin(w io.Writer, params registerAdminParams) error {
-	return registerAdmin.Execute(w, params)
+func RegisterAdmin(w io.Writer, params registerAdminParams) {
+	if err := registerAdmin.Execute(w, params); err != nil {
+		log.Print(err)
+	}
 }
 
 // Login page
@@ -76,8 +79,10 @@ type loginPageParams struct {
 	ShowNavbar bool
 }
 
-func LoginPage(w io.Writer) error {
-	return login.Execute(w, loginPageParams{ShowNavbar: false})
+func LoginPage(w io.Writer) {
+	if err := login.Execute(w, loginPageParams{ShowNavbar: false}); err != nil {
+		log.Print(err)
+	}
 }
 
 // Lists page
@@ -94,6 +99,8 @@ func ListsPageParams(lists []constants.List) listsPageParams {
 	}
 }
 
-func ListsPage(w io.Writer, params listsPageParams) error {
-	return lists.Execute(w, params)
+func ListsPage(w io.Writer, params listsPageParams) {
+	if err := lists.Execute(w, params); err != nil {
+		log.Print(err)
+	}
 }

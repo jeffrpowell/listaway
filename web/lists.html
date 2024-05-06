@@ -1,6 +1,30 @@
 {{define "mobile"}}
-Rendering the lists.html page
+    {{if (eq (len .Lists) 0)}}
+    Welcome to Listaway! Let's start off by <a href="/list/create" class="underline">creating your first list</a>.
+    {{else}}
+    <table class="table-auto">
+        <thead>
+            <tr>
+                <th class="px-4 py-2">List</th>
+                <th class="px-4 py-2"># of items</th>
+                <th class="px-4 py-2">Edit</th>
+                <th class="px-4 py-2">Share</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Lists}}
+                <tr>
+                    <td class="border px-4 py-2">{{.Name}}</td>
+                    <td class="border px-4 py-2">{{.Id}}</td>
+                    <td class="border px-4 py-2"><a href="/list/{{.Id}}/edit" class="underline">Edit</a></td>
+                    <td class="border px-4 py-2">{{.ShareURL}}</td>
+                </tr>
+            {{end}}
+        </tbody>
+    </table>
+    {{end}}
 {{end}}
+
 {{define "wide"}}
-Rendering the lists.html page
+    {{template "mobile" .}}
 {{end}}
