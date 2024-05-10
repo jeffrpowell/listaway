@@ -36,11 +36,15 @@ func minifyTemplates(filenames ...string) (*template.Template, error) {
 			return nil, err
 		}
 
-		mb, err := m.Bytes("text/html", b)
+		mb, err := m.Bytes("text/html", b) //BUG: lower-cases go interpolation tags
 		if err != nil {
 			return nil, err
 		}
-		tmpl.Parse(string(mb))
+
+		tmpl, err = tmpl.Parse(string(mb))
+		if err != nil {
+			return nil, err
+		}
 	}
 	return tmpl, nil
 }
