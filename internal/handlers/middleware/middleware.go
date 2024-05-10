@@ -14,5 +14,9 @@ func Chain(f http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
 }
 
 func DefaultMiddleware(f http.HandlerFunc) http.HandlerFunc {
-	return Chain(f, RequireAuth())
+	return Chain(f, RequireAuth(), Cors())
+}
+
+func DefaultPublicMiddleware(f http.HandlerFunc) http.HandlerFunc {
+	return Chain(f, Cors())
 }

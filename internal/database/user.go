@@ -1,6 +1,8 @@
 package database
 
 import (
+	"database/sql"
+
 	"github.com/jeffrpowell/listaway/internal/constants"
 	_ "github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
@@ -38,6 +40,22 @@ func RegisterUser(user constants.UserRegister) error {
 		return err
 	}
 	return nil
+}
+
+func LoginUser(email, password string) (bool, error) {
+	db := getDatabaseConnection()
+	defer db.Close()
+	row := db.QueryRow("SELECT PasswordHash FROM "+constants.DB_TABLE_USER+" WHERE Email = $1", email)
+	var passwordHash string
+	err := row.Scan(&passwordHash)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			return false, err
+		} else {
+			return false, nil
+		}
+	}
+	return checkPasswordHash(password, passwordHash), nil
 }
 
 func hashPassword(password string) (string, error) {

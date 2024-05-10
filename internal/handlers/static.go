@@ -9,6 +9,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/jeffrpowell/listaway/internal/constants"
+	"github.com/jeffrpowell/listaway/internal/handlers/middleware"
 )
 
 // build system will generate this directory
@@ -17,7 +18,7 @@ import (
 var staticFiles embed.FS
 
 func init() {
-	constants.ROUTER.HandleFunc("/static/{pathname...}", staticHandler).Methods("GET")
+	constants.ROUTER.HandleFunc("/static/{pathname...}", middleware.DefaultPublicMiddleware(staticHandler)).Methods("GET")
 }
 
 func staticHandler(w http.ResponseWriter, r *http.Request) {

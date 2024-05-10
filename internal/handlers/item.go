@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	constants.ROUTER.HandleFunc("/list/{listId}/item/", middleware.DefaultMiddleware(itemsHandler))
+	constants.ROUTER.HandleFunc("/list/{listId}/item", middleware.DefaultMiddleware(itemsHandler))
 	constants.ROUTER.HandleFunc("/list/{listId}/item/{itemId}", middleware.DefaultMiddleware(itemHandler))
 }
 

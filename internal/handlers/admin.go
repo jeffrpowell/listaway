@@ -1,16 +1,19 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/jeffrpowell/listaway/internal/constants"
 	"github.com/jeffrpowell/listaway/internal/database"
+	"github.com/jeffrpowell/listaway/internal/handlers/middleware"
 	"github.com/jeffrpowell/listaway/web"
 )
 
 func init() {
-	constants.ROUTER.HandleFunc("/admin/register", registerAdminHandler)
+	constants.ROUTER.HandleFunc("/admin/register", middleware.DefaultPublicMiddleware(registerAdminHandler))
 }
 
 func registerAdminHandler(w http.ResponseWriter, r *http.Request) {
@@ -42,8 +45,8 @@ func registerAdminPOST(w http.ResponseWriter, r *http.Request) {
 		Password: r.FormValue("password"),
 		Admin:    true,
 	}
-	if newUserIsInvalid(newUser) {
-		http.Error(w, "Invalid user provided", http.StatusBadRequest)
+	if invalid, reason := newUserIsInvalid(newUser); invalid {
+		http.Error(w, reason, http.StatusBadRequest)
 		return
 	}
 	err := database.RegisterUser(newUser)
@@ -55,11 +58,21 @@ func registerAdminPOST(w http.ResponseWriter, r *http.Request) {
 		session, _ := constants.COOKIE_STORE.Get(r, constants.COOKIE_NAME_SESSION)
 		session.Values["authenticated"] = true
 		session.Save(r, w)
-		http.Redirect(w, r, "/list/", http.StatusSeeOther)
+		w.Header().Add("Status", fmt.Sprint(http.StatusOK))
+		w.Header().Add("Location", "/list")
+		w.Write([]byte(""))
 	}
-
 }
 
-func newUserIsInvalid(newUser constants.UserRegister) bool {
-	return newUser.Email == "" || newUser.Name == "" || newUser.Password == ""
+func newUserIsInvalid(newUser constants.UserRegister) (bool, string) {
+	if strings.TrimSpace(newUser.Email) == "" {
+		return true, "Email is required"
+	}
+	if strings.TrimSpace(newUser.Name) == "" {
+		return true, "Name is required"
+	}
+	if strings.TrimSpace(newUser.Password) == "" {
+		return true, "Password is required"
+	}
+	return false, ""
 }
