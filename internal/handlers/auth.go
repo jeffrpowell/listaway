@@ -19,7 +19,7 @@ func init() {
 func rootHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		http.Redirect(w, r, "/lists", http.StatusPermanentRedirect)
+		http.Redirect(w, r, "/list", http.StatusPermanentRedirect)
 	default:
 		http.Error(w, "", http.StatusMethodNotAllowed)
 	}
