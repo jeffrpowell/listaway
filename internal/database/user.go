@@ -42,20 +42,24 @@ func RegisterUser(user constants.UserRegister) error {
 	return nil
 }
 
-func LoginUser(email, password string) (bool, error) {
+func LoginUser(email, password string) (int, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	row := db.QueryRow("SELECT PasswordHash FROM "+constants.DB_TABLE_USER+" WHERE Email = $1", email)
+	row := db.QueryRow("SELECT Id, PasswordHash FROM "+constants.DB_TABLE_USER+" WHERE Email = $1", email)
+	var userId int
 	var passwordHash string
-	err := row.Scan(&passwordHash)
+	err := row.Scan(&userId, &passwordHash)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			return false, err
+			return -1, err
 		} else {
-			return false, nil
+			return -1, nil
 		}
 	}
-	return checkPasswordHash(password, passwordHash), nil
+	if checkPasswordHash(password, passwordHash) {
+		return userId, nil
+	}
+	return -1, nil
 }
 
 func hashPassword(password string) (string, error) {

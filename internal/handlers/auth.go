@@ -47,19 +47,20 @@ func authGET(w http.ResponseWriter, r *http.Request) {
 func authPOST(w http.ResponseWriter, r *http.Request) {
 	session, _ := constants.COOKIE_STORE.Get(r, constants.COOKIE_NAME_SESSION)
 
-	success, err := database.LoginUser(r.FormValue("email"), r.FormValue("password"))
+	userId, err := database.LoginUser(r.FormValue("email"), r.FormValue("password"))
 	if err != nil {
 		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
 		log.Print(err)
 		return
 	}
-	if !success {
+	if userId == -1 {
 		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
 		return
 	}
 
 	// Set user as authenticated
 	session.Values["authenticated"] = true
+	session.Values["userId"] = userId
 	session.Save(r, w)
 	w.Header().Add("Status", fmt.Sprint(http.StatusOK))
 	w.Header().Add("Location", "/list")
@@ -72,6 +73,8 @@ func authDELETE(w http.ResponseWriter, r *http.Request) {
 
 	// Revoke users authentication
 	session.Values["authenticated"] = false
+	delete(session.Values, "userId")
+	session.Options.MaxAge = -1
 	session.Save(r, w)
 	w.Header().Add("Status", fmt.Sprint(http.StatusOK))
 	w.Header().Add("Location", "/auth")
