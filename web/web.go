@@ -18,6 +18,7 @@ var (
 	registerAdmin = parseSingleLayout("registerAdmin.html")
 	login         = parseSplitLayout("login.html")
 	lists         = parseSplitLayout("lists.html")
+	createList    = parseSplitLayout("list-create.html")
 )
 
 func minifyTemplates(filenames ...string) (*template.Template, error) {
@@ -105,6 +106,18 @@ func ListsPageParams(lists []constants.List) listsPageParams {
 
 func ListsPage(w io.Writer, params listsPageParams) {
 	if err := lists.Execute(w, params); err != nil {
+		log.Print(err)
+	}
+}
+
+// Create List page
+
+type createListParams struct {
+	ShowNavbar bool
+}
+
+func CreateListPage(w io.Writer) {
+	if err := createList.Execute(w, createListParams{ShowNavbar: true}); err != nil {
 		log.Print(err)
 	}
 }

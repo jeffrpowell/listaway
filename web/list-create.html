@@ -1,0 +1,61 @@
+{{define "mobile"}}
+<form class="list-form bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <label class="block text-gray-700 text-sm font-bold mb-2" for="listName">
+        Pick a name for your list
+    </label>
+    <input
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        id="listName" type="text" name="name" placeholder="Name">
+</form>
+{{end}}
+{{define "wide"}}
+    {{template "mobile" .}}
+{{end}}
+{{define "js"}}
+<script type="text/javascript">
+    async function sendData(form) {
+        // Associate the FormData object with the form element
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch("/list", {
+                method: "PUT",
+                // Set the FormData instance as the request body
+                headers: {
+                    "Accept": "text/plain",
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams(formData).toString()
+            });
+            if (response.status >= 400) {
+                showError(response.status);
+            } else if (response.status === 200) {
+                window.location.href = response.headers.get("Location");
+            }
+        } catch (e) {
+            console.error(e);
+            showError(500);
+        }
+    }
+
+    // Take over form submission
+    const forms = document.querySelectorAll(".list-form");
+    forms.forEach(form => form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        sendData(form);
+    }));
+
+    function showError(statusCode) {
+        const errorSpans = document.querySelectorAll(".error-span");
+        errorSpans.forEach(errorSpan => {
+            if (statusCode === 400) {
+                errorSpan.innerText = "List name is already in use.";
+            }
+            else {
+                errorSpan.innerText = "Unexpected error occurred. Please try again later.";
+            }
+            errorSpan.classList.remove("hidden");
+        });
+    }
+</script>
+{{end}}
