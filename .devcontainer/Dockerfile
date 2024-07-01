@@ -1,15 +1,9 @@
 FROM mcr.microsoft.com/devcontainers/go:1-1.22-bookworm
 
-# ------------ TailwindCSS Standalone CLI -------------------
-RUN curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.3/tailwindcss-linux-x64
-RUN chmod +x tailwindcss-linux-x64
-RUN mv tailwindcss-linux-x64 /usr/local/bin/tailwindcss
-# ------------ End TailwindCSS Standalone CLI ---------------
-
 # ------------ Docker-from-docker ---------------------------
 # Add Docker's official GPG key:
 RUN apt-get update
-RUN apt-get install ca-certificates curl
+RUN apt-get install -y ca-certificates curl
 RUN install -m 0755 -d /etc/apt/keyrings
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 RUN chmod a+r /etc/apt/keyrings/docker.asc
@@ -44,3 +38,11 @@ ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]
 CMD [ "sleep", "infinity" ]
 
 # --------- END Docker-from-docker ----------------------
+  
+# ------------ TailwindCSS Standalone CLI -------------------
+RUN curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.3/tailwindcss-linux-x64
+RUN chmod +x tailwindcss-linux-x64
+RUN mv tailwindcss-linux-x64 /usr/local/bin/tailwindcss
+# ------------ End TailwindCSS Standalone CLI ---------------
+
+RUN rm -rf /var/lib/apt/lists/*
