@@ -73,7 +73,7 @@ func nameCheckGET(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
-	taken, err := database.ListNameTaken(userId, r.FormValue("name"))
+	taken, err := database.ListNameTaken(userId, r.URL.Query().Get("name"))
 	if err != nil {
 		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
 		log.Print(err)

@@ -39,5 +39,5 @@ func ListNameTaken(userId int, name string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	return matches == 0, nil
+	return matches != 0, nil
 }
