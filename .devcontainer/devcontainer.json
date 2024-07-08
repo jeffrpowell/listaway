@@ -28,7 +28,7 @@
 		"POSTGRES_HOST": "db",
 		"LISTAWAY_AUTH_KEY": "zjVzypwJaRyIAz9blNPAmSiKoXb92NW9lgiVNgbHeAD0TRHPhicIh7YVzg4s6JBbjUZVQTaF5JIepCiMqQrUqe1Vs0bLwhrVbdHh03GCXuwbTjuXVYAZuGZ1XN4cHXpitySaRVO95Dxlv27crLpvJEYC3RJu0U7Hw85jkgidDvHjXpB16dLSqW60lfq9EAvPFWjT"
 	},
-	"postAttachCommand": "yarn --cwd /workspaces/listaway/web run build",
+	"postAttachCommand": "yarn --cwd /workspaces/listaway/web install && yarn --cwd /workspaces/listaway/web run build",
 	"customizations": {
 		"vscode": {
 			"extensions": ["golang.go", "cweijan.vscode-postgresql-client2", "bradlc.vscode-tailwindcss"],
