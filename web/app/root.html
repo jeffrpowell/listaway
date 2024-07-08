@@ -4,11 +4,11 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <link rel="stylesheet" href="/static/root.css"/>
+    <link rel="stylesheet" href="/static/styles.css"/>
     <title>Listaway</title>
 </head>
 <body bg-gray-100>
     {{block "content" .}}{{end}}
-    {{block "js" .}}{{end}}
+    <script type="text/javascript" src="/static/{{.JsFile}}.js"></script>
 </body>
 </html>

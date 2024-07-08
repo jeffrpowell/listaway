@@ -49,10 +49,10 @@ This repository is provided with a configured devcontainer available to assist i
 
 It is possible to do local development without using the devcontainer. Generally this involves following the steps encoded in the files under the `.devcontainer` folder.
 
-Once you've installed the necessary tooling for this project (notably Go, Postgres, and the TailindCSS Standalone CLI), these steps will get the application server running:
+Once you've installed the necessary tooling for this project (notably Go, Postgres, NodeJs, and Yarn), these steps will get the application server running:
 
-1. `tailwindcss -i web/root.css -o internal/handlers/assets/root.css --watch`
-    * For the devcontainer users, the devcontainer will run this automatically for you
+1. `yarn --cwd web run build`
+    * For the devcontainer users, the devcontainer will run this automatically for you each time you open it (you may need to manually "Refresh Explorer" to see the generated files for the first time)
 2. `go run cmd/listaway/main.go`
     * Or leverage the `launch.json` file in VS Code
 3. The URL of the server is printed to stdout

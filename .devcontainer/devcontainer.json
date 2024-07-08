@@ -1,10 +1,14 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/go-postgres
 {
-	"name": "Listaway Go & PostgreSQL",
+	"name": "Listaway Go, Yarn, Postgre",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+	"features": {
+		"ghcr.io/devcontainers/features/node:1": {}
+	},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [8080, 5432],
@@ -24,7 +28,7 @@
 		"POSTGRES_HOST": "db",
 		"LISTAWAY_AUTH_KEY": "zjVzypwJaRyIAz9blNPAmSiKoXb92NW9lgiVNgbHeAD0TRHPhicIh7YVzg4s6JBbjUZVQTaF5JIepCiMqQrUqe1Vs0bLwhrVbdHh03GCXuwbTjuXVYAZuGZ1XN4cHXpitySaRVO95Dxlv27crLpvJEYC3RJu0U7Hw85jkgidDvHjXpB16dLSqW60lfq9EAvPFWjT"
 	},
-	"postAttachCommand": "tailwindcss -i /workspaces/listaway/web/root.css -o /workspaces/listaway/internal/handlers/assets/root.css --watch",
+	"postAttachCommand": "yarn --cwd /workspaces/listaway/web run build",
 	"customizations": {
 		"vscode": {
 			"extensions": ["golang.go", "cweijan.vscode-postgresql-client2", "bradlc.vscode-tailwindcss"],

@@ -1,5 +1,5 @@
 # Use the official Go image to create a build container
-FROM golang:1.17 AS builder
+FROM golang:1.22-bookworm AS builder
 
 WORKDIR /workspaces/listaway
 
@@ -13,11 +13,19 @@ RUN go mod download
 # Copy the source code
 COPY . .
 
-# Compile css file from TailwindCSS classes
-RUN curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.3/tailwindcss-linux-x64
-RUN chmod +x tailwindcss-linux-x64
-RUN mv tailwindcss-linux-x64 /usr/local/bin/tailwindcss
-RUN tailwindcss -i ./web/root.css -o ./internal/handlers/assets/root.css
+# Install npm
+RUN apt-get update && apt-get install -y curl \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
+
+# Install yarn
+RUN npm install --global yarn
+
+# Install npm dependencies
+RUN yarn --cwd web install
+
+# Build the static assets using npm
+RUN yarn --cwd web run build-prod
 
 # Build the Go application
 RUN CGO_ENABLED=0 GOOS=linux go build -o ./bin/listaway ./cmd/listaway

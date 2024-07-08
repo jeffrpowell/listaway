@@ -5,21 +5,59 @@ import (
 	"html/template"
 	"io"
 	"log"
+	"mime"
+	"net/http"
 	"path/filepath"
 
+	"github.com/gorilla/mux"
 	"github.com/jeffrpowell/listaway/internal/constants"
+	"github.com/jeffrpowell/listaway/internal/handlers/middleware"
 	"github.com/tdewolff/minify"
 	"github.com/tdewolff/minify/html"
 )
 
-//go:embed *
-var htmlFiles embed.FS
+//go:embed dist/*
+var staticFiles embed.FS
 var (
-	registerAdmin = parseSingleLayout("registerAdmin.html")
-	login         = parseSplitLayout("login.html")
-	lists         = parseSplitLayout("lists.html")
-	createList    = parseSplitLayout("list-create.html")
+	registerAdmin = parseSingleLayout("dist/registerAdmin.html")
+	login         = parseSplitLayout("dist/login.html")
+	lists         = parseSplitLayout("dist/lists.html")
+	createList    = parseSplitLayout("dist/listCreate.html")
 )
+
+func init() {
+	constants.ROUTER.HandleFunc("/static/{pathname...}", middleware.DefaultPublicMiddleware(staticHandler)).Methods("GET")
+}
+
+func staticHandler(w http.ResponseWriter, r *http.Request) {
+	filePath := mux.Vars(r)["pathname..."]
+	// Open the file from the embedded file system
+	file, err := staticFiles.Open("dist/" + filePath)
+	if err != nil {
+		http.Error(w, "File not found", http.StatusNotFound)
+		return
+	}
+	defer file.Close()
+
+	// Get the file extension
+	ext := filepath.Ext(filePath)
+	// Set the content type based on the file extension
+	contentType := mime.TypeByExtension(ext)
+	if contentType == "" {
+		// If the content type is unknown, default to "application/octet-stream"
+		contentType = "application/octet-stream"
+	}
+
+	// Set the content type header
+	w.Header().Set("Content-Type", contentType)
+
+	// Copy the file content to the response writer
+	_, err = io.Copy(w, file)
+	if err != nil {
+		http.Error(w, "Error serving file", http.StatusInternalServerError)
+		return
+	}
+}
 
 func minifyTemplates(filenames ...string) (*template.Template, error) {
 	m := minify.New()
@@ -32,7 +70,7 @@ func minifyTemplates(filenames ...string) (*template.Template, error) {
 			tmpl = template.New(name)
 		}
 
-		b, err := htmlFiles.ReadFile(filename)
+		b, err := staticFiles.ReadFile(filename)
 		if err != nil {
 			return nil, err
 		}
@@ -51,24 +89,32 @@ func minifyTemplates(filenames ...string) (*template.Template, error) {
 }
 
 func parseSplitLayout(file string) *template.Template {
-	return template.Must(minifyTemplates("root.html", "splitLayout.html", file))
+	return template.Must(minifyTemplates("dist/root.html", "dist/splitLayout.html", file))
 }
 
 func parseSingleLayout(file string) *template.Template {
-	return template.Must(minifyTemplates("root.html", "singleLayout.html", file))
+	return template.Must(minifyTemplates("dist/root.html", "dist/singleLayout.html", file))
+}
+
+type globalWebParams struct {
+	ShowNavbar bool
+	JsFile     string
 }
 
 // Register Admin page
 
 type registerAdminParams struct {
+	globalWebParams
 	AdminExists bool
-	ShowNavbar  bool
 }
 
 func RegisterAdminParams(adminExists bool) registerAdminParams {
 	return registerAdminParams{
+		globalWebParams: globalWebParams{
+			ShowNavbar: false,
+			JsFile:     "registerAdmin",
+		},
 		AdminExists: adminExists,
-		ShowNavbar:  false,
 	}
 }
 
@@ -81,11 +127,11 @@ func RegisterAdmin(w io.Writer, params registerAdminParams) {
 // Login page
 
 type loginPageParams struct {
-	ShowNavbar bool
+	globalWebParams
 }
 
 func LoginPage(w io.Writer) {
-	if err := login.Execute(w, loginPageParams{ShowNavbar: false}); err != nil {
+	if err := login.Execute(w, loginPageParams{globalWebParams{ShowNavbar: false, JsFile: "login"}}); err != nil {
 		log.Print(err)
 	}
 }
@@ -93,14 +139,17 @@ func LoginPage(w io.Writer) {
 // Lists page
 
 type listsPageParams struct {
-	Lists      []constants.List
-	ShowNavbar bool
+	Lists []constants.List
+	globalWebParams
 }
 
 func ListsPageParams(lists []constants.List) listsPageParams {
 	return listsPageParams{
-		Lists:      lists,
-		ShowNavbar: true,
+		globalWebParams: globalWebParams{
+			ShowNavbar: true,
+			JsFile:     "lists",
+		},
+		Lists: lists,
 	}
 }
 
@@ -113,11 +162,11 @@ func ListsPage(w io.Writer, params listsPageParams) {
 // Create List page
 
 type createListParams struct {
-	ShowNavbar bool
+	globalWebParams
 }
 
 func CreateListPage(w io.Writer) {
-	if err := createList.Execute(w, createListParams{ShowNavbar: true}); err != nil {
+	if err := createList.Execute(w, createListParams{globalWebParams{ShowNavbar: true, JsFile: "listCreate"}}); err != nil {
 		log.Print(err)
 	}
 }
