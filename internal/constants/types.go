@@ -1,5 +1,7 @@
 package constants
 
+import "database/sql"
+
 type UserRead struct {
 	Id    uint64
 	Email string
@@ -17,7 +19,7 @@ type UserRegister struct {
 type List struct {
 	Id       uint64
 	Name     string
-	ShareURL string
+	ShareURL sql.NullString
 }
 
 type Item struct {

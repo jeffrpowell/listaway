@@ -2,21 +2,26 @@ require('../index')
 require('../navbar')
 
 document.addEventListener('DOMContentLoaded', (event) => {
-    const listNameInput = document.getElementById('listName');
-    const submitButton = document.querySelector('button[type="submit"]');
-    const errorSpan = document.querySelector('.error-span');
+    const listNameInputs = document.getElementsByName('name');
+    const submitButtons = document.querySelectorAll('button[type="submit"]');
+    const errorSpans = document.querySelectorAll('.error-span');
+    var formReadyToSubmit = false;
 
-    listNameInput.addEventListener('keyup', (event) => {
-        submitButton.disabled = true;
-        errorSpan.classList.add('hidden');
-        errorSpan.textContent = '';
+    listNameInputs.forEach(listNameInput => 
+        listNameInput.addEventListener('input', (event) => {
+            submitButtons.forEach(submitButton => submitButton.classList.remove("opacity-50", "cursor-not-allowed"));
+            errorSpans.forEach(errorSpan => {
+                errorSpan.classList.add('hidden');
+                errorSpan.textContent = '';
+            });
 
-        if (listNameInput.value.trim() !== '') {
-            checkListName(listNameInput.value.trim());
-        }
-    });
+            if (listNameInput.value.trim() !== '') {
+                checkListName(submitButtons, errorSpans, listNameInput.value.trim());
+            }
+        })
+    );
 
-    async function checkListName(name) {
+    async function checkListName(submitButtons, errorSpans, name) {
         try {
             const response = await fetch(`/list/namecheck?name=${encodeURIComponent(name)}`, {
                 method: 'GET',
@@ -26,23 +31,36 @@ document.addEventListener('DOMContentLoaded', (event) => {
             });
 
             if (response.status === 200) {
-                submitButton.disabled = false;
+                submitButtons.forEach(submitButton => submitButton.classList.remove("opacity-50", "cursor-not-allowed"));
+                formReadyToSubmit = true;
             } else if (response.status === 400) {
-                submitButton.disabled = true;
-                errorSpan.textContent = 'The list name is already in use.';
-                errorSpan.classList.remove('hidden');
+                submitButtons.forEach(submitButton => submitButton.classList.add("opacity-50", "cursor-not-allowed"));
+                errorSpans.forEach(errorSpan => {
+                    errorSpan.textContent = 'The list name is already in use.';
+                    errorSpan.classList.remove('hidden');
+                });
+                formReadyToSubmit = false;
             } else {
-                submitButton.disabled = true;
-                errorSpan.textContent = 'There was a problem while checking if the name was taken. Please try again.';
-                errorSpan.classList.remove('hidden');
+                submitButtons.forEach(submitButton => submitButton.classList.add("opacity-50", "cursor-not-allowed"));
+                errorSpans.forEach(errorSpan => {
+                    errorSpan.textContent = 'There was a problem while checking if the name was taken. Please try again.';
+                    errorSpan.classList.remove('hidden');
+                });
+                formReadyToSubmit = false;
             }
         } catch (error) {
-            submitButton.disabled = true;
-            errorSpan.textContent = 'There was a problem while checking if the name was taken. Please try again.';
-            errorSpan.classList.remove('hidden');
+            submitButtons.forEach(submitButton => submitButton.classList.add("opacity-50", "cursor-not-allowed"));
+            errorSpans.forEach(errorSpan => {
+                errorSpan.textContent = 'There was a problem while checking if the name was taken. Please try again.';
+                errorSpan.classList.remove('hidden');
+            });
+            formReadyToSubmit = false;
         }
     }
     async function sendData(form) {
+        if (!formReadyToSubmit) {
+            return;
+        }
         // Associate the FormData object with the form element
         const formData = new FormData(form);
 

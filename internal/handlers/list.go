@@ -23,6 +23,8 @@ func listsHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		listsGET(w, r)
+	case "PUT":
+		listPUT(w, r)
 	default:
 		http.Error(w, "", http.StatusMethodNotAllowed)
 	}
@@ -82,6 +84,37 @@ func nameCheckGET(w http.ResponseWriter, r *http.Request) {
 	if taken {
 		http.Error(w, "List name already taken", http.StatusBadRequest)
 	} else {
+		w.Write([]byte(""))
+	}
+}
+
+/* Create list */
+func listPUT(w http.ResponseWriter, r *http.Request) {
+	userId, err := helper.GetUserId(r)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	var listName string = r.FormValue("name")
+	//Don't trust client input
+	taken, err := database.ListNameTaken(userId, listName)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	if taken {
+		http.Error(w, "List name already taken", http.StatusBadRequest)
+	} else {
+		id, err := database.CreateList(userId, listName)
+		if err != nil {
+			http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+			log.Print(err)
+			return
+		}
+		w.Header().Add("Status", fmt.Sprint(http.StatusOK))
+		w.Header().Add("Location", fmt.Sprintf("/list/%d", id))
 		w.Write([]byte(""))
 	}
 }

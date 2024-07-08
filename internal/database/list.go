@@ -41,3 +41,14 @@ func ListNameTaken(userId int, name string) (bool, error) {
 	}
 	return matches != 0, nil
 }
+
+func CreateList(userId int, name string) (int, error) {
+	db := getDatabaseConnection()
+	defer db.Close()
+	var newId int
+	err := db.QueryRow(`INSERT INTO listaway.list (UserId, Name) VALUES($1, $2) RETURNING Id`, userId, name).Scan(&newId)
+	if err != nil {
+		return 0, err
+	}
+	return newId, nil
+}
