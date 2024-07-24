@@ -9,8 +9,8 @@ import (
 )
 
 func init() {
-	constants.ROUTER.HandleFunc("/list/{listId}/item", middleware.DefaultMiddleware(itemsHandler))
-	constants.ROUTER.HandleFunc("/list/{listId}/item/{itemId}", middleware.DefaultMiddleware(itemHandler))
+	constants.ROUTER.HandleFunc("/list/{listId}/item", middleware.DefaultMiddlewareChain(itemsHandler))
+	constants.ROUTER.HandleFunc("/list/{listId}/item/{itemId}", middleware.DefaultMiddlewareChain(itemHandler))
 }
 
 func itemsHandler(w http.ResponseWriter, r *http.Request) {

@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	constants.ROUTER.HandleFunc("/list/{listId}/share", middleware.DefaultMiddleware(listShareHandler))
+	constants.ROUTER.HandleFunc("/list/{listId}/share", middleware.DefaultMiddlewareChain(listShareHandler))
 	constants.ROUTER.HandleFunc("/share", shareGET).Methods("GET")
 }
 

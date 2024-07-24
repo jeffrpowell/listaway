@@ -6,6 +6,9 @@ import (
 
 type Middleware func(http.HandlerFunc) http.HandlerFunc
 
+var DefaultPublicMiddlewareSlice []Middleware = []Middleware{Cors()}
+var DefaultMiddlewareSlice []Middleware = []Middleware{RequireAuth(), Cors()}
+
 func Chain(f http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
 	for _, m := range middlewares {
 		f = m(f)
@@ -13,10 +16,10 @@ func Chain(f http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
 	return f
 }
 
-func DefaultMiddleware(f http.HandlerFunc) http.HandlerFunc {
-	return Chain(f, RequireAuth(), Cors())
+func DefaultMiddlewareChain(f http.HandlerFunc) http.HandlerFunc {
+	return Chain(f, DefaultMiddlewareSlice...)
 }
 
-func DefaultPublicMiddleware(f http.HandlerFunc) http.HandlerFunc {
-	return Chain(f, Cors())
+func DefaultPublicMiddlewareChain(f http.HandlerFunc) http.HandlerFunc {
+	return Chain(f, DefaultPublicMiddlewareSlice...)
 }

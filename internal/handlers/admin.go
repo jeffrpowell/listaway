@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	constants.ROUTER.HandleFunc("/admin/register", middleware.DefaultPublicMiddleware(registerAdminHandler))
+	constants.ROUTER.HandleFunc("/admin/register", middleware.DefaultPublicMiddlewareChain(registerAdminHandler))
 }
 
 func registerAdminHandler(w http.ResponseWriter, r *http.Request) {

@@ -13,10 +13,11 @@ import (
 )
 
 func init() {
-	constants.ROUTER.HandleFunc("/list", middleware.DefaultMiddleware(listsHandler))
-	constants.ROUTER.HandleFunc("/list/create", middleware.DefaultMiddleware(createListGET)).Methods("GET")
-	constants.ROUTER.HandleFunc("/list/namecheck", middleware.DefaultMiddleware(nameCheckGET)).Methods("GET")
-	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}", middleware.DefaultMiddleware(listHandler))
+	constants.ROUTER.HandleFunc("/list", middleware.DefaultMiddlewareChain(listsHandler))
+	constants.ROUTER.HandleFunc("/list/create", middleware.DefaultMiddlewareChain(createListGET)).Methods("GET")
+	constants.ROUTER.HandleFunc("/list/namecheck", middleware.DefaultMiddlewareChain(nameCheckGET)).Methods("GET")
+	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}", middleware.DefaultMiddlewareChain(listHandler))
+	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/edit", middleware.Chain(editListGET, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...)).Methods("GET")
 }
 
 func listsHandler(w http.ResponseWriter, r *http.Request) {
@@ -117,6 +118,11 @@ func listPUT(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Location", fmt.Sprintf("/list/%d", id))
 		w.Write([]byte(""))
 	}
+}
+
+/* Edit list page */
+func editListGET(w http.ResponseWriter, r *http.Request) {
+	web.EditListPage(w)
 }
 
 /* Rename list */

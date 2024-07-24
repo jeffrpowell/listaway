@@ -12,8 +12,8 @@ import (
 )
 
 func init() {
-	constants.ROUTER.HandleFunc("/", middleware.DefaultMiddleware(rootHandler))
-	constants.ROUTER.HandleFunc("/auth", middleware.DefaultPublicMiddleware(authHandler))
+	constants.ROUTER.HandleFunc("/", middleware.DefaultMiddlewareChain(rootHandler))
+	constants.ROUTER.HandleFunc("/auth", middleware.DefaultPublicMiddlewareChain(authHandler))
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {

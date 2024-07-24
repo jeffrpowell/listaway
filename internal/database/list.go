@@ -52,3 +52,15 @@ func CreateList(userId int, name string) (int, error) {
 	}
 	return newId, nil
 }
+
+func UserOwnsList(userId int, listId int) (bool, error) {
+	db := getDatabaseConnection()
+	defer db.Close()
+	row := db.QueryRow("SELECT COUNT(1) FROM "+constants.DB_TABLE_LIST+" WHERE UserId = $1 AND Id = $2", userId, listId)
+	var matches int
+	err := row.Scan(&matches)
+	if err != nil {
+		return false, err
+	}
+	return matches != 0, nil
+}
