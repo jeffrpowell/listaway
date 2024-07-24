@@ -1,0 +1,24 @@
+{{define "mobile"}}
+<div class="list-form bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <div class="flex items-center mb-4">
+        <h1 class="text-gray-700 text-sm font-bold">List Name</h1>
+        <button><i class="fas fa-pencil-alt text-gray-600 ml-2"></i></button>
+    </div>
+    <div class="mb-4">
+        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Generate Share Link</button>
+        <span class="ml-2">http://share.link</span>
+        <button class="ml-2"><i class="fas fa-copy text-gray-600"></i></button>
+    </div>
+    <div class="mb-4">
+        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          View list items
+        </button>
+    </div>
+    <div>
+        <button class="opacity-50 cursor-not-allowed bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Delete list</button>
+    </div>
+</div>
+{{end}}
+{{define "wide"}}
+    {{template "mobile" .}}
+{{end}}

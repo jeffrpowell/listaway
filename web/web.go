@@ -23,10 +23,11 @@ var (
 	login         = parseSplitLayout("dist/login.html")
 	lists         = parseSplitLayout("dist/lists.html")
 	createList    = parseSplitLayout("dist/listCreate.html")
+	editList      = parseSplitLayout("dist/listEdit.html")
 )
 
 func init() {
-	constants.ROUTER.HandleFunc("/static/{pathname...}", middleware.DefaultPublicMiddleware(staticHandler)).Methods("GET")
+	constants.ROUTER.HandleFunc("/static/{pathname...}", middleware.DefaultPublicMiddlewareChain(staticHandler)).Methods("GET")
 }
 
 func staticHandler(w http.ResponseWriter, r *http.Request) {
@@ -167,6 +168,18 @@ type createListParams struct {
 
 func CreateListPage(w io.Writer) {
 	if err := createList.Execute(w, createListParams{globalWebParams{ShowNavbar: true, JsFile: "listCreate"}}); err != nil {
+		log.Print(err)
+	}
+}
+
+// Edit List page
+
+type editListParams struct {
+	globalWebParams
+}
+
+func EditListPage(w io.Writer) {
+	if err := editList.Execute(w, editListParams{globalWebParams{ShowNavbar: true, JsFile: "listEdit"}}); err != nil {
 		log.Print(err)
 	}
 }

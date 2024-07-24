@@ -6,7 +6,6 @@
         <thead>
             <tr>
                 <th class="px-4 py-2">List</th>
-                <th class="px-4 py-2"># of items</th>
                 <th class="px-4 py-2">Edit</th>
                 <th class="px-4 py-2">Share</th>
             </tr>
@@ -15,7 +14,6 @@
             {{range .Lists}}
                 <tr>
                     <td class="border px-4 py-2">{{.Name}}</td>
-                    <td class="border px-4 py-2">{{.Id}}</td>
                     <td class="border px-4 py-2"><a href="/list/{{.Id}}/edit" class="underline">Edit</a></td>
                     <td class="border px-4 py-2">{{.ShareURL}}</td>
                 </tr>

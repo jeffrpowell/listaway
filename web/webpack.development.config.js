@@ -7,7 +7,8 @@ module.exports = {
         login: './app/pages/login.js',
         registerAdmin: './app/pages/registerAdmin.js',
         lists: './app/pages/lists.js',
-        listCreate: './app/pages/listCreate.js'
+        listCreate: './app/pages/listCreate.js',
+        listEdit: './app/pages/listEdit.js',
     },
     output: {
         filename: '[name].js',
