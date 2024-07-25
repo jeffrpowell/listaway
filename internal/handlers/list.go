@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
+	"github.com/gorilla/mux"
 	"github.com/jeffrpowell/listaway/internal/constants"
 	"github.com/jeffrpowell/listaway/internal/database"
 	"github.com/jeffrpowell/listaway/internal/handlers/helper"
@@ -122,7 +124,16 @@ func listPUT(w http.ResponseWriter, r *http.Request) {
 
 /* Edit list page */
 func editListGET(w http.ResponseWriter, r *http.Request) {
-	web.EditListPage(w)
+	listId, _ := strconv.Atoi(mux.Vars(r)["listId"]) //err will trip in listIdOwner middleware first
+	list, err := database.GetList(listId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+
+	editListPageParams := web.EditListParams(list)
+	web.EditListPage(w, editListPageParams)
 }
 
 /* Rename list */

@@ -64,3 +64,15 @@ func UserOwnsList(userId int, listId int) (bool, error) {
 	}
 	return matches != 0, nil
 }
+
+func GetList(listId int) (constants.List, error) {
+	db := getDatabaseConnection()
+	defer db.Close()
+	row := db.QueryRow("SELECT Id, Name, ShareURL FROM "+constants.DB_TABLE_LIST+" WHERE Id = $1", listId)
+	var list constants.List
+	err := row.Scan(&list.Id, &list.Name, &list.ShareURL)
+	if err != nil {
+		return constants.List{}, err
+	}
+	return list, nil
+}

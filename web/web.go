@@ -175,11 +175,22 @@ func CreateListPage(w io.Writer) {
 // Edit List page
 
 type editListParams struct {
+	List constants.List
 	globalWebParams
 }
 
-func EditListPage(w io.Writer) {
-	if err := editList.Execute(w, editListParams{globalWebParams{ShowNavbar: true, JsFile: "listEdit"}}); err != nil {
+func EditListParams(list constants.List) editListParams {
+	return editListParams{
+		globalWebParams: globalWebParams{
+			ShowNavbar: true,
+			JsFile:     "listEdit",
+		},
+		List: list,
+	}
+}
+
+func EditListPage(w io.Writer, params editListParams) {
+	if err := editList.Execute(w, params); err != nil {
 		log.Print(err)
 	}
 }
