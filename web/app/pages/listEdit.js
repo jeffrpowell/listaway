@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
 
     listNameInputs.forEach(listNameInput => 
-        listNameInput.addEventListener('input', (event) => {
+        listNameInput.addEventListener('input', async (event) => {
             saveNameButtons.forEach(saveNameButton => saveNameButton.classList.remove("opacity-50", "cursor-not-allowed"));
             editNameErrors.forEach(errorSpan => {
                 errorSpan.classList.add('hidden');
@@ -45,7 +45,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
             });
 
             if (listNameInput.value.trim() !== '') {
-                checkListName(saveNameButtons, editNameErrors, listNameInput.value.trim());
+                await checkListName(saveNameButtons, editNameErrors, listNameInput.value.trim());
+            }
+            else {
+                formReadyToSubmit = false;
+                saveNameButtons.forEach(saveNameButton => saveNameButton.classList.add("opacity-50", "cursor-not-allowed"));
             }
         })
     );

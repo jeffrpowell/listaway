@@ -3,7 +3,7 @@ require('../navbar')
 
 document.addEventListener('DOMContentLoaded', (event) => {
     const listNameInputs = document.getElementsByName('name');
-    const submitButtons = document.querySelectorAll('button[type="submit"]');
+    const submitButtons = document.querySelectorAll('button');
     const errorSpans = document.querySelectorAll('.error-span');
     var formReadyToSubmit = false;
 
@@ -14,9 +14,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 errorSpan.classList.add('hidden');
                 errorSpan.textContent = '';
             });
-
             if (listNameInput.value.trim() !== '') {
                 checkListName(submitButtons, errorSpans, listNameInput.value.trim());
+            }
+            else {
+                formReadyToSubmit = false;
+                submitButtons.forEach(submitButton => submitButton.classList.add("opacity-50", "cursor-not-allowed"));
             }
         })
     );
