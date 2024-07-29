@@ -55,7 +55,13 @@
         </button>
     </div>
     <div>
-        <button class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline">Delete list</button>
+        <button class="list-delete bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline" data-list-id="{{.List.Id}}">Delete list</button>
+        <span class="list-delete-confirmation-span hidden">
+            <input
+                class="list-delete-confirmation shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                type="text" name="deleteName" placeholder='type "{{.List.Name}}"'>
+            Confirm by typing list name + clicking button again
+        </span>
     </div>
 </div>
 {{end}}

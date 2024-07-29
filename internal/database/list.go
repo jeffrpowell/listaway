@@ -1,6 +1,8 @@
 package database
 
 import (
+	"database/sql"
+
 	"github.com/jeffrpowell/listaway/internal/constants"
 	_ "github.com/lib/pq"
 )
@@ -82,4 +84,28 @@ func UpdateList(listId int, name string) error {
 	defer db.Close()
 	_, err := db.Exec(`UPDATE listaway.list SET Name = $1 WHERE Id = $2`, name, listId)
 	return err
+}
+
+func DeleteList(listId int, confirmationName string) (bool, error) {
+	db := getDatabaseConnection()
+	defer db.Close()
+	matches, err := confirmNameMatchesListName(db, listId, confirmationName)
+	if err != nil {
+		return false, err
+	}
+	if !matches {
+		return false, nil
+	}
+	_, err = db.Exec(`DELETE FROM listaway.list WHERE Id = $1 AND Name = $2`, listId, confirmationName)
+	return true, err
+}
+
+func confirmNameMatchesListName(db *sql.DB, listId int, confirmationName string) (bool, error) {
+	row := db.QueryRow("SELECT COUNT(1) FROM "+constants.DB_TABLE_LIST+" WHERE Id = $1 AND Name = $2", listId, confirmationName)
+	var matches int
+	err := row.Scan(&matches)
+	if err != nil {
+		return false, err
+	}
+	return matches != 0, nil
 }

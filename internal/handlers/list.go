@@ -19,7 +19,7 @@ func init() {
 	constants.ROUTER.HandleFunc("/list", middleware.DefaultMiddlewareChain(listsHandler))
 	constants.ROUTER.HandleFunc("/list/create", middleware.DefaultMiddlewareChain(createListGET)).Methods("GET")
 	constants.ROUTER.HandleFunc("/list/namecheck", middleware.DefaultMiddlewareChain(nameCheckGET)).Methods("GET")
-	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}", middleware.DefaultMiddlewareChain(listHandler))
+	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}", middleware.Chain(listHandler, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...))
 	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/edit", middleware.Chain(editListGET, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...)).Methods("GET")
 }
 
@@ -176,7 +176,33 @@ func listPOST(w http.ResponseWriter, r *http.Request) {
 
 /* Delete list */
 func listDELETE(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, World!")
+	listId, err := helper.GetPathVarInt(r, "listId")
+	if err != nil {
+		http.Error(w, "Invalid listId supplied in path", http.StatusBadRequest)
+		log.Print(err)
+		return
+	}
+	var confirmationName string
+	decoder := json.NewDecoder(r.Body)
+	err = decoder.Decode(&confirmationName)
+	if err != nil {
+		http.Error(w, "Invalid input provided", http.StatusBadRequest)
+		log.Print(err)
+		return
+	}
+	deleted, err := database.DeleteList(listId, confirmationName)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	if !deleted {
+		http.Error(w, "Confirmation name did not match list name", http.StatusBadRequest)
+		return
+	}
+	w.Header().Add("Status", fmt.Sprint(http.StatusOK))
+	w.Header().Add("Location", "/list")
+	w.Write([]byte(""))
 }
 
 /* Get list-level details */
