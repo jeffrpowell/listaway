@@ -24,6 +24,7 @@ var (
 	lists         = parseSplitLayout("dist/lists.html")
 	createList    = parseSplitLayout("dist/listCreate.html")
 	editList      = parseSplitLayout("dist/listEdit.html")
+	listItems     = parseSplitLayout("dist/listItems.html")
 )
 
 func init() {
@@ -191,6 +192,31 @@ func EditListParams(list constants.List) editListParams {
 
 func EditListPage(w io.Writer, params editListParams) {
 	if err := editList.Execute(w, params); err != nil {
+		log.Print(err)
+	}
+}
+
+// List Items page
+
+type listItemsPageParams struct {
+	List  constants.List
+	Items []constants.Item
+	globalWebParams
+}
+
+func ListItemsPageParams(list constants.List, items []constants.Item) listItemsPageParams {
+	return listItemsPageParams{
+		globalWebParams: globalWebParams{
+			ShowNavbar: true,
+			JsFile:     "listItems",
+		},
+		List:  list,
+		Items: items,
+	}
+}
+
+func ListItemsPage(w io.Writer, params listItemsPageParams) {
+	if err := listItems.Execute(w, params); err != nil {
 		log.Print(err)
 	}
 }

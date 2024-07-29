@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 
-	"github.com/gorilla/mux"
 	"github.com/jeffrpowell/listaway/internal/constants"
 	"github.com/jeffrpowell/listaway/internal/database"
 	"github.com/jeffrpowell/listaway/internal/handlers/helper"
@@ -125,7 +123,7 @@ func listPUT(w http.ResponseWriter, r *http.Request) {
 
 /* Edit list page */
 func editListGET(w http.ResponseWriter, r *http.Request) {
-	listId, _ := strconv.Atoi(mux.Vars(r)["listId"]) //err will trip in listIdOwner middleware first
+	listId, _ := helper.GetPathVarInt(r, "listId") //err will trip in listIdOwner middleware first
 	list, err := database.GetList(listId)
 	if err != nil {
 		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
@@ -139,15 +137,10 @@ func editListGET(w http.ResponseWriter, r *http.Request) {
 
 /* Rename list */
 func listPOST(w http.ResponseWriter, r *http.Request) {
-	listId, err := helper.GetPathVarInt(r, "listId")
-	if err != nil {
-		http.Error(w, "Invalid listId supplied in path", http.StatusBadRequest)
-		log.Print(err)
-		return
-	}
+	listId, _ := helper.GetPathVarInt(r, "listId") //err will trip in listIdOwner middleware first
 	var listName string
 	decoder := json.NewDecoder(r.Body)
-	err = decoder.Decode(&listName)
+	err := decoder.Decode(&listName)
 	if err != nil {
 		http.Error(w, "Invalid input provided", http.StatusBadRequest)
 		log.Print(err)

@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const readNameActions = document.querySelectorAll('.edit-name-read-actions');
     const editNameButtons = document.querySelectorAll('.btn-edit-list-name');
     const editNameErrors = document.querySelectorAll('.edit-name-error');
+    const listItemsRedirectButtons = document.querySelectorAll('.list-items-redirect');
     const deleteListButtons = document.querySelectorAll('.list-delete');
     const deleteListConfirmationSpans = document.querySelectorAll('.list-delete-confirmation-span');
     const deleteListConfirmationInputs = document.querySelectorAll('.list-delete-confirmation');
@@ -139,6 +140,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 saveNameButtons.forEach(el => el.classList.remove('hidden'));
                 editNameErrors.forEach(el => el.classList.remove('hidden'));
             }
+        });
+    });
+
+    listItemsRedirectButtons.forEach(listItemsRedirectBtn => {
+        listItemsRedirectBtn.addEventListener('click', async (event) => {
+            let listId = listItemsRedirectBtn.dataset.listId;
+            window.location.href = "/list/"+listId+"/item";
         });
     });
 

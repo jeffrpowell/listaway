@@ -24,9 +24,8 @@ type List struct {
 
 type Item struct {
 	Id       uint64
-	List     List
 	Name     string
-	URL      string
-	Notes    string
-	Priority int
+	URL      sql.NullString
+	Notes    sql.NullString
+	Priority sql.NullString
 }

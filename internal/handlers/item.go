@@ -2,24 +2,19 @@ package handlers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/jeffrpowell/listaway/internal/constants"
+	"github.com/jeffrpowell/listaway/internal/database"
+	"github.com/jeffrpowell/listaway/internal/handlers/helper"
 	"github.com/jeffrpowell/listaway/internal/handlers/middleware"
+	"github.com/jeffrpowell/listaway/web"
 )
 
 func init() {
-	constants.ROUTER.HandleFunc("/list/{listId}/item", middleware.DefaultMiddlewareChain(itemsHandler))
-	constants.ROUTER.HandleFunc("/list/{listId}/item/{itemId}", middleware.DefaultMiddlewareChain(itemHandler))
-}
-
-func itemsHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		itemsGET(w, r)
-	default:
-		http.Error(w, "", http.StatusMethodNotAllowed)
-	}
+	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item", middleware.Chain(itemsGET, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...)).Methods("GET")
+	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item/{itemId:[0-9]+}", middleware.DefaultMiddlewareChain(itemHandler))
 }
 
 func itemHandler(w http.ResponseWriter, r *http.Request) {
@@ -37,7 +32,21 @@ func itemHandler(w http.ResponseWriter, r *http.Request) {
 
 /* Get all items in a list */
 func itemsGET(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, World!")
+	listId, _ := helper.GetPathVarInt(r, "listId") //err will trip in listIdOwner middleware first
+	list, err := database.GetList(listId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	items, err := database.GetListItems(listId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	listItemsPage := web.ListItemsPageParams(list, items)
+	web.ListItemsPage(w, listItemsPage)
 }
 
 /* Update item */
