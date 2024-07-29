@@ -38,7 +38,7 @@ POSTGRES_DATABASE=listaway
 LISTAWAY_AUTH_KEY=[random alphanumeric 128-character string]
 ```
 4. `docker compose up`
-4. [https://localhost:8080/register/admin/](https://localhost:8080/register/admin/)
+4. [https://localhost:8080/admin/register](https://localhost:8080/admin/register)
 
 ## Build from source
 This repository is provided with a configured devcontainer available to assist in quickly bootstrapping a local developmment environment suitable to build and run this application locally. 
