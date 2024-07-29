@@ -76,3 +76,10 @@ func GetList(listId int) (constants.List, error) {
 	}
 	return list, nil
 }
+
+func UpdateList(listId int, name string) error {
+	db := getDatabaseConnection()
+	defer db.Close()
+	_, err := db.Exec(`UPDATE listaway.list SET Name = $1 WHERE Id = $2`, name, listId)
+	return err
+}

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -138,7 +139,39 @@ func editListGET(w http.ResponseWriter, r *http.Request) {
 
 /* Rename list */
 func listPOST(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, World!")
+	listId, err := helper.GetPathVarInt(r, "listId")
+	if err != nil {
+		http.Error(w, "Invalid listId supplied in path", http.StatusBadRequest)
+		log.Print(err)
+		return
+	}
+	var listName string
+	decoder := json.NewDecoder(r.Body)
+	err = decoder.Decode(&listName)
+	if err != nil {
+		http.Error(w, "Invalid input provided", http.StatusBadRequest)
+		log.Print(err)
+		return
+	}
+	//Don't trust client input
+	taken, err := database.ListNameTaken(listId, listName)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	if taken {
+		http.Error(w, "List name already taken", http.StatusBadRequest)
+	} else {
+		err = database.UpdateList(listId, listName)
+		if err != nil {
+			http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+			log.Print(err)
+			return
+		}
+		w.Header().Add("Status", fmt.Sprint(http.StatusOK))
+		w.Write([]byte(""))
+	}
 }
 
 /* Delete list */

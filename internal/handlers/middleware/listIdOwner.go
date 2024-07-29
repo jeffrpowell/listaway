@@ -3,9 +3,7 @@ package middleware
 import (
 	"log"
 	"net/http"
-	"strconv"
 
-	"github.com/gorilla/mux"
 	"github.com/jeffrpowell/listaway/internal/database"
 	"github.com/jeffrpowell/listaway/internal/handlers/helper"
 )
@@ -24,7 +22,7 @@ func ListIdOwner(pathVarName string) Middleware {
 				return
 			}
 
-			listId, err := strconv.Atoi(mux.Vars(r)[pathVarName])
+			listId, err := helper.GetPathVarInt(r, pathVarName)
 			if err != nil {
 				http.Error(w, "Invalid listId supplied in path", http.StatusBadRequest)
 				log.Print(err)

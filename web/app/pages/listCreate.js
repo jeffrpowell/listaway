@@ -1,5 +1,6 @@
 require('../index')
 require('../navbar')
+require('./DRY/listNameCheck')
 
 document.addEventListener('DOMContentLoaded', (event) => {
     const listNameInputs = document.getElementsByName('name');
