@@ -59,7 +59,7 @@ func registerAdminPOST(w http.ResponseWriter, r *http.Request) {
 		session.Values["authenticated"] = true
 		session.Save(r, w)
 		w.Header().Add("Status", fmt.Sprint(http.StatusOK))
-		w.Header().Add("Location", "/list")
+		w.Header().Add("Location", "/auth")
 		w.Write([]byte(""))
 	}
 }
