@@ -1,0 +1,42 @@
+{{define "mobile"}}
+<div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <form class="list-form bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" data-list-id="{{.List.Id}}">
+        <!-- <th class="px-4 py-2">Item</th>
+        <th class="px-4 py-2">URL</th>
+        <th class="px-4 py-2">Priority</th>
+        <th class="px-4 py-2">Notes</th> -->
+        <label class="block text-gray-700 text-sm font-bold mb-2">
+            Item name
+        </label>
+        <input
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            type="text" name="name" placeholder="Name">
+        <label class="block text-gray-700 text-sm font-bold mb-2">
+            URL
+        </label>
+        <input
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            type="url" name="url" placeholder="Optional">
+        <label class="block text-gray-700 text-sm font-bold mb-2">
+            Priority
+        </label>
+        <input
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            type="number" name="priority" placeholder="Optional">
+        <label class="block text-gray-700 text-sm font-bold mb-2">
+            Notes
+        </label>
+        <input
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            type="text" name="notes" placeholder="Optional">
+        <button type="submit"
+            class="opacity-50 cursor-not-allowed bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-2 rounded focus:outline-none focus:shadow-outline">
+            Save
+        </button>
+        <span class="error-span text-red-500 italic mt-2 hidden"></span>
+    </form>
+</div>
+{{end}}
+{{define "wide"}}
+    {{template "mobile" .}}
+{{end}}

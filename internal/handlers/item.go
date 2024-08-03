@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/jeffrpowell/listaway/internal/constants"
 	"github.com/jeffrpowell/listaway/internal/database"
@@ -14,11 +16,14 @@ import (
 
 func init() {
 	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item", middleware.Chain(itemsGET, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...)).Methods("GET")
+	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item/create", middleware.Chain(createItemGET, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...)).Methods("GET")
 	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item/{itemId:[0-9]+}", middleware.DefaultMiddlewareChain(itemHandler))
 }
 
 func itemHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
+	case "PUT":
+		itemPUT(w, r)
 	case "POST":
 		itemPOST(w, r)
 	case "DELETE":
@@ -47,6 +52,42 @@ func itemsGET(w http.ResponseWriter, r *http.Request) {
 	}
 	listItemsPage := web.ListItemsPageParams(list, items)
 	web.ListItemsPage(w, listItemsPage)
+}
+
+/* Create item page */
+func createItemGET(w http.ResponseWriter, r *http.Request) {
+	listId, _ := helper.GetPathVarInt(r, "listId") //err will trip in listIdOwner middleware first
+	list, err := database.GetList(listId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	web.CreateItemPage(w, web.CreateItemParams(list))
+}
+
+/* Create item */
+func itemPUT(w http.ResponseWriter, r *http.Request) {
+	listId, _ := helper.GetPathVarInt(r, "listId") //err will trip in listIdOwner middleware first
+	var itemName string = r.FormValue("name")
+	var url string = r.FormValue("url")
+	priority, err := strconv.ParseInt(r.FormValue("priority"), 10, 32)
+	var notes string = r.FormValue("notes")
+	id, err := database.CreateItem(constants.ItemInsert{
+		Name:     itemName,
+		ListId:   uint64(listId),
+		URL:      sql.NullString{String: url, Valid: notes != ""},
+		Priority: sql.NullInt64{Int64: priority, Valid: err != nil},
+		Notes:    sql.NullString{String: notes, Valid: notes != ""},
+	})
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	w.Header().Add("Status", fmt.Sprint(http.StatusOK))
+	w.Header().Add("Location", fmt.Sprintf("/list/%d", id))
+	w.Write([]byte(""))
 }
 
 /* Update item */

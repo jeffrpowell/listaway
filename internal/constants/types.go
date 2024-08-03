@@ -22,6 +22,14 @@ type List struct {
 	ShareURL sql.NullString
 }
 
+type ItemInsert struct {
+	Name     string
+	ListId   uint64
+	URL      sql.NullString
+	Notes    sql.NullString
+	Priority sql.NullInt64
+}
+
 type Item struct {
 	Id       uint64
 	Name     string
