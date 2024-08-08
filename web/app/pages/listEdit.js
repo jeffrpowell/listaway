@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     listItemsRedirectButtons.forEach(listItemsRedirectBtn => {
         listItemsRedirectBtn.addEventListener('click', async (event) => {
             let listId = listItemsRedirectBtn.dataset.listId;
-            window.location.href = "/list/"+listId+"/item";
+            window.location.href = "/list/"+listId;
         });
     });
 
