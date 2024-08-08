@@ -116,7 +116,7 @@ func listPUT(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		w.Header().Add("Status", fmt.Sprint(http.StatusOK))
-		w.Header().Add("Location", fmt.Sprintf("/list/%d", id))
+		w.Header().Add("Location", fmt.Sprintf("/list/%d/item", id))
 		w.Write([]byte(""))
 	}
 }
