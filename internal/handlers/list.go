@@ -116,7 +116,7 @@ func listPUT(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		w.Header().Add("Status", fmt.Sprint(http.StatusOK))
-		w.Header().Add("Location", fmt.Sprintf("/list/%d/item", id))
+		w.Header().Add("Location", fmt.Sprintf("/list/%d", id))
 		w.Write([]byte(""))
 	}
 }
@@ -198,7 +198,21 @@ func listDELETE(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(""))
 }
 
-/* Get list-level details */
+/* View list items page */
 func listGET(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, World!")
+	listId, _ := helper.GetPathVarInt(r, "listId") //err will trip in listIdOwner middleware first
+	list, err := database.GetList(listId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	items, err := database.GetListItems(listId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	listItemsPage := web.ListItemsPageParams(list, items)
+	web.ListItemsPage(w, listItemsPage)
 }

@@ -10,6 +10,7 @@ module.exports = {
         listCreate: './app/pages/listCreate.js',
         listEdit: './app/pages/listEdit.js',
         listItems: './app/pages/listItems.js',
+        itemCreate: './app/pages/itemCreate.js',
     },
     output: {
         filename: '[name].js',

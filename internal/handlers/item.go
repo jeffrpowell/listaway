@@ -15,15 +15,13 @@ import (
 )
 
 func init() {
-	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item", middleware.Chain(itemsGET, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...)).Methods("GET")
+	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item", middleware.Chain(itemPUT, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...)).Methods("PUT")
 	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item/create", middleware.Chain(createItemGET, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...)).Methods("GET")
 	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item/{itemId:[0-9]+}", middleware.DefaultMiddlewareChain(itemHandler))
 }
 
 func itemHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
-	case "PUT":
-		itemPUT(w, r)
 	case "POST":
 		itemPOST(w, r)
 	case "DELETE":
@@ -33,25 +31,6 @@ func itemHandler(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.Error(w, "", http.StatusMethodNotAllowed)
 	}
-}
-
-/* Get all items in a list */
-func itemsGET(w http.ResponseWriter, r *http.Request) {
-	listId, _ := helper.GetPathVarInt(r, "listId") //err will trip in listIdOwner middleware first
-	list, err := database.GetList(listId)
-	if err != nil {
-		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
-		log.Print(err)
-		return
-	}
-	items, err := database.GetListItems(listId)
-	if err != nil {
-		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
-		log.Print(err)
-		return
-	}
-	listItemsPage := web.ListItemsPageParams(list, items)
-	web.ListItemsPage(w, listItemsPage)
 }
 
 /* Create item page */
