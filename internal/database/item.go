@@ -30,15 +30,11 @@ func GetListItems(listId int) ([]constants.Item, error) {
 	return items, nil
 }
 
-func CreateItem(item constants.ItemInsert) (int, error) {
+func CreateItem(item constants.ItemInsert) error {
 	db := getDatabaseConnection()
 	defer db.Close()
-	var newId int
-	err := db.QueryRow(`INSERT INTO listaway.item (Name, ListId, URL, Notes, Priority) VALUES($1, $2, $3, $4, $5) RETURNING Id`, item.Name, item.ListId, item.URL, item.Notes, item.Priority).Scan(&newId)
-	if err != nil {
-		return 0, err
-	}
-	return newId, nil
+	_, err := db.Exec(`INSERT INTO listaway.item (Name, ListId, URL, Notes, Priority) VALUES($1, $2, $3, $4, $5)`, item.Name, item.ListId, item.URL, item.Notes, item.Priority)
+	return err
 }
 
 func DeleteItem(itemId int) error {

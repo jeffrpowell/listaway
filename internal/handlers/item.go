@@ -50,13 +50,13 @@ func itemPUT(w http.ResponseWriter, r *http.Request) {
 	listId, _ := helper.GetPathVarInt(r, "listId") //err will trip in listIdOwner middleware first
 	var itemName string = r.FormValue("name")
 	var url string = r.FormValue("url")
-	priority, err := strconv.ParseInt(r.FormValue("priority"), 10, 32)
+	priority, err := strconv.ParseInt(r.FormValue("priority"), 10, 64)
 	var notes string = r.FormValue("notes")
-	id, err := database.CreateItem(constants.ItemInsert{
+	err = database.CreateItem(constants.ItemInsert{
 		Name:     itemName,
 		ListId:   uint64(listId),
 		URL:      sql.NullString{String: url, Valid: notes != ""},
-		Priority: sql.NullInt64{Int64: priority, Valid: err != nil},
+		Priority: sql.NullInt64{Int64: priority, Valid: err == nil},
 		Notes:    sql.NullString{String: notes, Valid: notes != ""},
 	})
 	if err != nil {
@@ -65,7 +65,7 @@ func itemPUT(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Add("Status", fmt.Sprint(http.StatusOK))
-	w.Header().Add("Location", fmt.Sprintf("/list/%d", id))
+	w.Header().Add("Location", fmt.Sprintf("/list/%d", listId))
 	w.Write([]byte(""))
 }
 
