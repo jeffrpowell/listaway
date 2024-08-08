@@ -17,7 +17,7 @@ import (
 func init() {
 	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item", middleware.Chain(itemPUT, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...)).Methods("PUT")
 	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item/create", middleware.Chain(createItemGET, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...)).Methods("GET")
-	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item/{itemId:[0-9]+}", middleware.DefaultMiddlewareChain(itemHandler))
+	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item/{itemId:[0-9]+}", middleware.Chain(itemHandler, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...))
 }
 
 func itemHandler(w http.ResponseWriter, r *http.Request) {
@@ -76,7 +76,20 @@ func itemPOST(w http.ResponseWriter, r *http.Request) {
 
 /* Delete item */
 func itemDELETE(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, World!")
+	itemId, err := helper.GetPathVarInt(r, "itemId")
+	if err != nil {
+		http.Error(w, "Invalid itemId supplied in path", http.StatusBadRequest)
+		log.Print(err)
+		return
+	}
+	err = database.DeleteItem(itemId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	w.Header().Add("Status", fmt.Sprint(http.StatusNoContent))
+	w.Write([]byte(""))
 }
 
 /* Get item details */
