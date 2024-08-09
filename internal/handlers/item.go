@@ -18,6 +18,7 @@ func init() {
 	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item", middleware.Chain(itemPUT, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...)).Methods("PUT")
 	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item/create", middleware.Chain(createItemGET, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...)).Methods("GET")
 	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item/{itemId:[0-9]+}", middleware.Chain(itemHandler, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...))
+	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item/{itemId:[0-9]+}/edit", middleware.Chain(itemEditGET, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...)).Methods("GET")
 }
 
 func itemHandler(w http.ResponseWriter, r *http.Request) {
@@ -42,7 +43,7 @@ func createItemGET(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
-	web.CreateItemPage(w, web.CreateItemParams(list))
+	web.CreateEditItemPage(w, web.CreateItemParams(list))
 }
 
 /* Create item */
@@ -64,14 +65,63 @@ func itemPUT(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
-	w.Header().Add("Status", fmt.Sprint(http.StatusOK))
+	w.Header().Add("Status", fmt.Sprint(http.StatusNoContent))
 	w.Header().Add("Location", fmt.Sprintf("/list/%d", listId))
 	w.Write([]byte(""))
 }
 
+/* Edit item page */
+func itemEditGET(w http.ResponseWriter, r *http.Request) {
+	listId, _ := helper.GetPathVarInt(r, "listId") //err will trip in listIdOwner middleware first
+	itemId, err := helper.GetPathVarInt(r, "itemId")
+	if err != nil {
+		http.Error(w, "Invalid itemId supplied", http.StatusBadRequest)
+		log.Print(err)
+		return
+	}
+	list, err := database.GetList(listId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	item, err := database.GetItem(itemId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	web.CreateEditItemPage(w, web.EditItemParams(list, item))
+}
+
 /* Update item */
 func itemPOST(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, World!")
+	listId, _ := helper.GetPathVarInt(r, "listId") //err will trip in listIdOwner middleware first
+	itemId, err := helper.GetPathVarInt(r, "itemId")
+	if err != nil {
+		http.Error(w, "Invalid itemId supplied", http.StatusBadRequest)
+		log.Print(err)
+		return
+	}
+	var itemName string = r.FormValue("name")
+	var url string = r.FormValue("url")
+	priority, err := strconv.ParseInt(r.FormValue("priority"), 10, 64)
+	var notes string = r.FormValue("notes")
+	err = database.UpdateItem(itemId, constants.ItemInsert{
+		Name:     itemName,
+		ListId:   uint64(listId),
+		URL:      sql.NullString{String: url, Valid: notes != ""},
+		Priority: sql.NullInt64{Int64: priority, Valid: err == nil},
+		Notes:    sql.NullString{String: notes, Valid: notes != ""},
+	})
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	w.Header().Add("Status", fmt.Sprint(http.StatusNoContent))
+	w.Header().Add("Location", fmt.Sprintf("/list/%d", listId))
+	w.Write([]byte(""))
 }
 
 /* Delete item */

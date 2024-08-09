@@ -35,5 +35,5 @@ type Item struct {
 	Name     string
 	URL      sql.NullString
 	Notes    sql.NullString
-	Priority sql.NullString
+	Priority sql.NullInt64
 }

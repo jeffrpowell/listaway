@@ -222,24 +222,40 @@ func ListItemsPage(w io.Writer, params listItemsPageParams) {
 	}
 }
 
-// Create Item page
+// Create/Edit Item page
 
-type createItemParams struct {
+type createEditItemParams struct {
 	globalWebParams
-	List constants.List
+	List     constants.List
+	Item     constants.Item
+	EditMode bool
 }
 
-func CreateItemParams(list constants.List) createItemParams {
-	return createItemParams{
+func CreateItemParams(list constants.List) createEditItemParams {
+	return createEditItemParams{
 		globalWebParams: globalWebParams{
 			ShowNavbar: true,
 			JsFile:     "itemCreate",
 		},
-		List: list,
+		List:     list,
+		Item:     constants.Item{},
+		EditMode: false,
 	}
 }
 
-func CreateItemPage(w io.Writer, params createItemParams) {
+func EditItemParams(list constants.List, item constants.Item) createEditItemParams {
+	return createEditItemParams{
+		globalWebParams: globalWebParams{
+			ShowNavbar: true,
+			JsFile:     "itemCreate",
+		},
+		List:     list,
+		Item:     item,
+		EditMode: true,
+	}
+}
+
+func CreateEditItemPage(w io.Writer, params createEditItemParams) {
 	if err := createItem.Execute(w, params); err != nil {
 		log.Print(err)
 	}

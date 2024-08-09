@@ -43,3 +43,22 @@ func DeleteItem(itemId int) error {
 	_, err := db.Exec(`DELETE FROM listaway.item WHERE Id = $1`, itemId)
 	return err
 }
+
+func GetItem(itemId int) (constants.Item, error) {
+	db := getDatabaseConnection()
+	defer db.Close()
+	row := db.QueryRow("SELECT Id, Name, URL, Notes, Priority FROM "+constants.DB_TABLE_ITEM+" WHERE Id = $1", itemId)
+	var item constants.Item
+	err := row.Scan(&item.Id, &item.Name, &item.URL, &item.Notes, &item.Priority)
+	if err != nil {
+		return constants.Item{}, err
+	}
+	return item, nil
+}
+
+func UpdateItem(itemId int, item constants.ItemInsert) error {
+	db := getDatabaseConnection()
+	defer db.Close()
+	_, err := db.Exec(`UPDATE listaway.item SET Name = $1, URL = $2, Priority = $3, Notes = $4 WHERE Id = $5`, item.Name, item.URL, item.Priority, item.Notes, itemId)
+	return err
+}

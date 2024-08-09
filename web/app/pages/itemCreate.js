@@ -34,24 +34,52 @@ document.addEventListener('DOMContentLoaded', (event) => {
         // Associate the FormData object with the form element
         const formData = new FormData(form);
         let listId = form.dataset.listId;
+        let editMode = form.dataset.editMode;
         try {
-            const response = await fetch("/list/"+listId+"/item", {
-                method: "PUT",
-                // Set the FormData instance as the request body
-                headers: {
-                    "Accept": "text/plain",
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: new URLSearchParams(formData).toString()
-            });
-            if (response.status >= 400) {
-                showError(response.status);
-            } else if (response.status === 200) {
-                window.location.href = response.headers.get("Location");
+            if (editMode) {
+                let itemId = form.dataset.itemId;
+                await submitEditItem(listId, itemId, formData);
+            }
+            else {
+                await submitCreateItem(listId, formData);
             }
         } catch (e) {
             console.error(e);
             showError(500);
+        }
+    }
+    
+    async function submitEditItem(listId, itemId, formData) {
+        const response = await fetch("/list/"+listId+"/item/"+itemId, {
+            method: "POST",
+            // Set the FormData instance as the request body
+            headers: {
+                "Accept": "text/plain",
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams(formData).toString()
+        });
+        if (response.status >= 400) {
+            showError(response.status);
+        } else if (response.status === 204 || response.status === 200) {
+            window.location.href = response.headers.get("Location");
+        }
+    }
+
+    async function submitCreateItem(listId, formData) {
+        const response = await fetch("/list/"+listId+"/item", {
+            method: "PUT",
+            // Set the FormData instance as the request body
+            headers: {
+                "Accept": "text/plain",
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams(formData).toString()
+        });
+        if (response.status >= 400) {
+            showError(response.status);
+        } else if (response.status === 204 || response.status === 200) {
+            window.location.href = response.headers.get("Location");
         }
     }
 
