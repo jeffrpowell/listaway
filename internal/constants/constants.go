@@ -9,20 +9,24 @@ import (
 )
 
 // Registered environment vars
-const ENV_AUTH_KEY string = "LISTAWAY_AUTH_KEY" // key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
-const ENV_POSTGRES_USER string = "POSTGRES_USER"
-const ENV_POSTGRES_PASSWORD string = "POSTGRES_PASSWORD"
-const ENV_POSTGRES_HOST string = "POSTGRES_HOST"
-const ENV_POSTGRES_DB string = "POSTGRES_DB"
+const (
+	ENV_AUTH_KEY          string = "LISTAWAY_AUTH_KEY" // key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
+	ENV_POSTGRES_USER     string = "POSTGRES_USER"
+	ENV_POSTGRES_PASSWORD string = "POSTGRES_PASSWORD"
+	ENV_POSTGRES_HOST     string = "POSTGRES_HOST"
+	ENV_POSTGRES_DB       string = "POSTGRES_DB"
+)
 
 // Database consts
-const DB_DEFAULT_USER string = "listaway"
-const DB_DEFAULT_PASSWORD string = "listaway"
-const DB_DEFAULT_HOST string = "localhost"
-const DB_DEFAULT_DB string = "listaway"
-const DB_TABLE_LIST string = "listaway.list"
-const DB_TABLE_USER string = "listaway.user"
-const DB_TABLE_ITEM string = "listaway.item"
+const (
+	DB_DEFAULT_USER     string = "listaway"
+	DB_DEFAULT_PASSWORD string = "listaway"
+	DB_DEFAULT_HOST     string = "localhost"
+	DB_DEFAULT_DB       string = "listaway"
+	DB_TABLE_LIST       string = "listaway.list"
+	DB_TABLE_USER       string = "listaway.user"
+	DB_TABLE_ITEM       string = "listaway.item"
+)
 
 var DB_CONNECTION_STRING string = getDbConnectionString()
 
@@ -33,6 +37,15 @@ var (
 	authKey                            = []byte(os.Getenv(ENV_AUTH_KEY))
 	COOKIE_STORE *sessions.CookieStore = sessions.NewCookieStore(authKey)
 	ROUTER       *mux.Router           = mux.NewRouter()
+)
+
+// Random consts
+const (
+	DefaultN                  = 6
+	CharSetUnambiguousUpper   = "ABCDEFGHJKLMNPQRTUVWYXZ2346789"
+	CharSetUnambiguousLower   = "abcdefghjklmnpqrtuvwyxz2346789"
+	CharSetUnambiguousNumeric = "2346789"
+	CharSetUnambiguous        = CharSetUnambiguousUpper + CharSetUnambiguousLower + CharSetUnambiguousNumeric
 )
 
 func init() {
