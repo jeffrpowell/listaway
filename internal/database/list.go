@@ -149,3 +149,15 @@ func createUniqueShareCode(db *sql.DB) (string, error) {
 
 	return code, nil
 }
+
+func GetListFromShareCode(shareCode string) (constants.List, error) {
+	db := getDatabaseConnection()
+	defer db.Close()
+	row := db.QueryRow("SELECT Id, Name, ShareCode FROM "+constants.DB_TABLE_LIST+" WHERE ShareCode = $1", shareCode)
+	var list constants.List
+	err := row.Scan(&list.Id, &list.Name, &list.ShareCode)
+	if err != nil {
+		return constants.List{}, err
+	}
+	return list, nil
+}

@@ -26,6 +26,8 @@ var (
 	editList      = parseSplitLayout("dist/listEdit.html")
 	listItems     = parseSplitLayout("dist/listItems.html")
 	createItem    = parseSplitLayout("dist/itemCreate.html")
+	sharedList    = parseSplitLayout("dist/sharedList.html")
+	sharedList404 = parseSingleLayout("dist/sharedList404.html")
 )
 
 func init() {
@@ -259,6 +261,54 @@ func EditItemParams(list constants.List, item constants.Item) createEditItemPara
 
 func CreateEditItemPage(w io.Writer, params createEditItemParams) {
 	if err := createItem.Execute(w, params); err != nil {
+		log.Print(err)
+	}
+}
+
+// Shared List Items page
+
+type sharedListItemsPageParams struct {
+	List  constants.List
+	Items []constants.Item
+	globalWebParams
+}
+
+func SharedListItemsPageParams(list constants.List, items []constants.Item) sharedListItemsPageParams {
+	return sharedListItemsPageParams{
+		globalWebParams: globalWebParams{
+			ShowNavbar: true,
+			JsFile:     "sharedList",
+		},
+		List:  list,
+		Items: items,
+	}
+}
+
+func SharedListItemsPage(w io.Writer, params sharedListItemsPageParams) {
+	if err := sharedList.Execute(w, params); err != nil {
+		log.Print(err)
+	}
+}
+
+// Shared List 404 page
+
+type sharedList404PageParams struct {
+	ShareCode string
+	globalWebParams
+}
+
+func SharedList404PageParams(shareCode string) sharedList404PageParams {
+	return sharedList404PageParams{
+		globalWebParams: globalWebParams{
+			ShowNavbar: false,
+			JsFile:     "sharedList404",
+		},
+		ShareCode: shareCode,
+	}
+}
+
+func SharedList404Page(w io.Writer, params sharedList404PageParams) {
+	if err := sharedList404.Execute(w, params); err != nil {
 		log.Print(err)
 	}
 }

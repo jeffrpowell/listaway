@@ -1,0 +1,36 @@
+{{define "mobile"}}
+<div class="list-form bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <div class="flex flex-col mb-4">
+        <h1 class="list-name-header text-gray-700 font-bold text-2xl relative">{{.List.Name}}</h1>
+        <div>
+            {{if (eq (len .Items) 0)}}
+            This list is empty. Whomever shared it with you needs to add some items in it first.
+            {{else}}
+            <table class="table-auto">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-2">Item</th>
+                        <th class="px-4 py-2">URL</th>
+                        <th class="px-4 py-2">Priority</th>
+                        <th class="px-4 py-2">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Items}}
+                        <tr>
+                            <td class="border px-4 py-2">{{.Name}}</td>
+                            <td class="border px-4 py-2">{{if .URL.Valid}}<a href="{{.URL.String}}" class="underline">{{.URL.String}}</a>{{end}}</td>
+                            <td class="border px-4 py-2">{{if .Priority.Valid}}{{.Priority.Int64}}{{end}}</td>
+                            <td class="border px-4 py-2">{{if .Notes.Valid}}{{.Notes.String}}{{end}}</td>
+                        </tr>
+                    {{end}}
+                </tbody>
+            </table>
+            {{end}}
+        </div>
+    </div>
+</div>
+{{end}}
+{{define "wide"}}
+    {{template "mobile" .}}
+{{end}}
