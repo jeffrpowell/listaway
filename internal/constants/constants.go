@@ -31,7 +31,10 @@ const (
 var DB_CONNECTION_STRING string = getDbConnectionString()
 
 // Handler consts
-const COOKIE_NAME_SESSION string = "session"
+const (
+	COOKIE_NAME_SESSION string = "session"
+	SHARED_LIST_PATH    string = "sharedlist"
+)
 
 var (
 	authKey                            = []byte(os.Getenv(ENV_AUTH_KEY))
@@ -41,11 +44,11 @@ var (
 
 // Random consts
 const (
-	DefaultN                  = 6
-	CharSetUnambiguousUpper   = "ABCDEFGHJKLMNPQRTUVWYXZ2346789"
-	CharSetUnambiguousLower   = "abcdefghjklmnpqrtuvwyxz2346789"
-	CharSetUnambiguousNumeric = "2346789"
-	CharSetUnambiguous        = CharSetUnambiguousUpper + CharSetUnambiguousLower + CharSetUnambiguousNumeric
+	DefaultN                  = 8
+	charSetUnambiguousUpper   = "ABCDEFGHJKLMNPQRTUVWYXZ"
+	charSetUnambiguousLower   = "abcdefghjklmnpqrtuvwyxz"
+	charSetUnambiguousNumeric = "2346789"
+	CharSetUnambiguous        = charSetUnambiguousUpper + charSetUnambiguousLower + charSetUnambiguousNumeric
 )
 
 func init() {

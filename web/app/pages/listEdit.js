@@ -11,6 +11,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const readNameActions = document.querySelectorAll('.edit-name-read-actions');
     const editNameButtons = document.querySelectorAll('.btn-edit-list-name');
     const editNameErrors = document.querySelectorAll('.edit-name-error');
+    const generateShareButtons = document.querySelectorAll('.btn-generate-share');
+    const shareLinks = document.querySelectorAll('.share-link');
+    const copyShareLinkButtons = document.querySelectorAll('.btn-copy-share-link');
+    const copyShareLinkEmptyIcons = document.querySelectorAll('.clipboard-empty');
+    const copyShareLinkCheckIcons = document.querySelectorAll('.clipboard-check');
     const listItemsRedirectButtons = document.querySelectorAll('.list-items-redirect');
     const deleteListButtons = document.querySelectorAll('.list-delete');
     const deleteListConfirmationSpans = document.querySelectorAll('.list-delete-confirmation-span');
@@ -143,6 +148,45 @@ document.addEventListener('DOMContentLoaded', (event) => {
         });
     });
 
+    generateShareButtons.forEach(generateShareBtn => {
+        generateShareBtn.addEventListener('click', async (event) => {
+            let listId = generateShareBtn.dataset.listId;
+            const response = await fetch('/list/'+listId+'/share', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
+            if (response.status === 200) {
+                window.location.reload();
+            }
+        });
+    });
+    
+    shareLinks.forEach(shareLink => {
+        shareLink.textContent = window.location.origin + "/" + shareLink.dataset.sharedListPath + "/" + shareLink.dataset.shareCode;
+    });
+
+    copyShareLinkButtons.forEach(copyShareLinkBtn => {
+        copyShareLinkBtn.addEventListener('click', async (event) => {
+            var result = writeClipboardText(window.location.origin + "/" + copyShareLinkBtn.dataset.sharedListPath + "/" + copyShareLinkBtn.dataset.shareCode);
+            if (result) {
+                copyShareLinkEmptyIcons.forEach(icon => icon.classList.add("hidden"));
+                copyShareLinkCheckIcons.forEach(icon => icon.classList.remove("hidden"));
+            }
+        });
+    });
+
+    async function writeClipboardText(text) {
+        try {
+            await navigator.clipboard.writeText(text);
+            return true;
+        } catch (error) {
+            console.error(error.message);
+            return false;
+        }
+    }
+    
     listItemsRedirectButtons.forEach(listItemsRedirectBtn => {
         listItemsRedirectBtn.addEventListener('click', async (event) => {
             let listId = listItemsRedirectBtn.dataset.listId;

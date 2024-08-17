@@ -177,7 +177,8 @@ func CreateListPage(w io.Writer) {
 // Edit List page
 
 type editListParams struct {
-	List constants.List
+	List           constants.List
+	SharedListPath string
 	globalWebParams
 }
 
@@ -187,7 +188,8 @@ func EditListParams(list constants.List) editListParams {
 			ShowNavbar: true,
 			JsFile:     "listEdit",
 		},
-		List: list,
+		List:           list,
+		SharedListPath: constants.SHARED_LIST_PATH,
 	}
 }
 

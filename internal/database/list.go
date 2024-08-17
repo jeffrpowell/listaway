@@ -4,13 +4,14 @@ import (
 	"database/sql"
 
 	"github.com/jeffrpowell/listaway/internal/constants"
+	"github.com/jeffrpowell/listaway/internal/constants/random"
 	_ "github.com/lib/pq"
 )
 
 func GetLists(userId int) ([]constants.List, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	rows, err := db.Query("SELECT Id, Name, ShareURL FROM "+constants.DB_TABLE_LIST+" WHERE UserId = $1", userId)
+	rows, err := db.Query("SELECT Id, Name, ShareCode FROM "+constants.DB_TABLE_LIST+" WHERE UserId = $1", userId)
 	if err != nil {
 		return nil, err
 	}
@@ -20,7 +21,7 @@ func GetLists(userId int) ([]constants.List, error) {
 	for rows.Next() {
 		var l constants.List
 
-		err := rows.Scan(&l.Id, &l.Name, &l.ShareURL)
+		err := rows.Scan(&l.Id, &l.Name, &l.ShareCode)
 		if err != nil {
 			return nil, err
 		}
@@ -70,9 +71,9 @@ func UserOwnsList(userId int, listId int) (bool, error) {
 func GetList(listId int) (constants.List, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	row := db.QueryRow("SELECT Id, Name, ShareURL FROM "+constants.DB_TABLE_LIST+" WHERE Id = $1", listId)
+	row := db.QueryRow("SELECT Id, Name, ShareCode FROM "+constants.DB_TABLE_LIST+" WHERE Id = $1", listId)
 	var list constants.List
-	err := row.Scan(&list.Id, &list.Name, &list.ShareURL)
+	err := row.Scan(&list.Id, &list.Name, &list.ShareCode)
 	if err != nil {
 		return constants.List{}, err
 	}
@@ -108,4 +109,43 @@ func confirmNameMatchesListName(db *sql.DB, listId int, confirmationName string)
 		return false, err
 	}
 	return matches != 0, nil
+}
+
+func GenerateShareCode(listId int) (string, error) {
+	db := getDatabaseConnection()
+	defer db.Close()
+	code, err := createUniqueShareCode(db)
+	if err != nil {
+		return "", err
+	}
+	_, err = db.Exec(`UPDATE listaway.list SET ShareCode = $1 WHERE Id = $2`, code, listId)
+	return code, err
+}
+
+func createUniqueShareCode(db *sql.DB) (string, error) {
+	var code string
+	var err error
+	var count int
+
+	for {
+		// Generate a random string
+		code, err = random.String(constants.DefaultN, constants.CharSetUnambiguous)
+		if err != nil {
+			return "", err
+		}
+
+		// Check if the generated code already exists in the database
+		row := db.QueryRow(`SELECT COUNT(1) FROM listaway.list WHERE ShareCode = $1`, code)
+		err = row.Scan(&count)
+		if err != nil {
+			return "", err
+		}
+
+		// If the code doesn't exist (count is 0), it's unique, so return it
+		if count == 0 {
+			break
+		}
+	}
+
+	return code, nil
 }

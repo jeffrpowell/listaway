@@ -17,9 +17,9 @@ type UserRegister struct {
 }
 
 type List struct {
-	Id       uint64
-	Name     string
-	ShareURL sql.NullString
+	Id        uint64
+	Name      string
+	ShareCode sql.NullString
 }
 
 type ItemInsert struct {
