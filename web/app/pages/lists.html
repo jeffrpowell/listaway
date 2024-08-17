@@ -13,7 +13,7 @@
         <tbody>
             {{range .Lists}}
                 <tr>
-                    <td class="border px-4 py-2"><a href="/list/{{.Id}}/item" class="underline">{{.Name}}</a></td>
+                    <td class="border px-4 py-2"><a href="/list/{{.Id}}" class="underline">{{.Name}}</a></td>
                     <td class="border px-4 py-2"><a href="/list/{{.Id}}/edit" class="underline">Edit</a></td>
                     <td class="border px-4 py-2">{{if .ShareURL.Valid}}{{.ShareURL.String}}{{end}}</td>
                 </tr>
