@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         // Associate the FormData object with the form element
         const formData = new FormData(form);
         let listId = form.dataset.listId;
-        let editMode = form.dataset.editMode;
+        let editMode = form.dataset.editMode && form.dataset.editMode === "true";
         try {
             if (editMode) {
                 let itemId = form.dataset.itemId;
