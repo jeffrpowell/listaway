@@ -27,8 +27,6 @@ func itemHandler(w http.ResponseWriter, r *http.Request) {
 		itemPOST(w, r)
 	case "DELETE":
 		itemDELETE(w, r)
-	case "GET":
-		itemGET(w, r)
 	default:
 		http.Error(w, "", http.StatusMethodNotAllowed)
 	}
@@ -140,9 +138,4 @@ func itemDELETE(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Add("Status", fmt.Sprint(http.StatusNoContent))
 	w.Write([]byte(""))
-}
-
-/* Get item details */
-func itemGET(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, World!")
 }
