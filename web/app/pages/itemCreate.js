@@ -2,13 +2,11 @@ require('../index')
 require('../navbar')
 
 document.addEventListener('DOMContentLoaded', (event) => {
+    const forms = document.querySelectorAll(".list-form");
     const nameInputs = document.getElementsByName('name');
-    const urlInputs = document.getElementsByName('url');
-    const priorityInputs = document.getElementsByName('priority');
-    const notesInputs = document.getElementsByName('notes');
     const submitButtons = document.querySelectorAll('button');
     const errorSpans = document.querySelectorAll('.error-span');
-    var formReadyToSubmit = false;
+    var formReadyToSubmit = nameInputs[0].value.trim() !== '';
 
     nameInputs.forEach(listNameInput => 
         listNameInput.addEventListener('input', (event) => {
@@ -84,7 +82,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     // Take over form submission
-    const forms = document.querySelectorAll(".list-form");
     forms.forEach(form => form.addEventListener("submit", (event) => {
         event.preventDefault();
         sendData(form);
