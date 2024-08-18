@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -58,9 +57,8 @@ func authPOST(w http.ResponseWriter, r *http.Request) {
 	session.Values["authenticated"] = true
 	session.Values["userId"] = userId
 	session.Save(r, w)
-	w.Header().Add("Status", fmt.Sprint(http.StatusOK))
 	w.Header().Add("Location", "/list")
-	w.Write([]byte(""))
+	w.WriteHeader(http.StatusOK)
 }
 
 /* Logout */
@@ -72,7 +70,6 @@ func authDELETE(w http.ResponseWriter, r *http.Request) {
 	delete(session.Values, "userId")
 	session.Options.MaxAge = -1
 	session.Save(r, w)
-	w.Header().Add("Status", fmt.Sprint(http.StatusOK))
 	w.Header().Add("Location", "/auth")
-	w.Write([]byte(""))
+	w.WriteHeader(http.StatusNoContent)
 }

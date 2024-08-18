@@ -63,9 +63,8 @@ func itemPUT(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
-	w.Header().Add("Status", fmt.Sprint(http.StatusNoContent))
 	w.Header().Add("Location", fmt.Sprintf("/list/%d", listId))
-	w.Write([]byte(""))
+	w.WriteHeader(http.StatusNoContent)
 }
 
 /* Edit item page */
@@ -117,9 +116,8 @@ func itemPOST(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
-	w.Header().Add("Status", fmt.Sprint(http.StatusNoContent))
 	w.Header().Add("Location", fmt.Sprintf("/list/%d", listId))
-	w.Write([]byte(""))
+	w.WriteHeader(http.StatusNoContent)
 }
 
 /* Delete item */
@@ -136,6 +134,5 @@ func itemDELETE(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
-	w.Header().Add("Status", fmt.Sprint(http.StatusNoContent))
-	w.Write([]byte(""))
+	w.WriteHeader(http.StatusNoContent)
 }

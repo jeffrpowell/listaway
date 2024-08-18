@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -59,9 +58,8 @@ func registerAdminPOST(w http.ResponseWriter, r *http.Request) {
 		session, _ := constants.COOKIE_STORE.Get(r, constants.COOKIE_NAME_SESSION)
 		session.Values["authenticated"] = true
 		session.Save(r, w)
-		w.Header().Add("Status", fmt.Sprint(http.StatusOK))
 		w.Header().Add("Location", "/auth")
-		w.Write([]byte(""))
+		w.WriteHeader(http.StatusOK)
 	}
 }
 

@@ -115,9 +115,8 @@ func listPUT(w http.ResponseWriter, r *http.Request) {
 			log.Print(err)
 			return
 		}
-		w.Header().Add("Status", fmt.Sprint(http.StatusOK))
 		w.Header().Add("Location", fmt.Sprintf("/list/%d", id))
-		w.Write([]byte(""))
+		w.WriteHeader(http.StatusOK)
 	}
 }
 
@@ -162,8 +161,7 @@ func listPOST(w http.ResponseWriter, r *http.Request) {
 			log.Print(err)
 			return
 		}
-		w.Header().Add("Status", fmt.Sprint(http.StatusOK))
-		w.Write([]byte(""))
+		w.WriteHeader(http.StatusOK)
 	}
 }
 
@@ -193,9 +191,8 @@ func listDELETE(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Confirmation name did not match list name", http.StatusBadRequest)
 		return
 	}
-	w.Header().Add("Status", fmt.Sprint(http.StatusOK))
 	w.Header().Add("Location", "/list")
-	w.Write([]byte(""))
+	w.WriteHeader(http.StatusOK)
 }
 
 /* View list items page */

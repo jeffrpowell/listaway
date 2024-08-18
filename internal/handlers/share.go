@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -39,7 +38,6 @@ func listSharePUT(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
-	w.Header().Add("Status", fmt.Sprint(http.StatusOK))
 	w.Write([]byte(code))
 }
 
@@ -52,8 +50,7 @@ func listShareDELETE(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
-	w.Header().Add("Status", fmt.Sprint(http.StatusNoContent))
-	w.Write([]byte(""))
+	w.WriteHeader(http.StatusNoContent)
 }
 
 /* View shared list */
