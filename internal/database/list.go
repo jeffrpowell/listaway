@@ -161,3 +161,10 @@ func GetListFromShareCode(shareCode string) (constants.List, error) {
 	}
 	return list, nil
 }
+
+func UnpublishShareCode(listId int) error {
+	db := getDatabaseConnection()
+	defer db.Close()
+	_, err := db.Exec(`UPDATE listaway.list SET ShareCode = NULL WHERE Id = $1`, listId)
+	return err
+}

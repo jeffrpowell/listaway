@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const copyShareLinkButtons = document.querySelectorAll('.btn-copy-share-link');
     const copyShareLinkEmptyIcons = document.querySelectorAll('.clipboard-empty');
     const copyShareLinkCheckIcons = document.querySelectorAll('.clipboard-check');
+    const unpublishShareButtons = document.querySelectorAll('.btn-unpublish-share');
     const listItemsRedirectButtons = document.querySelectorAll('.list-items-redirect');
     const deleteListButtons = document.querySelectorAll('.list-delete');
     const deleteListConfirmationSpans = document.querySelectorAll('.list-delete-confirmation-span');
@@ -176,7 +177,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
         });
     });
-
+    
     async function writeClipboardText(text) {
         try {
             await navigator.clipboard.writeText(text);
@@ -186,6 +187,21 @@ document.addEventListener('DOMContentLoaded', (event) => {
             return false;
         }
     }
+
+    unpublishShareButtons.forEach(unpublishShareBtn => {
+        unpublishShareBtn.addEventListener('click', async (event) => {
+            let listId = unpublishShareBtn.dataset.listId;
+            const response = await fetch('/list/'+listId+'/share', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
+            if (response.status === 204 || response.status === 200) {
+                window.location.reload();
+            }
+        });
+    });
     
     listItemsRedirectButtons.forEach(listItemsRedirectBtn => {
         listItemsRedirectBtn.addEventListener('click', async (event) => {

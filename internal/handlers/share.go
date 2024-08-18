@@ -45,7 +45,15 @@ func listSharePUT(w http.ResponseWriter, r *http.Request) {
 
 /* Unpublish */
 func listShareDELETE(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, World!")
+	listId, _ := helper.GetPathVarInt(r, "listId") //err will trip in listIdOwner middleware first
+	err := database.UnpublishShareCode(listId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	w.Header().Add("Status", fmt.Sprint(http.StatusNoContent))
+	w.Write([]byte(""))
 }
 
 /* View shared list */
