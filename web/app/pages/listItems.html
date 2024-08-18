@@ -28,7 +28,7 @@
                     {{range .Items}}
                         <tr>
                             <td class="border px-4 py-2">{{.Name}}</td>
-                            <td class="border px-4 py-2">{{if .URL.Valid}}<a href="{{.URL.String}}" class="underline">{{.URL.String}}</a>{{end}}</td>
+                            <td class="border px-4 py-2">{{if .URL.Valid}}<a href="{{.URL.String}}" class="underline" target="_blank" rel="nofollow noreferrer">{{.URL.String}}</a>{{end}}</td>
                             <td class="border px-4 py-2">{{if .Priority.Valid}}{{.Priority.Int64}}{{end}}</td>
                             <td class="border px-4 py-2">{{if .Notes.Valid}}{{.Notes.String}}{{end}}</td>
                             <td class="border px-4 py-2 flex">
