@@ -144,7 +144,8 @@ func LoginPage(w io.Writer) {
 // Lists page
 
 type listsPageParams struct {
-	Lists []constants.List
+	Lists          []constants.List
+	SharedListPath string
 	globalWebParams
 }
 
@@ -154,7 +155,8 @@ func ListsPageParams(lists []constants.List) listsPageParams {
 			ShowNavbar: true,
 			JsFile:     "lists",
 		},
-		Lists: lists,
+		Lists:          lists,
+		SharedListPath: constants.SHARED_LIST_PATH,
 	}
 }
 
