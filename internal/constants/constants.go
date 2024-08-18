@@ -40,6 +40,7 @@ var (
 	authKey                            = []byte(os.Getenv(ENV_AUTH_KEY))
 	COOKIE_STORE *sessions.CookieStore = sessions.NewCookieStore(authKey)
 	ROUTER       *mux.Router           = mux.NewRouter()
+	ADMIN_EXISTS                       = false
 )
 
 // Random consts
@@ -48,7 +49,7 @@ const (
 	charSetUnambiguousUpper   = "ABCDEFGHJKLMNPQRTUVWYXZ"
 	charSetUnambiguousLower   = "abcdefghjklmnpqrtuvwyxz"
 	charSetUnambiguousNumeric = "2346789"
-	CharSetUnambiguous        = charSetUnambiguousUpper + charSetUnambiguousLower + charSetUnambiguousNumeric
+	CHARSET_UNAMBIGUOUS       = charSetUnambiguousUpper + charSetUnambiguousLower + charSetUnambiguousNumeric
 )
 
 func init() {

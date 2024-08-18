@@ -54,6 +54,7 @@ func registerAdminPOST(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
 		log.Print(err)
 	} else {
+		constants.ADMIN_EXISTS = true
 		// Set user as authenticated
 		session, _ := constants.COOKIE_STORE.Get(r, constants.COOKIE_NAME_SESSION)
 		session.Values["authenticated"] = true

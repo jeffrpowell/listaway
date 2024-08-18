@@ -129,7 +129,7 @@ func createUniqueShareCode(db *sql.DB) (string, error) {
 
 	for {
 		// Generate a random string
-		code, err = random.String(constants.DefaultN, constants.CharSetUnambiguous)
+		code, err = random.String(constants.DefaultN, constants.CHARSET_UNAMBIGUOUS)
 		if err != nil {
 			return "", err
 		}

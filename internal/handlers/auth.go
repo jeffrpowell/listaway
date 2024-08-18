@@ -12,17 +12,13 @@ import (
 )
 
 func init() {
-	constants.ROUTER.HandleFunc("/", middleware.DefaultMiddlewareChain(rootHandler))
+	constants.ROUTER.HandleFunc("/", middleware.DefaultMiddlewareChain(rootHandler)).Methods("GET")
 	constants.ROUTER.HandleFunc("/auth", middleware.DefaultPublicMiddlewareChain(authHandler))
+	constants.ADMIN_EXISTS = database.AdminUserExists()
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		http.Redirect(w, r, "/list", http.StatusPermanentRedirect)
-	default:
-		http.Error(w, "", http.StatusMethodNotAllowed)
-	}
+	http.Redirect(w, r, "/list", http.StatusPermanentRedirect)
 }
 
 func authHandler(w http.ResponseWriter, r *http.Request) {

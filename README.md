@@ -1,6 +1,6 @@
 # Listaway
 
-This self-hostable application allows authenticated users to publish one or more lists of items publicly. These lists can either be for tracking purposes (e.g. a list of books to read, a list of components in a custom computer build, a list of favorite local places, etc.) or for wishlist purposes (e.g. a gift wishlist, a list of tasks you need help with, etc.). The items can be freeform text or a URL to details about the item. The public link (which you control) to these lists do not require authentication.
+This self-hostable application allows authenticated users to publish one or more lists of items publicly. These lists can either be for tracking purposes (e.g. a list of books to read, a list of components in a custom computer build, a list of favorite local places, etc.) or for wishlist purposes (e.g. a gift wishlist, a list of tasks you need help with, etc.). The items can be freeform text or a URL to details about the item. Shared lists incorporate a random string in the URL to give a little protection against guessing (thus allowing you to share the link and access it without requiring authentication).
 
 ## Quick start
 
@@ -38,10 +38,11 @@ POSTGRES_DATABASE=listaway
 LISTAWAY_AUTH_KEY=[random alphanumeric 128-character string]
 ```
 4. `docker compose up`
-4. [https://localhost:8080/admin/register](https://localhost:8080/admin/register)
+5. [https://localhost:8080/](https://localhost:8080/) (All paths will 303 to [https://localhost:8080/admin/register](https://localhost:8080/admin/register))
+
 
 ## Build from source
-This repository is provided with a configured devcontainer available to assist in quickly bootstrapping a local developmment environment suitable to build and run this application locally. 
+This repository is provided with a configured devcontainer that is available to assist in quickly bootstrapping a local development environment suitable to build and run this application locally. 
 
 1. Install Docker, VS Code, and the Dev Containers extension in VS Code
     * Make sure your Docker engine is running
