@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS listaway.list (
     Id SERIAL PRIMARY KEY,
     UserId BIGINT NOT NULL,
     Name VARCHAR NOT NULL,
+    Description VARCHAR NULL,
     ShareCode VARCHAR
 );
 

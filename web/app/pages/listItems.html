@@ -10,6 +10,7 @@
                 </svg>
             </a>
         </h1>
+        {{if .List.Description.Valid}}<p class="mt-2 text-gray-700 text-lg">{{.List.Description.String}}</p>{{end}}
         <div>
             {{if (eq (len .Items) 0)}}
             This list is empty. <a href="/list/{{.List.Id}}/item/create" class="underline">Add an item to the list</a>.

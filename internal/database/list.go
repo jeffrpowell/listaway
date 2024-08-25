@@ -11,7 +11,7 @@ import (
 func GetLists(userId int) ([]constants.List, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	rows, err := db.Query("SELECT Id, Name, ShareCode FROM "+constants.DB_TABLE_LIST+" WHERE UserId = $1", userId)
+	rows, err := db.Query("SELECT Id, Name, Description, ShareCode FROM "+constants.DB_TABLE_LIST+" WHERE UserId = $1", userId)
 	if err != nil {
 		return nil, err
 	}
@@ -21,7 +21,7 @@ func GetLists(userId int) ([]constants.List, error) {
 	for rows.Next() {
 		var l constants.List
 
-		err := rows.Scan(&l.Id, &l.Name, &l.ShareCode)
+		err := rows.Scan(&l.Id, &l.Name, &l.Description, &l.ShareCode)
 		if err != nil {
 			return nil, err
 		}
@@ -45,11 +45,11 @@ func ListNameTaken(userId int, name string) (bool, error) {
 	return matches != 0, nil
 }
 
-func CreateList(userId int, name string) (int, error) {
+func CreateList(userId int, name string, description string) (int, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
 	var newId int
-	err := db.QueryRow(`INSERT INTO listaway.list (UserId, Name) VALUES($1, $2) RETURNING Id`, userId, name).Scan(&newId)
+	err := db.QueryRow(`INSERT INTO listaway.list (UserId, Name, Description) VALUES($1, $2, $3) RETURNING Id`, userId, name, description).Scan(&newId)
 	if err != nil {
 		return 0, err
 	}
@@ -71,19 +71,19 @@ func UserOwnsList(userId int, listId int) (bool, error) {
 func GetList(listId int) (constants.List, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	row := db.QueryRow("SELECT Id, Name, ShareCode FROM "+constants.DB_TABLE_LIST+" WHERE Id = $1", listId)
+	row := db.QueryRow("SELECT Id, Name, Description, ShareCode FROM "+constants.DB_TABLE_LIST+" WHERE Id = $1", listId)
 	var list constants.List
-	err := row.Scan(&list.Id, &list.Name, &list.ShareCode)
+	err := row.Scan(&list.Id, &list.Name, &list.Description, &list.ShareCode)
 	if err != nil {
 		return constants.List{}, err
 	}
 	return list, nil
 }
 
-func UpdateList(listId int, name string) error {
+func UpdateList(listId int, params constants.ListPostParams) error {
 	db := getDatabaseConnection()
 	defer db.Close()
-	_, err := db.Exec(`UPDATE listaway.list SET Name = $1 WHERE Id = $2`, name, listId)
+	_, err := db.Exec(`UPDATE listaway.list SET Name = $1, Description = $2 WHERE Id = $3`, params.Name, params.Description, listId)
 	return err
 }
 
@@ -153,9 +153,9 @@ func createUniqueShareCode(db *sql.DB) (string, error) {
 func GetListFromShareCode(shareCode string) (constants.List, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	row := db.QueryRow("SELECT Id, Name, ShareCode FROM "+constants.DB_TABLE_LIST+" WHERE ShareCode = $1", shareCode)
+	row := db.QueryRow("SELECT Id, Name, Description, ShareCode FROM "+constants.DB_TABLE_LIST+" WHERE ShareCode = $1", shareCode)
 	var list constants.List
-	err := row.Scan(&list.Id, &list.Name, &list.ShareCode)
+	err := row.Scan(&list.Id, &list.Name, &list.Description, &list.ShareCode)
 	if err != nil {
 		return constants.List{}, err
 	}

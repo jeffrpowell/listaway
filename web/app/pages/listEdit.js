@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const readNameActions = document.querySelectorAll('.edit-name-read-actions');
     const editNameButtons = document.querySelectorAll('.btn-edit-list-name');
     const editNameErrors = document.querySelectorAll('.edit-name-error');
+    const listDescriptionInputs = document.querySelectorAll('.list-description-input');
+    const descriptionSavedIcons = document.querySelectorAll('.description-saved-icon');
+    const descriptionErrors = document.querySelectorAll('.description-error');
     const generateShareButtons = document.querySelectorAll('.btn-generate-share');
     const shareLinks = document.querySelectorAll('.share-link');
     const copyShareLinkButtons = document.querySelectorAll('.btn-copy-share-link');
@@ -45,23 +48,22 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     listNameInputs.forEach(listNameInput => 
         listNameInput.addEventListener('input', async (event) => {
-            saveNameButtons.forEach(saveNameButton => saveNameButton.classList.remove("opacity-50", "cursor-not-allowed"));
             editNameErrors.forEach(errorSpan => {
                 errorSpan.classList.add('hidden');
                 errorSpan.textContent = '';
             });
-
+            saveNameButtons.forEach(saveNameButton => saveNameButton.classList.add("opacity-50", "cursor-not-allowed"));
             if (listNameInput.value.trim() !== '') {
-                await checkListName(saveNameButtons, editNameErrors, listNameInput.value.trim());
+                debouncedCheckListName(editNameErrors, listNameInput.value.trim());
             }
             else {
                 formReadyToSubmit = false;
-                saveNameButtons.forEach(saveNameButton => saveNameButton.classList.add("opacity-50", "cursor-not-allowed"));
             }
         })
     );
 
-    async function checkListName(submitButtons, errorSpans, name) {
+    var debouncedCheckListName = debounce(checkListName, 500);
+    async function checkListName(errorSpans, name) {
         try {
             const response = await fetch(`/list/namecheck?name=${encodeURIComponent(name)}`, {
                 method: 'GET',
@@ -71,17 +73,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
             });
 
             if (response.status === 200) {
-                submitButtons.forEach(submitButton => submitButton.classList.remove("opacity-50", "cursor-not-allowed"));
+                saveNameButtons.forEach(saveNameButton => saveNameButton.classList.remove("opacity-50", "cursor-not-allowed"));
                 formReadyToSubmit = true;
             } else if (response.status === 400) {
-                submitButtons.forEach(submitButton => submitButton.classList.add("opacity-50", "cursor-not-allowed"));
                 errorSpans.forEach(errorSpan => {
                     errorSpan.textContent = 'The list name is already in use.';
                     errorSpan.classList.remove('hidden');
                 });
                 formReadyToSubmit = false;
             } else {
-                submitButtons.forEach(submitButton => submitButton.classList.add("opacity-50", "cursor-not-allowed"));
                 errorSpans.forEach(errorSpan => {
                     errorSpan.textContent = 'There was a problem while checking if the name was taken. Please try again.';
                     errorSpan.classList.remove('hidden');
@@ -89,7 +89,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 formReadyToSubmit = false;
             }
         } catch (error) {
-            submitButtons.forEach(submitButton => submitButton.classList.add("opacity-50", "cursor-not-allowed"));
             errorSpans.forEach(errorSpan => {
                 errorSpan.textContent = 'There was a problem while checking if the name was taken. Please try again.';
                 errorSpan.classList.remove('hidden');
@@ -117,6 +116,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     break;
                 }
             }
+            let description;
+            for (const listDescriptionInput of listDescriptionInputs) {
+                description = listDescriptionInput.value;
+                break;
+            }
             let listId = saveNameBtn.dataset.listId;
             try {
                 const response = await fetch('/list/'+listId, {
@@ -124,7 +128,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(newName)
+                    body: JSON.stringify({name: newName, description: description})
                 });
                 
                 if (!response.ok) {
@@ -149,6 +153,42 @@ document.addEventListener('DOMContentLoaded', (event) => {
         });
     });
 
+    listDescriptionInputs.forEach(listDescriptionInput => 
+        listDescriptionInput.addEventListener('input', async (event) => {
+            descriptionSavedIcons.forEach(descriptionSavedIcon => descriptionSavedIcon.classList.add('hidden'));
+            descriptionErrors.forEach(descriptionError => descriptionError.classList.add('hidden'));
+            debouncedSaveDescription(listDescriptionInput.dataset.listId, listDescriptionInput.value.trim());
+        })
+    );
+
+    var debouncedSaveDescription = debounce(saveDescription, 500);
+    async function saveDescription(listId, description) {
+        let listName;
+        for (const listNameHeader of listNameHeaders) {
+            listName = listNameHeader.textContent;
+            break;
+        }
+        try {
+            const response = await fetch('/list/'+listId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({name: listName, description: description})
+            });
+            
+            if (!response.status === 204 && !response.status === 200) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            descriptionSavedIcons.forEach(descriptionSavedIcon => descriptionSavedIcon.classList.remove('hidden'));
+            setTimeout(() => descriptionSavedIcons.forEach(descriptionSavedIcon => descriptionSavedIcon.classList.add('hidden')), 5000);
+            listDescriptionInputs.forEach(listDescriptionInput => listDescriptionInput.value = description);
+        }
+        catch (error) {
+            descriptionErrors.forEach(descriptionError => descriptionError.classList.remove('hidden'));
+        }
+    }
+    
     generateShareButtons.forEach(generateShareBtn => {
         generateShareBtn.addEventListener('click', async (event) => {
             let listId = generateShareBtn.dataset.listId;
@@ -246,4 +286,16 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
         });
     });
+
+    function debounce(func, delay) {
+        let timeoutId;
+        return function(...args) {
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+            timeoutId = setTimeout(() => {
+                func.apply(this, args);
+            }, delay);
+        };
+    }
 });

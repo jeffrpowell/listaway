@@ -38,6 +38,19 @@
         </div>
     </div>
     <div class="mb-4">
+        <label class="text-gray-700 text-sm font-bold mb-2 flex">
+            Description
+            <!-- https://heroicons.com/ check-circle -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="description-saved-icon hidden text-green-600 size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>              
+        </label>
+        <input
+            class="list-description-input shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            type="text" name="description" placeholder="Optional description" data-list-id="{{.List.Id}}" value="{{if .List.Description.Valid}}{{.List.Description.String}}{{end}}">
+        <p class="description-error text-red-800 hidden">A problem came up and your change was not saved. Please try again later.</p>
+    </div>
+    <div class="mb-4">
         <button class="btn-generate-share bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded focus:outline-none focus:shadow-outline" data-list-id="{{.List.Id}}">Generate Share Link</button>
         {{if .List.ShareCode.Valid}}
         <span class="ml-2"><a class="share-link underline" href="/{{.SharedListPath}}/{{.List.ShareCode.String}}" data-shared-list-path="{{.SharedListPath}}" data-share-code="{{.List.ShareCode.String}}"></a></span>

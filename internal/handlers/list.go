@@ -109,7 +109,8 @@ func listPUT(w http.ResponseWriter, r *http.Request) {
 	if taken {
 		http.Error(w, "List name already taken", http.StatusBadRequest)
 	} else {
-		id, err := database.CreateList(userId, listName)
+		var description string = r.FormValue("description")
+		id, err := database.CreateList(userId, listName, description)
 		if err != nil {
 			http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
 			log.Print(err)
@@ -134,19 +135,19 @@ func editListGET(w http.ResponseWriter, r *http.Request) {
 	web.EditListPage(w, editListPageParams)
 }
 
-/* Rename list */
+/* Update list */
 func listPOST(w http.ResponseWriter, r *http.Request) {
 	listId, _ := helper.GetPathVarInt(r, "listId") //err will trip in listIdOwner middleware first
-	var listName string
+	var listParams constants.ListPostParams
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&listName)
+	err := decoder.Decode(&listParams)
 	if err != nil {
 		http.Error(w, "Invalid input provided", http.StatusBadRequest)
 		log.Print(err)
 		return
 	}
 	//Don't trust client input
-	taken, err := database.ListNameTaken(listId, listName)
+	taken, err := database.ListNameTaken(listId, listParams.Name)
 	if err != nil {
 		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
 		log.Print(err)
@@ -155,7 +156,7 @@ func listPOST(w http.ResponseWriter, r *http.Request) {
 	if taken {
 		http.Error(w, "List name already taken", http.StatusBadRequest)
 	} else {
-		err = database.UpdateList(listId, listName)
+		err = database.UpdateList(listId, listParams)
 		if err != nil {
 			http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
 			log.Print(err)

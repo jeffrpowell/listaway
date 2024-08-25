@@ -17,9 +17,15 @@ type UserRegister struct {
 }
 
 type List struct {
-	Id        uint64
-	Name      string
-	ShareCode sql.NullString
+	Id          uint64
+	Name        string
+	Description sql.NullString
+	ShareCode   sql.NullString
+}
+
+type ListPostParams struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
 }
 
 type ItemInsert struct {

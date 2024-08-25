@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 errorSpan.textContent = '';
             });
             if (listNameInput.value.trim() !== '') {
-                checkListName(submitButtons, errorSpans, listNameInput.value.trim());
+                debouncedCheckListName(submitButtons, errorSpans, listNameInput.value.trim());
             }
             else {
                 formReadyToSubmit = false;
@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         })
     );
 
+    var debouncedCheckListName = debounce(checkListName, 500);
     async function checkListName(submitButtons, errorSpans, name) {
         try {
             const response = await fetch(`/list/namecheck?name=${encodeURIComponent(name)}`, {
@@ -106,5 +107,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
             errorSpan.classList.remove("hidden");
         });
+    }
+
+    function debounce(func, delay) {
+        let timeoutId;
+        return function(...args) {
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+            timeoutId = setTimeout(() => {
+                func.apply(this, args);
+            }, delay);
+        };
     }
 });
