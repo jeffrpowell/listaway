@@ -13,6 +13,7 @@ module.exports = {
       login: './app/pages/login.js',
       sharedList: './app/pages/sharedList.js',
       sharedList404: './app/pages/sharedList404.js',
+      userAdmin: './app/pages/userAdmin.js',
     },
     output: {
         filename: '[name].js',

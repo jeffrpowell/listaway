@@ -28,6 +28,7 @@ var (
 	createItem    = parseSplitLayout("dist/itemCreate.html")
 	sharedList    = parseSplitLayout("dist/sharedList.html")
 	sharedList404 = parseSingleLayout("dist/sharedList404.html")
+	userAdmin     = parseSplitLayout("dist/userAdmin.html")
 )
 
 func init() {
@@ -311,6 +312,31 @@ func SharedList404PageParams(shareCode string) sharedList404PageParams {
 
 func SharedList404Page(w io.Writer, params sharedList404PageParams) {
 	if err := sharedList404.Execute(w, params); err != nil {
+		log.Print(err)
+	}
+}
+
+// User Admin page
+
+type userAdminPageParams struct {
+	Users  []constants.UserRead
+	SelfId int
+	globalWebParams
+}
+
+func UserAdminPageParams(users []constants.UserRead, selfId int) userAdminPageParams {
+	return userAdminPageParams{
+		globalWebParams: globalWebParams{
+			ShowNavbar: true,
+			JsFile:     "userAdmin",
+		},
+		Users:  users,
+		SelfId: selfId,
+	}
+}
+
+func UserAdminPage(w io.Writer, params userAdminPageParams) {
+	if err := userAdmin.Execute(w, params); err != nil {
 		log.Print(err)
 	}
 }

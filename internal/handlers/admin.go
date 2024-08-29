@@ -7,12 +7,14 @@ import (
 
 	"github.com/jeffrpowell/listaway/internal/constants"
 	"github.com/jeffrpowell/listaway/internal/database"
+	"github.com/jeffrpowell/listaway/internal/handlers/helper"
 	"github.com/jeffrpowell/listaway/internal/handlers/middleware"
 	"github.com/jeffrpowell/listaway/web"
 )
 
 func init() {
 	constants.ROUTER.HandleFunc("/admin/register", middleware.DefaultPublicMiddlewareChain(registerAdminHandler))
+	constants.ROUTER.HandleFunc("/admin/users", middleware.Chain(userAdminGET, append(middleware.DefaultMiddlewareSlice, middleware.RequireAdmin())...)).Methods("GET")
 }
 
 func registerAdminHandler(w http.ResponseWriter, r *http.Request) {
@@ -74,4 +76,22 @@ func newUserIsInvalid(newUser constants.UserRegister) (bool, string) {
 		return true, "Password is required"
 	}
 	return false, ""
+}
+
+/* User Admin page */
+func userAdminGET(w http.ResponseWriter, r *http.Request) {
+	users, err := database.GetAllUsers()
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	selfId, err := helper.GetUserId(r)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	params := web.UserAdminPageParams(users, selfId)
+	web.UserAdminPage(w, params)
 }

@@ -71,3 +71,40 @@ func checkPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
 }
+
+func UserIsAdmin(userId int) (bool, error) {
+	db := getDatabaseConnection()
+	defer db.Close()
+	row := db.QueryRow("SELECT Admin FROM "+constants.DB_TABLE_USER+" WHERE Id = $1", userId)
+	var admin bool
+	err := row.Scan(&admin)
+	if err != nil {
+		return false, err
+	}
+	return admin, nil
+}
+
+func GetAllUsers() ([]constants.UserRead, error) {
+	db := getDatabaseConnection()
+	defer db.Close()
+	rows, err := db.Query("SELECT Id, Email, Name, Admin FROM " + constants.DB_TABLE_USER)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []constants.UserRead
+	for rows.Next() {
+		var user constants.UserRead
+
+		err := rows.Scan(&user.Id, &user.Email, &user.Name, &user.Admin)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return users, nil
+}
