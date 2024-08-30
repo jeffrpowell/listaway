@@ -29,6 +29,7 @@ var (
 	sharedList    = parseSplitLayout("dist/sharedList.html")
 	sharedList404 = parseSingleLayout("dist/sharedList404.html")
 	userAdmin     = parseSplitLayout("dist/userAdmin.html")
+	userCreate    = parseSplitLayout("dist/userCreate.html")
 )
 
 func init() {
@@ -132,12 +133,8 @@ func RegisterAdmin(w io.Writer, params registerAdminParams) {
 
 // Login page
 
-type loginPageParams struct {
-	globalWebParams
-}
-
 func LoginPage(w io.Writer) {
-	if err := login.Execute(w, loginPageParams{globalWebParams{ShowNavbar: false, JsFile: "login"}}); err != nil {
+	if err := login.Execute(w, globalWebParams{ShowNavbar: false, JsFile: "login"}); err != nil {
 		log.Print(err)
 	}
 }
@@ -169,12 +166,8 @@ func ListsPage(w io.Writer, params listsPageParams) {
 
 // Create List page
 
-type createListParams struct {
-	globalWebParams
-}
-
 func CreateListPage(w io.Writer) {
-	if err := createList.Execute(w, createListParams{globalWebParams{ShowNavbar: true, JsFile: "listCreate"}}); err != nil {
+	if err := createList.Execute(w, globalWebParams{ShowNavbar: true, JsFile: "listCreate"}); err != nil {
 		log.Print(err)
 	}
 }
@@ -337,6 +330,14 @@ func UserAdminPageParams(users []constants.UserRead, selfId int) userAdminPagePa
 
 func UserAdminPage(w io.Writer, params userAdminPageParams) {
 	if err := userAdmin.Execute(w, params); err != nil {
+		log.Print(err)
+	}
+}
+
+// Create User page
+
+func CreateUserPage(w io.Writer) {
+	if err := userCreate.Execute(w, globalWebParams{ShowNavbar: true, JsFile: "userCreate"}); err != nil {
 		log.Print(err)
 	}
 }

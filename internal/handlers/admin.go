@@ -3,6 +3,7 @@ package handlers
 import (
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/jeffrpowell/listaway/internal/constants"
@@ -15,6 +16,7 @@ import (
 func init() {
 	constants.ROUTER.HandleFunc("/admin/register", middleware.DefaultPublicMiddlewareChain(registerAdminHandler))
 	constants.ROUTER.HandleFunc("/admin/users", middleware.Chain(userAdminGET, append(middleware.DefaultMiddlewareSlice, middleware.RequireAdmin())...)).Methods("GET")
+	constants.ROUTER.HandleFunc("/admin/users/create", middleware.Chain(createUserHandler, append(middleware.DefaultMiddlewareSlice, middleware.RequireAdmin())...))
 }
 
 func registerAdminHandler(w http.ResponseWriter, r *http.Request) {
@@ -23,6 +25,17 @@ func registerAdminHandler(w http.ResponseWriter, r *http.Request) {
 		registerAdminGET(w, r)
 	case "POST":
 		registerAdminPOST(w, r)
+	default:
+		http.Error(w, "", http.StatusMethodNotAllowed)
+	}
+}
+
+func createUserHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		createUserGET(w, r)
+	case "PUT":
+		createUserPUT(w, r)
 	default:
 		http.Error(w, "", http.StatusMethodNotAllowed)
 	}
@@ -94,4 +107,35 @@ func userAdminGET(w http.ResponseWriter, r *http.Request) {
 	}
 	params := web.UserAdminPageParams(users, selfId)
 	web.UserAdminPage(w, params)
+}
+
+/* Create user page */
+func createUserGET(w http.ResponseWriter, r *http.Request) {
+	web.CreateUserPage(w)
+}
+
+/* Submit new user */
+func createUserPUT(w http.ResponseWriter, r *http.Request) {
+	admin, err := strconv.ParseBool(r.FormValue("admin"))
+	if err != nil {
+		admin = false
+	}
+	newUser := constants.UserRegister{
+		Email:    r.FormValue("email"),
+		Name:     r.FormValue("name"),
+		Password: r.FormValue("password"),
+		Admin:    admin,
+	}
+	if invalid, reason := newUserIsInvalid(newUser); invalid {
+		http.Error(w, reason, http.StatusBadRequest)
+		return
+	}
+	err = database.RegisterUser(newUser)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+	} else {
+		w.Header().Add("Location", "/admin/users")
+		w.WriteHeader(http.StatusNoContent)
+	}
 }
