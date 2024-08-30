@@ -59,14 +59,16 @@ func listsGET(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
-
-	listsPage := web.ListsPageParams(lists)
+	admin := helper.IsUserAdmin(r)
+	listsPage := web.ListsPageParams(lists, admin)
 	web.ListsPage(w, listsPage)
 }
 
 /* Create list page */
 func createListGET(w http.ResponseWriter, r *http.Request) {
-	web.CreateListPage(w)
+	admin := helper.IsUserAdmin(r)
+	params := web.CreateListParams(admin)
+	web.CreateListPage(w, params)
 }
 
 /* Checks if a list name is taken */
@@ -130,8 +132,8 @@ func editListGET(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
-
-	editListPageParams := web.EditListParams(list)
+	admin := helper.IsUserAdmin(r)
+	editListPageParams := web.EditListParams(list, admin)
 	web.EditListPage(w, editListPageParams)
 }
 
@@ -211,6 +213,7 @@ func listGET(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
-	listItemsPage := web.ListItemsPageParams(list, items)
+	admin := helper.IsUserAdmin(r)
+	listItemsPage := web.ListItemsPageParams(list, items, admin)
 	web.ListItemsPage(w, listItemsPage)
 }

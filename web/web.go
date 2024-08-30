@@ -105,6 +105,7 @@ func parseSingleLayout(file string) *template.Template {
 
 type globalWebParams struct {
 	ShowNavbar bool
+	ShowAdmin  bool
 	JsFile     string
 }
 
@@ -147,10 +148,11 @@ type listsPageParams struct {
 	globalWebParams
 }
 
-func ListsPageParams(lists []constants.List) listsPageParams {
+func ListsPageParams(lists []constants.List, showAdmin bool) listsPageParams {
 	return listsPageParams{
 		globalWebParams: globalWebParams{
 			ShowNavbar: true,
+			ShowAdmin:  showAdmin,
 			JsFile:     "lists",
 		},
 		Lists:          lists,
@@ -166,8 +168,16 @@ func ListsPage(w io.Writer, params listsPageParams) {
 
 // Create List page
 
-func CreateListPage(w io.Writer) {
-	if err := createList.Execute(w, globalWebParams{ShowNavbar: true, JsFile: "listCreate"}); err != nil {
+func CreateListParams(showAdmin bool) globalWebParams {
+	return globalWebParams{
+		ShowNavbar: true,
+		ShowAdmin:  showAdmin,
+		JsFile:     "listCreate",
+	}
+}
+
+func CreateListPage(w io.Writer, params globalWebParams) {
+	if err := createList.Execute(w, params); err != nil {
 		log.Print(err)
 	}
 }
@@ -180,10 +190,11 @@ type editListParams struct {
 	globalWebParams
 }
 
-func EditListParams(list constants.List) editListParams {
+func EditListParams(list constants.List, showAdmin bool) editListParams {
 	return editListParams{
 		globalWebParams: globalWebParams{
 			ShowNavbar: true,
+			ShowAdmin:  showAdmin,
 			JsFile:     "listEdit",
 		},
 		List:           list,
@@ -205,10 +216,11 @@ type listItemsPageParams struct {
 	globalWebParams
 }
 
-func ListItemsPageParams(list constants.List, items []constants.Item) listItemsPageParams {
+func ListItemsPageParams(list constants.List, items []constants.Item, showAdmin bool) listItemsPageParams {
 	return listItemsPageParams{
 		globalWebParams: globalWebParams{
 			ShowNavbar: true,
+			ShowAdmin:  showAdmin,
 			JsFile:     "listItems",
 		},
 		List:  list,
@@ -231,10 +243,11 @@ type createEditItemParams struct {
 	EditMode bool
 }
 
-func CreateItemParams(list constants.List) createEditItemParams {
+func CreateItemParams(list constants.List, showAdmin bool) createEditItemParams {
 	return createEditItemParams{
 		globalWebParams: globalWebParams{
 			ShowNavbar: true,
+			ShowAdmin:  showAdmin,
 			JsFile:     "itemCreate",
 		},
 		List:     list,
@@ -243,10 +256,11 @@ func CreateItemParams(list constants.List) createEditItemParams {
 	}
 }
 
-func EditItemParams(list constants.List, item constants.Item) createEditItemParams {
+func EditItemParams(list constants.List, item constants.Item, showAdmin bool) createEditItemParams {
 	return createEditItemParams{
 		globalWebParams: globalWebParams{
 			ShowNavbar: true,
+			ShowAdmin:  showAdmin,
 			JsFile:     "itemCreate",
 		},
 		List:     list,
@@ -269,10 +283,11 @@ type sharedListItemsPageParams struct {
 	globalWebParams
 }
 
-func SharedListItemsPageParams(list constants.List, items []constants.Item) sharedListItemsPageParams {
+func SharedListItemsPageParams(list constants.List, items []constants.Item, showAdmin bool) sharedListItemsPageParams {
 	return sharedListItemsPageParams{
 		globalWebParams: globalWebParams{
 			ShowNavbar: true,
+			ShowAdmin:  showAdmin,
 			JsFile:     "sharedList",
 		},
 		List:  list,
@@ -317,10 +332,11 @@ type userAdminPageParams struct {
 	globalWebParams
 }
 
-func UserAdminPageParams(users []constants.UserRead, selfId int) userAdminPageParams {
+func UserAdminPageParams(users []constants.UserRead, selfId int, showAdmin bool) userAdminPageParams {
 	return userAdminPageParams{
 		globalWebParams: globalWebParams{
 			ShowNavbar: true,
+			ShowAdmin:  showAdmin,
 			JsFile:     "userAdmin",
 		},
 		Users:  users,
@@ -336,8 +352,16 @@ func UserAdminPage(w io.Writer, params userAdminPageParams) {
 
 // Create User page
 
-func CreateUserPage(w io.Writer) {
-	if err := userCreate.Execute(w, globalWebParams{ShowNavbar: true, JsFile: "userCreate"}); err != nil {
+func CreateUserParams(showAdmin bool) globalWebParams {
+	return globalWebParams{
+		ShowNavbar: true,
+		ShowAdmin:  showAdmin,
+		JsFile:     "userCreate",
+	}
+}
+
+func CreateUserPage(w io.Writer, params globalWebParams) {
+	if err := userCreate.Execute(w, params); err != nil {
 		log.Print(err)
 	}
 }

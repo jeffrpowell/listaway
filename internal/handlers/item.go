@@ -41,7 +41,8 @@ func createItemGET(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
-	web.CreateEditItemPage(w, web.CreateItemParams(list))
+	admin := helper.IsUserAdmin(r)
+	web.CreateEditItemPage(w, web.CreateItemParams(list, admin))
 }
 
 /* Create item */
@@ -88,7 +89,8 @@ func itemEditGET(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
-	web.CreateEditItemPage(w, web.EditItemParams(list, item))
+	admin := helper.IsUserAdmin(r)
+	web.CreateEditItemPage(w, web.EditItemParams(list, item, admin))
 }
 
 /* Update item */

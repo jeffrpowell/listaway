@@ -17,7 +17,7 @@
             </div>
             <div class="flex items-center space-x-4">
                 <span class="logout text-white cursor-pointer">Logout</span>
-                <a href="#" class="text-white">User Admin</a>
+                {{if .ShowAdmin}}<a href="#" class="text-white">User Admin</a>{{end}}
             </div>
         </div>
     </div>
@@ -30,7 +30,7 @@
         <div class="flex justify-between items-center py-2 px-4">
             <a href="/" class="text-white text-lg font-bold">Listaway</a>
             <div class="hidden md:flex items-center space-x-4">
-                <a href="/admin/users" class="text-white">User Admin</a>
+                {{if .ShowAdmin}}<a href="/admin/users" class="text-white">User Admin</a>{{end}}
                 <span class="logout text-white cursor-pointer">Logout</span>
             </div>
         </div>

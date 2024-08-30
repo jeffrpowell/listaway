@@ -105,13 +105,16 @@ func userAdminGET(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
-	params := web.UserAdminPageParams(users, selfId)
+	admin := helper.IsUserAdmin(r)
+	params := web.UserAdminPageParams(users, selfId, admin)
 	web.UserAdminPage(w, params)
 }
 
 /* Create user page */
 func createUserGET(w http.ResponseWriter, r *http.Request) {
-	web.CreateUserPage(w)
+	admin := helper.IsUserAdmin(r)
+	params := web.CreateUserParams(admin)
+	web.CreateUserPage(w, params)
 }
 
 /* Submit new user */

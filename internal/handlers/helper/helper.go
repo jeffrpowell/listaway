@@ -8,6 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/jeffrpowell/listaway/internal/constants"
+	"github.com/jeffrpowell/listaway/internal/database"
 )
 
 func GetUserId(r *http.Request) (int, error) {
@@ -23,4 +24,16 @@ func GetUserId(r *http.Request) (int, error) {
 
 func GetPathVarInt(r *http.Request, pathNodeName string) (int, error) {
 	return strconv.Atoi(mux.Vars(r)[pathNodeName])
+}
+
+func IsUserAdmin(r *http.Request) bool {
+	userId, err := GetUserId(r)
+	if err != nil {
+		return false
+	}
+	admin, err := database.UserIsAdmin(userId)
+	if err != nil {
+		return false
+	}
+	return admin
 }
