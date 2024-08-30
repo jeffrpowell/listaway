@@ -6,7 +6,7 @@ async function sendData(form) {
 
     try {
         const response = await fetch("/admin/register", {
-            method: "POST",
+            method: "PUT",
             headers: {
                 "Accept": "text/plain",
                 "Content-Type": "application/x-www-form-urlencoded"

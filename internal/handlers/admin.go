@@ -23,8 +23,8 @@ func registerAdminHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		registerAdminGET(w, r)
-	case "POST":
-		registerAdminPOST(w, r)
+	case "PUT":
+		registerAdminPUT(w, r)
 	default:
 		http.Error(w, "", http.StatusMethodNotAllowed)
 	}
@@ -48,7 +48,7 @@ func registerAdminGET(w http.ResponseWriter, r *http.Request) {
 }
 
 /* Submit new admin user */
-func registerAdminPOST(w http.ResponseWriter, r *http.Request) {
+func registerAdminPUT(w http.ResponseWriter, r *http.Request) {
 	if database.AdminUserExists() {
 		http.Error(w, "Forbidden", http.StatusForbidden)
 		return
