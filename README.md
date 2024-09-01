@@ -23,7 +23,7 @@ version: '3.9'
 
 services:
   listaway:
-    image: "https://github.com/jeffrpowell/listaway:1.0"
+    image: "docker pull ghcr.io/jeffrpowell/listaway:1.0.0"
     ports:
       - "8080:8080"
     env_file:
