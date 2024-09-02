@@ -14,9 +14,9 @@ func main() {
 	fmt.Println("#             LISTAWAY             #")
 	fmt.Println("####################################")
 	fmt.Println()
-	fmt.Println("Server is running at http://localhost:8080")
+	fmt.Println("Server is running at http://localhost:" + constants.PORT)
 	if !constants.ADMIN_EXISTS {
-		fmt.Println("No admin user has been created yet. Please register one at http://localhost:8080/admin/register")
+		fmt.Println("No admin user has been created yet. Please register one at http://localhost:" + constants.PORT + "/admin/register")
 	}
-	http.ListenAndServe(":8080", constants.ROUTER)
+	http.ListenAndServe(":"+constants.PORT, constants.ROUTER)
 }

@@ -30,11 +30,12 @@ services:
 ```
 3. Make a `.env` file
 ```
+LISTAWAY_AUTH_KEY=[random alphanumeric 128-character string]
+PORT=8080
 POSTGRES_USER=listaway
 POSTGRES_PASSWORD=password
 POSTGRES_HOST=[pghost]
 POSTGRES_DATABASE=listaway
-LISTAWAY_AUTH_KEY=[random alphanumeric 128-character string]
 ```
 4. `docker compose up`
 5. [https://localhost:8080/](https://localhost:8080/) (All paths will 303 to [https://localhost:8080/admin/register](https://localhost:8080/admin/register))

@@ -11,6 +11,7 @@ import (
 // Registered environment vars
 const (
 	ENV_AUTH_KEY          string = "LISTAWAY_AUTH_KEY" // key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
+	ENV_PORT              string = "PORT"
 	ENV_POSTGRES_USER     string = "POSTGRES_USER"
 	ENV_POSTGRES_PASSWORD string = "POSTGRES_PASSWORD"
 	ENV_POSTGRES_HOST     string = "POSTGRES_HOST"
@@ -34,7 +35,10 @@ var DB_CONNECTION_STRING string = getDbConnectionString()
 const (
 	COOKIE_NAME_SESSION string = "session"
 	SHARED_LIST_PATH    string = "sharedlist"
+	defaultPort         string = "8080"
 )
+
+var PORT string = loadEnvWithDefault(ENV_PORT, defaultPort)
 
 var (
 	authKey                            = []byte(os.Getenv(ENV_AUTH_KEY))
@@ -61,24 +65,20 @@ func init() {
 	COOKIE_STORE.Options.Secure = false
 }
 
+func loadEnvWithDefault(key string, defaultValue string) string {
+	val := os.Getenv(key)
+	if val == "" {
+		val = defaultValue
+	}
+	return val
+}
+
 func getDbConnectionString() string {
 	// Fetch database connection parameters from environment variables
-	dbUser := os.Getenv(ENV_POSTGRES_USER)
-	if dbUser == "" {
-		dbUser = DB_DEFAULT_USER
-	}
-	dbPassword := os.Getenv(ENV_POSTGRES_PASSWORD)
-	if dbPassword == "" {
-		dbPassword = DB_DEFAULT_PASSWORD
-	}
-	dbHost := os.Getenv(ENV_POSTGRES_HOST)
-	if dbHost == "" {
-		dbHost = DB_DEFAULT_HOST
-	}
-	dbName := os.Getenv(ENV_POSTGRES_DB)
-	if dbName == "" {
-		dbName = DB_DEFAULT_DB
-	}
+	dbUser := loadEnvWithDefault(ENV_POSTGRES_USER, DB_DEFAULT_USER)
+	dbPassword := loadEnvWithDefault(ENV_POSTGRES_PASSWORD, DB_DEFAULT_PASSWORD)
+	dbHost := loadEnvWithDefault(ENV_POSTGRES_HOST, DB_DEFAULT_HOST)
+	dbName := loadEnvWithDefault(ENV_POSTGRES_DB, DB_DEFAULT_DB)
 
 	// Construct the connection string
 	return fmt.Sprintf("postgresql://%s:%s@%s/%s?sslmode=disable", dbUser, dbPassword, dbHost, dbName)
