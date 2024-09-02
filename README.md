@@ -19,11 +19,10 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA listaway TO listaway;
 ```
 2. Make a `docker-compose.yml` file
 ```yaml
-version: '3.9'
-
+version: "3.9"
 services:
   listaway:
-    image: "docker pull ghcr.io/jeffrpowell/listaway:1.0.1"
+    image: "ghcr.io/jeffrpowell/listaway:v1.0.1"
     ports:
       - "8080:8080"
     env_file:
