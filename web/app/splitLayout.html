@@ -9,15 +9,11 @@
     <div class="w-full bg-gray-800 fixed bottom-0 left-0 md:hidden">
         <div class="flex justify-between items-center py-2 px-4">
             <div class="flex items-center space-x-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-                </svg>
-                <a href="/" class="text-white">Home</a>
+                <a href="/" class="text-white">Listaway</a>
             </div>
             <div class="flex items-center space-x-4">
                 <span class="logout text-white cursor-pointer">Logout</span>
-                {{if .ShowAdmin}}<a href="#" class="text-white">User Admin</a>{{end}}
+                {{if .ShowAdmin}}<a href="/admin/users" class="text-white">User Admin</a>{{end}}
             </div>
         </div>
     </div>
