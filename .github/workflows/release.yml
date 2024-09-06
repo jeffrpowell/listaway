@@ -41,8 +41,6 @@ jobs:
           release_name: v${{ github.event.inputs.version }}
           draft: false
           prerelease: false
-          generate_release_notes: true
-          token: ${{ secrets.GITHUB_TOKEN }}
   build_and_push:
     needs: tag_and_release
     runs-on: ubuntu-latest
