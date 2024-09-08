@@ -22,7 +22,11 @@ env:
 jobs:
   tag_and_release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - name: Create GitHub Release
         uses: actions/create-release@v1
         env:
