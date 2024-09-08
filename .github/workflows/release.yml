@@ -20,26 +20,10 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  extract_tag:
-    runs-on: ubuntu-latest
-
-    outputs:
-      TAG_NAME: ${{ steps.get_tag.outputs.TAG_NAME }} # Set job output
-
-    steps:
-    - name: Check out the repository
-      uses: actions/checkout@v3
-
-    - name: Extract tag name
-      id: get_tag
-      run: echo "::set-output name=TAG_NAME::${GITHUB_REF#refs/tags/}"
   tag_and_release:
-    needs: extract_tag
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    env:
-      TAG_NAME: ${{ needs.extract-tag.outputs.TAG_NAME }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -48,8 +32,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.TAG_NAME }}
-          release_name: ${{ env.TAG_NAME }}
+          tag_name: ${{ github.ref_name }}
+          release_name: ${{ github.ref_name }}
           draft: false
           prerelease: false
   build_and_push:
@@ -129,24 +113,22 @@ jobs:
         # against the sigstore community Fulcio instance.
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
   update_version:
-    needs: [extract_tag, build_and_push]
+    needs: build_and_push
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    env:
-      TAG_NAME: ${{ needs.extract-tag.outputs.TAG_NAME }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Update version in code files
         run: |
-          sed -i "s/listaway:v[0-9]+\.[0-9]+(\.[0-9]+)?/listaway:${{ env.TAG_NAME }}/g" -E README.md
+          sed -i "s/listaway:v[0-9]+\.[0-9]+(\.[0-9]+)?/listaway:${{ github.ref_name }}/g" -E README.md
 
       - name: Commit version changes
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add README.md
-          git commit -m "Bump version in README.md to ${{ env.TAG_NAME }}"
+          git commit -m "Bump version in README.md to ${{ github.ref_name }}"
           git push origin main
