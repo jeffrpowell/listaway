@@ -22,11 +22,7 @@ env:
 jobs:
   tag_and_release:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
       - name: Create GitHub Release
         uses: actions/create-release@v1
         env:
@@ -48,7 +44,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
@@ -119,7 +115,9 @@ jobs:
       contents: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with: 
+          ref: 'main'
 
       - name: Update version in code files
         run: |
@@ -127,8 +125,8 @@ jobs:
 
       - name: Commit version changes
         run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add README.md
           git commit -m "Bump version in README.md to ${{ github.ref_name }}"
           git push origin main
