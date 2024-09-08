@@ -20,18 +20,29 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
+  extract_tag:
+    runs-on: ubuntu-latest
+
+    outputs:
+      TAG_NAME: ${{ steps.get_tag.outputs.TAG_NAME }} # Set job output
+
+    steps:
+    - name: Check out the repository
+      uses: actions/checkout@v3
+
+    - name: Extract tag name
+      id: get_tag
+      run: echo "::set-output name=TAG_NAME::${GITHUB_REF#refs/tags/}"
   tag_and_release:
+    needs: extract_tag
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      TAG_NAME: ${{ needs.extract-tag.outputs.TAG_NAME }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      # Extract the tag name
-      - name: Set up tag name
-        id: extract_tag
-        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-
       - name: Create GitHub Release
         uses: actions/create-release@v1
         env:
@@ -118,10 +129,12 @@ jobs:
         # against the sigstore community Fulcio instance.
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
   update_version:
-    needs: build_and_push
+    needs: [extract_tag, build_and_push]
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      TAG_NAME: ${{ needs.extract-tag.outputs.TAG_NAME }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -135,5 +148,5 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add README.md
-          git commit -m "Bump version to ${{ env.TAG_NAME }}"
+          git commit -m "Bump version in README.md to ${{ env.TAG_NAME }}"
           git push origin main
