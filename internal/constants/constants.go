@@ -2,6 +2,7 @@ package constants
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/gorilla/mux"
@@ -63,6 +64,7 @@ func init() {
 	COOKIE_STORE.Options.Path = "/"
 	COOKIE_STORE.Options.HttpOnly = true
 	COOKIE_STORE.Options.Secure = false
+	COOKIE_STORE.Options.SameSite = http.SameSiteLaxMode
 }
 
 func loadEnvWithDefault(key string, defaultValue string) string {
