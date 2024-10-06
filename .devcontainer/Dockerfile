@@ -1,4 +1,5 @@
-FROM mcr.microsoft.com/devcontainers/go:1-1.22-bookworm
+ARG TARGETPLATFORM
+FROM --platform=$TARGETPLATFORM mcr.microsoft.com/devcontainers/go:1-1.22-bookworm
 
 # ------------ Docker-from-docker ---------------------------
 # Add Docker's official GPG key:
