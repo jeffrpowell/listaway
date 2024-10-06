@@ -27,16 +27,31 @@ module.exports = {
           test: /\.css$/,
           exclude: /node_modules/,
           use: [
-            MiniCssExtractPlugin.loader,
-            'css-loader',
-            'postcss-loader',
+              MiniCssExtractPlugin.loader,
+              'css-loader',
+              'postcss-loader',
           ],
-        }
+        },
+        {
+          test: /\.css$/,
+          include: /node_modules/,
+          use: [
+              MiniCssExtractPlugin.loader,
+              'css-loader',
+          ],
+        },
+        {
+          test: /\.(woff|woff2|eot|ttf|otf)$/,
+          type: 'asset/resource',
+          generator: {
+              filename: 'fonts/[name][ext]', // Adjust as needed
+          },
+        },
       ]
     },
     plugins: [
       new MiniCssExtractPlugin({
-        filename: 'styles.css',
+        filename: '[name].css',
       }),
       new CopyWebpackPlugin({
         patterns: [
@@ -48,6 +63,18 @@ module.exports = {
       minimize: false,
       splitChunks: {
         chunks: 'all',
+        cacheGroups: {
+          default: false,
+          vendors: {
+            test: /[\\/]node_modules[\\/]/,
+            name(module, chunks, cacheGroupKey) {
+              // Creates a custom name for the vendor file
+              return `${chunks[0].name}-vendors`;
+            },
+            chunks: 'all',
+            enforce: true,
+          },
+        },
       },
     },
   }

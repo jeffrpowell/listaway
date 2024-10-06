@@ -106,7 +106,7 @@ func parseSingleLayout(file string) *template.Template {
 type globalWebParams struct {
 	ShowNavbar bool
 	ShowAdmin  bool
-	JsFile     string
+	ChunkName  string
 }
 
 // Register Admin page
@@ -120,7 +120,7 @@ func RegisterAdminParams(adminExists bool) registerAdminParams {
 	return registerAdminParams{
 		globalWebParams: globalWebParams{
 			ShowNavbar: false,
-			JsFile:     "registerAdmin",
+			ChunkName:  "registerAdmin",
 		},
 		AdminExists: adminExists,
 	}
@@ -135,7 +135,7 @@ func RegisterAdmin(w io.Writer, params registerAdminParams) {
 // Login page
 
 func LoginPage(w io.Writer) {
-	if err := login.Execute(w, globalWebParams{ShowNavbar: false, JsFile: "login"}); err != nil {
+	if err := login.Execute(w, globalWebParams{ShowNavbar: false, ChunkName: "login"}); err != nil {
 		log.Print(err)
 	}
 }
@@ -153,7 +153,7 @@ func ListsPageParams(lists []constants.List, showAdmin bool) listsPageParams {
 		globalWebParams: globalWebParams{
 			ShowNavbar: true,
 			ShowAdmin:  showAdmin,
-			JsFile:     "lists",
+			ChunkName:  "lists",
 		},
 		Lists:          lists,
 		SharedListPath: constants.SHARED_LIST_PATH,
@@ -172,7 +172,7 @@ func CreateListParams(showAdmin bool) globalWebParams {
 	return globalWebParams{
 		ShowNavbar: true,
 		ShowAdmin:  showAdmin,
-		JsFile:     "listCreate",
+		ChunkName:  "listCreate",
 	}
 }
 
@@ -195,7 +195,7 @@ func EditListParams(list constants.List, showAdmin bool) editListParams {
 		globalWebParams: globalWebParams{
 			ShowNavbar: true,
 			ShowAdmin:  showAdmin,
-			JsFile:     "listEdit",
+			ChunkName:  "listEdit",
 		},
 		List:           list,
 		SharedListPath: constants.SHARED_LIST_PATH,
@@ -221,7 +221,7 @@ func ListItemsPageParams(list constants.List, items []constants.Item, showAdmin 
 		globalWebParams: globalWebParams{
 			ShowNavbar: true,
 			ShowAdmin:  showAdmin,
-			JsFile:     "listItems",
+			ChunkName:  "listItems",
 		},
 		List:  list,
 		Items: items,
@@ -248,7 +248,7 @@ func CreateItemParams(list constants.List, showAdmin bool) createEditItemParams 
 		globalWebParams: globalWebParams{
 			ShowNavbar: true,
 			ShowAdmin:  showAdmin,
-			JsFile:     "itemCreate",
+			ChunkName:  "itemCreate",
 		},
 		List:     list,
 		Item:     constants.Item{},
@@ -261,7 +261,7 @@ func EditItemParams(list constants.List, item constants.Item, showAdmin bool) cr
 		globalWebParams: globalWebParams{
 			ShowNavbar: true,
 			ShowAdmin:  showAdmin,
-			JsFile:     "itemCreate",
+			ChunkName:  "itemCreate",
 		},
 		List:     list,
 		Item:     item,
@@ -288,7 +288,7 @@ func SharedListItemsPageParams(list constants.List, items []constants.Item, show
 		globalWebParams: globalWebParams{
 			ShowNavbar: true,
 			ShowAdmin:  showAdmin,
-			JsFile:     "sharedList",
+			ChunkName:  "sharedList",
 		},
 		List:  list,
 		Items: items,
@@ -312,7 +312,7 @@ func SharedList404PageParams(shareCode string) sharedList404PageParams {
 	return sharedList404PageParams{
 		globalWebParams: globalWebParams{
 			ShowNavbar: false,
-			JsFile:     "sharedList404",
+			ChunkName:  "sharedList404",
 		},
 		ShareCode: shareCode,
 	}
@@ -337,7 +337,7 @@ func UserAdminPageParams(users []constants.UserRead, selfId int, showAdmin bool)
 		globalWebParams: globalWebParams{
 			ShowNavbar: true,
 			ShowAdmin:  showAdmin,
-			JsFile:     "userAdmin",
+			ChunkName:  "userAdmin",
 		},
 		Users:  users,
 		SelfId: selfId,
@@ -356,7 +356,7 @@ func CreateUserParams(showAdmin bool) globalWebParams {
 	return globalWebParams{
 		ShowNavbar: true,
 		ShowAdmin:  showAdmin,
-		JsFile:     "userCreate",
+		ChunkName:  "userCreate",
 	}
 }
 
