@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
+
+/*
+Restyling W2UI grids
+*/
+.w2ui-grid .w2ui-grid-body table .w2ui-head {
+    @apply font-sans text-base;
+    background-image:none;
+}
+#tb_listItemsGrid_toolbar_item_w2ui-search, #tb_listItemsGrid_toolbar_item_w2ui-reload {
+    @apply hidden;
+}
+
 @tailwind utilities;
