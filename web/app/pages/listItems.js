@@ -10,14 +10,24 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const grid = new w2grid({
         name: 'listItemsGrid',
         fixedBody: false,
+        show: {
+            toolbar: true,
+            toolbarAdd: true,
+            toolbarEdit: true,
+            toolbarDelete: true,
+            selectColumn: true
+        },
         columns: [
-            { field: 'item', text: 'Item', size: '100%' },
-            { field: 'delete', text: 'Delete', size: '50px' }
+            { field: 'item', text: 'Item', sortable: true, resizeable: false, searchable: false},
+            { field: 'url', text: 'URL', sortable: true, resizeable: false, searchable: false},
+            { field: 'priority', text: 'Priority', sortable: true, resizeable: false, searchable: false},
+            { field: 'notes', text: 'Notes', sortable: true, resizeable: false, searchable: false}
         ],
         records: [
             // TODO: spin up new endpoint to feed this data to the table
-            { recid: 1, item: 'Sample Item 1', delete: '<button class="btn-delete-item" data-list-id="1" data-item-id="1">Delete</button>' },
-            { recid: 2, item: 'Sample Item 2', delete: '<button class="btn-delete-item" data-list-id="1" data-item-id="2">Delete</button>' },
+            { recid: 1, item: 'Sample Item 1', url: '', priority: '', notes: '', w2ui: {class: {item: 'font-sans text-base', url: 'font-sans text-base', priority: 'font-sans text-base', notes: 'font-sans text-base'}}},
+            { recid: 2, item: 'Sample Item 2', url: '', priority: '', notes: '', w2ui: {class: {item: 'font-sans text-base', url: 'font-sans text-base', priority: 'font-sans text-base', notes: 'font-sans text-base'}}},
+            { recid: 3, item: 'Sample Item 3', url: 'https://jeffpowell.dev', priority: '', notes: '', w2ui: {class: {item: 'font-sans text-base', url: 'font-sans text-base', priority: 'font-sans text-base', notes: 'font-sans text-base'}}  },
         ]
     });
     w2uigrid.forEach(g => grid.render(g));
