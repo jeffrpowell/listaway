@@ -22,7 +22,7 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA listaway TO listaway;
 version: "3.9"
 services:
   listaway:
-    image: "ghcr.io/jeffrpowell/listaway:v1.1.11"
+    image: "ghcr.io/jeffrpowell/listaway:v1.2.0"
     ports:
       - "8080:8080"
     env_file:
