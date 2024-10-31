@@ -19,6 +19,7 @@ func init() {
 	constants.ROUTER.HandleFunc("/list/namecheck", middleware.DefaultMiddlewareChain(nameCheckGET)).Methods("GET")
 	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}", middleware.Chain(listHandler, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...))
 	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/edit", middleware.Chain(editListGET, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...)).Methods("GET")
+	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/items", middleware.Chain(listItemsGET, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...)).Methods("GET")
 }
 
 func listsHandler(w http.ResponseWriter, r *http.Request) {
@@ -216,4 +217,20 @@ func listGET(w http.ResponseWriter, r *http.Request) {
 	admin := helper.IsUserAdmin(r)
 	listItemsPage := web.ListItemsPageParams(list, items, admin)
 	web.ListItemsPage(w, listItemsPage)
+}
+
+/* List items JSON */
+func listItemsGET(w http.ResponseWriter, r *http.Request) {
+	listId, _ := helper.GetPathVarInt(r, "listId") //err will trip in listIdOwner middleware first
+	items, err := database.GetListItems(listId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(items); err != nil {
+		http.Error(w, "Error encoding JSON response", http.StatusInternalServerError)
+		log.Print(err)
+	}
 }
