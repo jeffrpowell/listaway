@@ -21,7 +21,7 @@
             {{if (eq (len .Items) 0)}}
             This list is empty. <a href="/list/{{.List.Id}}/item/create" class="underline">Add an item to the list</a>.
             {{else}}
-            <div class="w2grid" style="width: 100%; height: 400px;"></div>
+            <div class="item-grid" style="width: 100%; height: 100%;" class="ag-theme-quartz" data-list-id="{{$.List.Id}}"></div>
             <table class="table-auto mt-4">
                 <thead>
                     <tr>
