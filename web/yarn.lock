@@ -2,6 +2,27 @@
 # yarn lockfile v1
 
 
+"@ag-grid-community/client-side-row-model@32.3.2":
+  version "32.3.2"
+  resolved "https://registry.yarnpkg.com/@ag-grid-community/client-side-row-model/-/client-side-row-model-32.3.2.tgz#79b4ddee0dd4ff0ddeb94e921173a741317d379d"
+  integrity sha512-ulDslHzoZ3nkBcSEiEXYoULLzhZ6lVnTTL/J7xeFV8esBaDkP4+heesG+0oAG2qKKWSRorsJyTTCJMrNodxerQ==
+  dependencies:
+    "@ag-grid-community/core" "32.3.2"
+    tslib "^2.3.0"
+
+"@ag-grid-community/core@32.3.2":
+  version "32.3.2"
+  resolved "https://registry.yarnpkg.com/@ag-grid-community/core/-/core-32.3.2.tgz#6e5dacea83a3f59a0e7d8d7110691f02a0524510"
+  integrity sha512-m9+x9y1hFoXGklaXxN474pxYc7B/M/hH6pcBtBl+mQpCC4TwUAy516rDsFRH6WqpYiakfBdx1A3mhQbavNEDAQ==
+  dependencies:
+    ag-charts-types "10.3.1"
+    tslib "^2.3.0"
+
+"@ag-grid-community/styles@32.3.2":
+  version "32.3.2"
+  resolved "https://registry.yarnpkg.com/@ag-grid-community/styles/-/styles-32.3.2.tgz#75f65fc3b65c5df992f316bfc00f1e5a821936ad"
+  integrity sha512-zAimgm2bORRNDegPnhopYx0s3017j12m9h6Fv3KKW+CSpjHh4U+5ykacrsp8vN6f2vecRxXbrDl8gJC8hCJdcg==
+
 "@alloc/quick-lru@^5.2.0":
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/@alloc/quick-lru/-/quick-lru-5.2.0.tgz#7bf68b20c0a350f936915fcae06f58e32007ce30"
@@ -357,6 +378,11 @@ acorn@^8.7.1, acorn@^8.8.2:
   version "8.12.1"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.12.1.tgz#71616bdccbe25e27a54439e0046e89ca76df2248"
   integrity sha512-tcpGyI9zbizT9JbV6oYE477V6mTlXvvi0T0G3SNIYE2apm/G5huBa1+K89VGeovbg+jycCrfhl3ADxErOuO6Jg==
+
+ag-charts-types@10.3.1:
+  version "10.3.1"
+  resolved "https://registry.yarnpkg.com/ag-charts-types/-/ag-charts-types-10.3.1.tgz#b60163a5da5f27222db71d4fcc20c0aed1854c9c"
+  integrity sha512-oZvu9vJLk6lmzaYi0TmVVmHFZJpVNFziU0bnllx4wR3muXCmnxz5LouKIZ8CYnNiC7VO5HmHNlFu+0DmEO5zxg==
 
 ajv-formats@^2.1.1:
   version "2.1.1"
@@ -2132,6 +2158,11 @@ ts-interface-checker@^0.1.9:
   resolved "https://registry.yarnpkg.com/ts-interface-checker/-/ts-interface-checker-0.1.13.tgz#784fd3d679722bc103b1b4b8030bcddb5db2a699"
   integrity sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==
 
+tslib@^2.3.0:
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.8.0.tgz#d124c86c3c05a40a91e6fdea4021bd31d377971b"
+  integrity sha512-jWVzBLplnCmoaTr13V9dYbiQ99wvZRd0vNWaDRg+aVYRcjDF3nDksxFDE/+fkXnKhpnUUkmx5pK/v8mCtLVqZA==
+
 undici-types@~5.26.4:
   version "5.26.5"
   resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-5.26.5.tgz#bcd539893d00b56e964fd2657a4866b221a65617"
@@ -2161,11 +2192,6 @@ util-deprecate@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
-
-w2ui@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/w2ui/-/w2ui-2.0.0.tgz#22ce533582ef061ab08c266b82e25bb2a2b1ce4d"
-  integrity sha512-oMvLitt2jMholqCpX0mDZ0b70ITjlLpfV56gswk7/cD2oPmlibV+DqcizESSs3+t5VJHiG0Xlcb23e4AoCN1Qw==
 
 watchpack@^2.4.1:
   version "2.4.1"

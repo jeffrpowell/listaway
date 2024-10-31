@@ -8,7 +8,8 @@
     "build-prod": "webpack --mode=production --config webpack.production.config.js"
   },
   "dependencies": {
-    "w2ui": "^2.0.0"
+    "@ag-grid-community/client-side-row-model": "32.3.2",
+    "@ag-grid-community/styles": "32.3.2"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.7",
