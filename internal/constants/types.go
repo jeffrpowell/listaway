@@ -37,9 +37,9 @@ type ItemInsert struct {
 }
 
 type Item struct {
-	Id       uint64
-	Name     string
-	URL      sql.NullString
-	Notes    sql.NullString
-	Priority sql.NullInt64
+	Id       uint64         `json:"id"`
+	Name     string         `json:"name"`
+	URL      sql.NullString `json:"url"`
+	Priority sql.NullInt64  `json:"priority"`
+	Notes    sql.NullString `json:"notes"`
 }
