@@ -1,6 +1,3 @@
-{{define "extracss"}}
-<link rel="stylesheet" href="/static/{{.ChunkName}}-vendors.css"/>
-{{end}}
 {{define "extrajs"}}
 <script type="text/javascript" src="/static/{{.ChunkName}}-vendors.js"></script>
 {{end}}
@@ -21,7 +18,7 @@
             {{if (eq (len .Items) 0)}}
             This list is empty. <a href="/list/{{.List.Id}}/item/create" class="underline">Add an item to the list</a>.
             {{else}}
-            <div class="item-grid" style="width: 100%; height: 100%;" class="ag-theme-quartz" data-list-id="{{$.List.Id}}"></div>
+            <div class="item-grid mt-6 w-1/2" data-list-id="{{$.List.Id}}"></div>
             <table class="table-auto mt-4">
                 <thead>
                     <tr>
