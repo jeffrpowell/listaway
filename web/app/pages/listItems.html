@@ -1,5 +1,5 @@
 {{define "extrajs"}}
-<script type="text/javascript" src="/static/{{.ChunkName}}-vendors.js"></script>
+<script type="text/javascript" src="/static/vendors.js"></script>
 {{end}}
 {{define "mobile"}}
 <div class="list-form">
@@ -19,7 +19,7 @@
             This list is empty. <a href="/list/{{.List.Id}}/item/create" class="underline">Add an item to the list</a>.
             {{else}}
             <a href="/list/{{.List.Id}}/item/create" class="underline">Add a new item to the list</a>
-            <div class="item-grid mt-6 w-1/2" data-list-id="{{$.List.Id}}"></div>
+            <div class="item-grid mt-6 w-1/2" data-list-id="{{.List.Id}}"></div>
             {{end}}
         </div>
     </div>

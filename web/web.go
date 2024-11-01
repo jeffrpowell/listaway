@@ -278,20 +278,22 @@ func CreateEditItemPage(w io.Writer, params createEditItemParams) {
 // Shared List Items page
 
 type sharedListItemsPageParams struct {
-	List  constants.List
-	Items []constants.Item
+	List      constants.List
+	Items     []constants.Item
+	ShareCode string
 	globalWebParams
 }
 
-func SharedListItemsPageParams(list constants.List, items []constants.Item, showAdmin bool) sharedListItemsPageParams {
+func SharedListItemsPageParams(shareCode string, list constants.List, items []constants.Item, showAdmin bool) sharedListItemsPageParams {
 	return sharedListItemsPageParams{
 		globalWebParams: globalWebParams{
 			ShowNavbar: true,
 			ShowAdmin:  showAdmin,
 			ChunkName:  "sharedList",
 		},
-		List:  list,
-		Items: items,
+		List:      list,
+		Items:     items,
+		ShareCode: shareCode,
 	}
 }
 
