@@ -67,10 +67,7 @@ module.exports = {
           default: false,
           vendors: {
             test: /[\\/]node_modules[\\/]/,
-            name(module, chunks, cacheGroupKey) {
-              // Creates a custom name for the vendor file
-              return `${chunks[0].name}-vendors`;
-            },
+            name: 'vendors',
             chunks: 'all',
             enforce: true,
           },

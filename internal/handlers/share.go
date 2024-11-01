@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -16,6 +17,7 @@ import (
 func init() {
 	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/share", middleware.Chain(listShareHandler, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...))
 	constants.ROUTER.HandleFunc("/"+constants.SHARED_LIST_PATH+"/{shareCode}", middleware.DefaultPublicMiddlewareChain(shareGET)).Methods("GET")
+	constants.ROUTER.HandleFunc("/"+constants.SHARED_LIST_PATH+"/{shareCode}/items", middleware.DefaultPublicMiddlewareChain(sharedItemsGET)).Methods("GET")
 }
 
 func listShareHandler(w http.ResponseWriter, r *http.Request) {
@@ -74,6 +76,33 @@ func shareGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	admin := helper.IsUserAdmin(r)
-	sharedListItemsPage := web.SharedListItemsPageParams(list, items, admin)
+	sharedListItemsPage := web.SharedListItemsPageParams(shareCode, list, items, admin)
 	web.SharedListItemsPage(w, sharedListItemsPage)
+}
+
+/* Shared list items JSON */
+func sharedItemsGET(w http.ResponseWriter, r *http.Request) {
+	shareCode := mux.Vars(r)["shareCode"]
+	list, err := database.GetListFromShareCode(shareCode)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			sharedList404Page := web.SharedList404PageParams(shareCode)
+			web.SharedList404Page(w, sharedList404Page)
+			return
+		}
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	items, err := database.GetListItems(int(list.Id))
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(items); err != nil {
+		http.Error(w, "Error encoding JSON response", http.StatusInternalServerError)
+		log.Print(err)
+	}
 }
