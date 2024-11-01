@@ -70,9 +70,12 @@ class ActionButtonsComponent {
 
 document.addEventListener('DOMContentLoaded', (event) => {
     const grid = document.querySelectorAll('.item-grid');
+    const customTheme = themeQuartz.withParams({
+        // internalContentLineHeight: "1.5"
+    });
 
     const gridOptions = {
-        theme: themeQuartz,
+        theme: customTheme,
         loadThemeGoogleFonts: true,
         rowData: [],
         columnDefs: [
@@ -80,6 +83,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 field: "name", 
                 headerName: "Item",
                 flex: 1,
+                wrapText: true,
+                autoHeight: true,
                 cellRenderer: itemNameRenderer
             },
             { 
@@ -94,6 +99,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 field: "notes", 
                 headerName: "Notes", 
                 flex: 2,
+                wrapText: true,
+                autoHeight: true,
                 valueGetter: p => p.data.notes.Valid ? p.data.notes.String : ""
             },
             {

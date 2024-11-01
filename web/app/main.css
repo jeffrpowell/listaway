@@ -7,5 +7,9 @@ Restyling 3rd-party components
     @apply tailwind-class;
 }
 */
+.ag-cell-wrap-text {
+    @apply leading-normal;
+    @apply py-3;
+}
 
 @tailwind utilities;
