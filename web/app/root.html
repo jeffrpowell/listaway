@@ -7,6 +7,11 @@
     {{block "extracss" .}}{{end}}
     <link rel="stylesheet" href="/static/{{.ChunkName}}.css"/>
     <title>Listaway</title>
+    <script>
+        /* to prevent Firefox FOUC, this must be here
+        https://stackoverflow.com/a/64158043 */
+        let FF_FOUC_FIX;
+    </script>
 </head>
 <body class="bg-gray-100 font-sans">
     {{block "content" .}}{{end}}

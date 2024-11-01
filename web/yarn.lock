@@ -18,10 +18,13 @@
     ag-charts-types "10.3.1"
     tslib "^2.3.0"
 
-"@ag-grid-community/styles@32.3.2":
+"@ag-grid-community/theming@32.3.2":
   version "32.3.2"
-  resolved "https://registry.yarnpkg.com/@ag-grid-community/styles/-/styles-32.3.2.tgz#75f65fc3b65c5df992f316bfc00f1e5a821936ad"
-  integrity sha512-zAimgm2bORRNDegPnhopYx0s3017j12m9h6Fv3KKW+CSpjHh4U+5ykacrsp8vN6f2vecRxXbrDl8gJC8hCJdcg==
+  resolved "https://registry.yarnpkg.com/@ag-grid-community/theming/-/theming-32.3.2.tgz#736bd6cd4da1d2bd0716b428ab60c4cceacd9178"
+  integrity sha512-JTi3r2TpHPHPgbBUQh87OysKD7VfIXrCUKiQxX3OiWJXutX0D0H6eAFwP4C83ourCMRIeZgBqCLhK+TMyzlKJw==
+  dependencies:
+    "@ag-grid-community/core" "32.3.2"
+    tslib "^2.6.3"
 
 "@alloc/quick-lru@^5.2.0":
   version "5.2.0"
@@ -2162,6 +2165,11 @@ tslib@^2.3.0:
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.8.0.tgz#d124c86c3c05a40a91e6fdea4021bd31d377971b"
   integrity sha512-jWVzBLplnCmoaTr13V9dYbiQ99wvZRd0vNWaDRg+aVYRcjDF3nDksxFDE/+fkXnKhpnUUkmx5pK/v8mCtLVqZA==
+
+tslib@^2.6.3:
+  version "2.8.1"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.8.1.tgz#612efe4ed235d567e8aba5f2a5fab70280ade83f"
+  integrity sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==
 
 undici-types@~5.26.4:
   version "5.26.5"
