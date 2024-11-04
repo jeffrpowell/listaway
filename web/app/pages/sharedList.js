@@ -12,6 +12,20 @@ const itemNameRenderer = function(params) {
     }
 }
 
+const priorityComparator = function(p1, p2) {
+    const p1Empty = p1 === undefined || p1 === null || p1 === "";
+    const p2Empty = p2 === undefined || p2 === null || p2 === "";
+    if (p1Empty && p2Empty) {
+        return 0;
+    } else if (p1Empty) {
+        return 1; //place p1 after p2
+    } else if (p2Empty) {
+        return -1; //place p2 after p1
+    } else {
+        return p1 - p2;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', (event) => {
     const grid = document.querySelectorAll('.item-grid');
     const customTheme = themeQuartz.withParams({
@@ -37,7 +51,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 type: 'numericColumn',
                 width: 125,
                 sort: 'asc',
-                valueGetter: p => p.data.priority.Valid ? p.data.priority.Int64 : null
+                valueGetter: p => p.data.priority.Valid ? p.data.priority.Int64 : null,
+                comparator: priorityComparator
             },
             { 
                 field: "notes", 
