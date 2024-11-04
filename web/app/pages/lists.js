@@ -15,8 +15,16 @@ document.addEventListener('DOMContentLoaded', (event) => {
         copyShareLinkBtn.addEventListener('click', async (event) => {
             var result = writeClipboardText(window.location.origin + "/" + copyShareLinkBtn.dataset.sharedListPath + "/" + copyShareLinkBtn.dataset.shareCode);
             if (result) {
-                copyShareLinkEmptyIcons.forEach(icon => icon.classList.add("hidden"));
-                copyShareLinkCheckIcons.forEach(icon => icon.classList.remove("hidden"));
+                copyShareLinkEmptyIcons.forEach(icon => {
+                    if (icon.getAttribute('data-share-code') === copyShareLinkBtn.dataset.shareCode) {
+                        icon.classList.add("hidden")
+                    }
+                });
+                copyShareLinkCheckIcons.forEach(icon => {
+                    if (icon.getAttribute('data-share-code') === copyShareLinkBtn.dataset.shareCode) {
+                        icon.classList.remove("hidden")
+                    }
+                });
             }
         });
     });
