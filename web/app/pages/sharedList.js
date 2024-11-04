@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 field: "name", 
                 headerName: "Item",
                 flex: 1,
+                minWidth: 120,
                 wrapText: true,
                 autoHeight: true,
                 cellRenderer: itemNameRenderer
@@ -49,7 +50,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 field: "priority", 
                 headerName: "Priority", 
                 type: 'numericColumn',
-                width: 125,
+                width: 115,
                 sort: 'asc',
                 valueGetter: p => p.data.priority.Valid ? p.data.priority.Int64 : null,
                 comparator: priorityComparator
@@ -58,6 +59,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 field: "notes", 
                 headerName: "Notes", 
                 flex: 2,
+                minWidth: 240,
                 wrapText: true,
                 autoHeight: true,
                 valueGetter: p => p.data.notes.Valid ? p.data.notes.String : ""

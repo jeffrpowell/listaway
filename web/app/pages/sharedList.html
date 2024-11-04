@@ -2,14 +2,14 @@
 <script type="text/javascript" src="/static/vendors.js"></script>
 {{end}}
 {{define "mobile"}}
-<div class="list-form bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+<div class="list-form">
     <div class="flex flex-col mb-4">
         <h1 class="list-name-header text-gray-700 font-bold text-2xl relative">{{.List.Name}}</h1>
         <div>
             {{if (eq (len .Items) 0)}}
             This list is empty. Whomever shared it with you needs to add some items in it first.
             {{else}}
-            <div class="item-grid mt-6 w-1/2" data-share-code="{{.ShareCode}}"></div>
+            <div class="item-grid mt-6 md:w-1/2" data-share-code="{{.ShareCode}}"></div>
             {{end}}
         </div>
     </div>
