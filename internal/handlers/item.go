@@ -55,7 +55,7 @@ func itemPUT(w http.ResponseWriter, r *http.Request) {
 	err = database.CreateItem(constants.ItemInsert{
 		Name:     itemName,
 		ListId:   uint64(listId),
-		URL:      sql.NullString{String: url, Valid: notes != ""},
+		URL:      sql.NullString{String: url, Valid: url != ""},
 		Priority: sql.NullInt64{Int64: priority, Valid: err == nil},
 		Notes:    sql.NullString{String: notes, Valid: notes != ""},
 	})
