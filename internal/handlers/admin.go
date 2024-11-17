@@ -54,10 +54,12 @@ func registerAdminPUT(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	newUser := constants.UserRegister{
-		Email:    r.FormValue("email"),
-		Name:     r.FormValue("name"),
-		Password: r.FormValue("password"),
-		Admin:    true,
+		GroupId:       0,
+		Email:         r.FormValue("email"),
+		Name:          r.FormValue("name"),
+		Password:      r.FormValue("password"),
+		Admin:         true,
+		InstanceAdmin: true,
 	}
 	if invalid, reason := newUserIsInvalid(newUser); invalid {
 		http.Error(w, reason, http.StatusBadRequest)
@@ -93,13 +95,13 @@ func newUserIsInvalid(newUser constants.UserRegister) (bool, string) {
 
 /* User Admin page */
 func userAdminGET(w http.ResponseWriter, r *http.Request) {
-	users, err := database.GetAllUsers()
+	selfId, err := helper.GetUserId(r)
 	if err != nil {
 		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
 		log.Print(err)
 		return
 	}
-	selfId, err := helper.GetUserId(r)
+	users, err := database.GetUsersInSameGroupAsUser(selfId)
 	if err != nil {
 		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
 		log.Print(err)
@@ -123,11 +125,25 @@ func createUserPUT(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		admin = false
 	}
+	selfId, err := helper.GetUserId(r)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	groupId, err := database.GetUserGroupId(selfId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
 	newUser := constants.UserRegister{
-		Email:    r.FormValue("email"),
-		Name:     r.FormValue("name"),
-		Password: r.FormValue("password"),
-		Admin:    admin,
+		GroupId:       groupId,
+		Email:         r.FormValue("email"),
+		Name:          r.FormValue("name"),
+		Password:      r.FormValue("password"),
+		Admin:         admin,
+		InstanceAdmin: false,
 	}
 	if invalid, reason := newUserIsInvalid(newUser); invalid {
 		http.Error(w, reason, http.StatusBadRequest)

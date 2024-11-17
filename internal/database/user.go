@@ -11,7 +11,7 @@ import (
 func AdminUserExists() bool {
 	db := getDatabaseConnection()
 	defer db.Close()
-	row := db.QueryRow("SELECT COUNT(1) FROM " + constants.DB_TABLE_USER + " WHERE Admin = true")
+	row := db.QueryRow("SELECT COUNT(1) FROM " + constants.DB_TABLE_USER + " WHERE admin = true")
 
 	var numAdmins int
 	err := row.Scan(&numAdmins)
@@ -27,15 +27,17 @@ func RegisterUser(user constants.UserRegister) error {
 		return err
 	}
 	hashedUser := constants.UserRegister{
-		Email:    user.Email,
-		Name:     user.Name,
-		Password: hash,
-		Admin:    user.Admin,
+		GroupId:       user.GroupId,
+		Email:         user.Email,
+		Name:          user.Name,
+		Password:      hash,
+		Admin:         user.Admin,
+		InstanceAdmin: user.InstanceAdmin,
 	}
 	db := getDatabaseConnection()
 	defer db.Close()
-	_, err = db.Exec("INSERT INTO "+constants.DB_TABLE_USER+" (Email, Name, PasswordHash, Admin) VALUES ($1, $2, $3, $4)",
-		hashedUser.Email, hashedUser.Name, hashedUser.Password, hashedUser.Admin)
+	_, err = db.Exec("INSERT INTO "+constants.DB_TABLE_USER+" (groupid, email, name, passwordhash, admin, instanceadmin) VALUES ($1, $2, $3, $4, $5, $6)",
+		hashedUser.GroupId, hashedUser.Email, hashedUser.Name, hashedUser.Password, hashedUser.Admin, hashedUser.InstanceAdmin)
 	if err != nil {
 		return err
 	}
@@ -45,7 +47,7 @@ func RegisterUser(user constants.UserRegister) error {
 func LoginUser(email, password string) (int, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	row := db.QueryRow("SELECT Id, PasswordHash FROM "+constants.DB_TABLE_USER+" WHERE Email = $1", email)
+	row := db.QueryRow("SELECT id, passwordhash FROM "+constants.DB_TABLE_USER+" WHERE email = $1", email)
 	var userId int
 	var passwordHash string
 	err := row.Scan(&userId, &passwordHash)
@@ -75,7 +77,7 @@ func checkPasswordHash(password, hash string) bool {
 func UserIsAdmin(userId int) (bool, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	row := db.QueryRow("SELECT Admin FROM "+constants.DB_TABLE_USER+" WHERE Id = $1", userId)
+	row := db.QueryRow("SELECT admin FROM "+constants.DB_TABLE_USER+" WHERE id = $1", userId)
 	var admin bool
 	err := row.Scan(&admin)
 	if err != nil {
@@ -87,7 +89,7 @@ func UserIsAdmin(userId int) (bool, error) {
 func GetAllUsers() ([]constants.UserRead, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	rows, err := db.Query("SELECT Id, Email, Name, Admin FROM " + constants.DB_TABLE_USER)
+	rows, err := db.Query("SELECT id, groupid, email, name, admin, instanceadmin FROM " + constants.DB_TABLE_USER)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +99,7 @@ func GetAllUsers() ([]constants.UserRead, error) {
 	for rows.Next() {
 		var user constants.UserRead
 
-		err := rows.Scan(&user.Id, &user.Email, &user.Name, &user.Admin)
+		err := rows.Scan(&user.Id, &user.GroupId, &user.Email, &user.Name, &user.Admin, &user.InstanceAdmin)
 		if err != nil {
 			return nil, err
 		}
@@ -107,4 +109,41 @@ func GetAllUsers() ([]constants.UserRead, error) {
 		return nil, err
 	}
 	return users, nil
+}
+
+func GetUsersInSameGroupAsUser(userId int) ([]constants.UserRead, error) {
+	db := getDatabaseConnection()
+	defer db.Close()
+	rows, err := db.Query("SELECT id, groupid, email, name, admin, instanceadmin FROM "+constants.DB_TABLE_USER+" WHERE groupid = (SELECT groupid FROM listaway.user WHERE id = $1)", userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []constants.UserRead
+	for rows.Next() {
+		var user constants.UserRead
+
+		err := rows.Scan(&user.Id, &user.GroupId, &user.Email, &user.Name, &user.Admin, &user.InstanceAdmin)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return users, nil
+}
+
+func GetUserGroupId(userId int) (int, error) {
+	db := getDatabaseConnection()
+	defer db.Close()
+	row := db.QueryRow("SELECT groupid FROM "+constants.DB_TABLE_USER+" WHERE id = $1", userId)
+	var groupId int
+	err := row.Scan(&groupId)
+	if err != nil {
+		return -1, err
+	}
+	return groupId, nil
 }

@@ -3,17 +3,21 @@ package constants
 import "database/sql"
 
 type UserRead struct {
-	Id    uint64
-	Email string
-	Name  string
-	Admin bool
+	Id            uint64
+	GroupId       uint64
+	Email         string
+	Name          string
+	Admin         bool
+	InstanceAdmin bool
 }
 
 type UserRegister struct {
-	Email    string
-	Name     string
-	Password string
-	Admin    bool
+	GroupId       int
+	Email         string
+	Name          string
+	Password      string
+	Admin         bool
+	InstanceAdmin bool
 }
 
 type List struct {
