@@ -147,3 +147,10 @@ func GetUserGroupId(userId int) (int, error) {
 	}
 	return groupId, nil
 }
+
+func DeleteUser(userId int) error {
+	db := getDatabaseConnection()
+	defer db.Close()
+	_, err := db.Exec(`DELETE FROM listaway.user WHERE Id = $1`, userId)
+	return err
+}
