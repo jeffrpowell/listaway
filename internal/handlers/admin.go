@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -17,6 +18,8 @@ func init() {
 	constants.ROUTER.HandleFunc("/admin/register", middleware.DefaultPublicMiddlewareChain(registerAdminHandler))
 	constants.ROUTER.HandleFunc("/admin/users", middleware.Chain(userAdminGET, append(middleware.DefaultMiddlewareSlice, middleware.RequireAdmin())...)).Methods("GET")
 	constants.ROUTER.HandleFunc("/admin/users/create", middleware.Chain(createUserHandler, append(middleware.DefaultMiddlewareSlice, middleware.RequireAdmin())...))
+	constants.ROUTER.HandleFunc("/admin/user/{userId:[0-9]+}/listscount", middleware.Chain(userListCountGET, append(middleware.DefaultMiddlewareSlice, middleware.RequireGroupAdmin("userId"))...)).Methods("GET")
+	constants.ROUTER.HandleFunc("/admin/user/{userId:[0-9]+}", middleware.Chain(deleteUser, append(middleware.DefaultMiddlewareSlice, middleware.RequireGroupAdmin("userId"))...)).Methods("DELETE")
 }
 
 func registerAdminHandler(w http.ResponseWriter, r *http.Request) {
@@ -157,4 +160,41 @@ func createUserPUT(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Location", "/admin/users")
 		w.WriteHeader(http.StatusNoContent)
 	}
+}
+
+func userListCountGET(w http.ResponseWriter, r *http.Request) {
+	targetUserId, err := helper.GetPathVarInt(r, "userId")
+	if err != nil {
+		http.Error(w, "Invalid userId provided in path", http.StatusBadRequest)
+		log.Print(err)
+		return
+	}
+	lists, err := database.GetLists(targetUserId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	_, err = fmt.Fprintf(w, "%d", len(lists))
+	if err != nil {
+		http.Error(w, "Failed to write response", http.StatusInternalServerError)
+	}
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(http.StatusOK)
+}
+
+func deleteUser(w http.ResponseWriter, r *http.Request) {
+	userId, err := helper.GetPathVarInt(r, "userId")
+	if err != nil {
+		http.Error(w, "Invalid userId supplied in path", http.StatusBadRequest)
+		log.Print(err)
+		return
+	}
+	err = database.DeleteUser(userId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
 }
