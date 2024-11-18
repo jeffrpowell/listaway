@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/jeffrpowell/listaway/internal/constants"
@@ -20,6 +19,7 @@ func init() {
 	constants.ROUTER.HandleFunc("/admin/users/create", middleware.Chain(createUserHandler, append(middleware.DefaultMiddlewareSlice, middleware.RequireAdmin())...))
 	constants.ROUTER.HandleFunc("/admin/user/{userId:[0-9]+}/listscount", middleware.Chain(userListCountGET, append(middleware.DefaultMiddlewareSlice, middleware.RequireGroupAdmin("userId"))...)).Methods("GET")
 	constants.ROUTER.HandleFunc("/admin/user/{userId:[0-9]+}", middleware.Chain(deleteUser, append(middleware.DefaultMiddlewareSlice, middleware.RequireGroupAdmin("userId"))...)).Methods("DELETE")
+	constants.ROUTER.HandleFunc("/admin/user/{userId:[0-9]+}/toggleadmin", middleware.Chain(toggleUserAdmin, append(middleware.DefaultMiddlewareSlice, middleware.RequireGroupAdmin("userId"))...)).Methods("POST")
 }
 
 func registerAdminHandler(w http.ResponseWriter, r *http.Request) {
@@ -124,10 +124,7 @@ func createUserGET(w http.ResponseWriter, r *http.Request) {
 
 /* Submit new user */
 func createUserPUT(w http.ResponseWriter, r *http.Request) {
-	admin, err := strconv.ParseBool(r.FormValue("admin"))
-	if err != nil {
-		admin = false
-	}
+	var admin = r.FormValue("admin") == "on"
 	selfId, err := helper.GetUserId(r)
 	if err != nil {
 		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
@@ -175,12 +172,11 @@ func userListCountGET(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
+	w.Header().Set("Content-Type", "text/plain")
 	_, err = fmt.Fprintf(w, "%d", len(lists))
 	if err != nil {
 		http.Error(w, "Failed to write response", http.StatusInternalServerError)
 	}
-	w.Header().Set("Content-Type", "text/plain")
-	w.WriteHeader(http.StatusOK)
 }
 
 func deleteUser(w http.ResponseWriter, r *http.Request) {
@@ -197,4 +193,30 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func toggleUserAdmin(w http.ResponseWriter, r *http.Request) {
+	userId, err := helper.GetPathVarInt(r, "userId")
+	if err != nil {
+		http.Error(w, "Invalid userId supplied in path", http.StatusBadRequest)
+		log.Print(err)
+		return
+	}
+	admin, err := database.UserIsAdmin(userId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	err = database.SetUserAdmin(userId, !admin)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	if admin {
+		w.Write([]byte("false"))
+	} else {
+		w.Write([]byte("true"))
+	}
 }

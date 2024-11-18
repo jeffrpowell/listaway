@@ -8,7 +8,7 @@ import (
 func GetListItems(listId int) ([]constants.Item, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	rows, err := db.Query("SELECT Id, Name, URL, Priority, Notes FROM "+constants.DB_TABLE_ITEM+" WHERE ListId = $1", listId)
+	rows, err := db.Query("SELECT id, name, url, priority, notes FROM "+constants.DB_TABLE_ITEM+" WHERE listid = $1", listId)
 	if err != nil {
 		return nil, err
 	}
@@ -33,21 +33,21 @@ func GetListItems(listId int) ([]constants.Item, error) {
 func CreateItem(item constants.ItemInsert) error {
 	db := getDatabaseConnection()
 	defer db.Close()
-	_, err := db.Exec(`INSERT INTO listaway.item (Name, ListId, URL, Notes, Priority) VALUES($1, $2, $3, $4, $5)`, item.Name, item.ListId, item.URL, item.Notes, item.Priority)
+	_, err := db.Exec(`INSERT INTO listaway.item (name, listid, url, notes, priority) VALUES($1, $2, $3, $4, $5)`, item.Name, item.ListId, item.URL, item.Notes, item.Priority)
 	return err
 }
 
 func DeleteItem(itemId int) error {
 	db := getDatabaseConnection()
 	defer db.Close()
-	_, err := db.Exec(`DELETE FROM listaway.item WHERE Id = $1`, itemId)
+	_, err := db.Exec(`DELETE FROM listaway.item WHERE id = $1`, itemId)
 	return err
 }
 
 func GetItem(itemId int) (constants.Item, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	row := db.QueryRow("SELECT Id, Name, URL, Notes, Priority FROM "+constants.DB_TABLE_ITEM+" WHERE Id = $1", itemId)
+	row := db.QueryRow("SELECT id, name, url, notes, priority FROM "+constants.DB_TABLE_ITEM+" WHERE id = $1", itemId)
 	var item constants.Item
 	err := row.Scan(&item.Id, &item.Name, &item.URL, &item.Notes, &item.Priority)
 	if err != nil {
@@ -59,6 +59,6 @@ func GetItem(itemId int) (constants.Item, error) {
 func UpdateItem(itemId int, item constants.ItemInsert) error {
 	db := getDatabaseConnection()
 	defer db.Close()
-	_, err := db.Exec(`UPDATE listaway.item SET Name = $1, URL = $2, Priority = $3, Notes = $4 WHERE Id = $5`, item.Name, item.URL, item.Priority, item.Notes, itemId)
+	_, err := db.Exec(`UPDATE listaway.item SET name = $1, url = $2, priority = $3, notes = $4 WHERE id = $5`, item.Name, item.URL, item.Priority, item.Notes, itemId)
 	return err
 }
