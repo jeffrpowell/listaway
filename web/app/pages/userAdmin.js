@@ -2,7 +2,20 @@ require("../navbar")
 
 document.addEventListener('DOMContentLoaded', (event) => {
     
+    const adminToggles = document.querySelectorAll('.admin-toggle');
     const deleteUserButtons = document.querySelectorAll('.btn-delete-user');
+
+    adminToggles.forEach(adminToggle => {
+        adminToggle.addEventListener('click', async (event) => {
+            const userId = adminToggle.dataset.userId;
+            const response = await fetch('/admin/user/'+userId+'/toggleadmin', {
+                method: 'POST',
+            });
+            if (response.status === 200) {
+                adminToggle.textContent = await response.text();
+            }
+        });
+    });
     
     deleteUserButtons.forEach(deleteUserBtn => {
         deleteUserBtn.addEventListener('click', async (event) => {
