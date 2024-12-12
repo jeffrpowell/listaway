@@ -17,5 +17,5 @@ require (
 	github.com/gorilla/mux v1.8.1
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/rs/cors v1.11.0
-	golang.org/x/crypto v0.25.0
+	golang.org/x/crypto v0.31.0
 )
