@@ -76,7 +76,8 @@ func shareGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	admin := helper.IsUserAdmin(r)
-	sharedListItemsPage := web.SharedListItemsPageParams(shareCode, list, items, admin)
+	instanceAdmin := helper.IsUserInstanceAdmin(r)
+	sharedListItemsPage := web.SharedListItemsPageParams(shareCode, list, items, admin, instanceAdmin)
 	web.SharedListItemsPage(w, sharedListItemsPage)
 }
 

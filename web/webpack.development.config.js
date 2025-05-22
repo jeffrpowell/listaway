@@ -15,6 +15,7 @@ module.exports = {
       sharedList404: './app/pages/sharedList404.js',
       userAdmin: './app/pages/userAdmin.js',
       userCreate: './app/pages/userCreate.js',
+      allUsers: './app/pages/allUsers.js',
     },
     output: {
         filename: '[name].js',

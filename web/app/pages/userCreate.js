@@ -3,12 +3,61 @@ require('../navbar')
 
 document.addEventListener('DOMContentLoaded', (event) => {
     const forms = document.querySelectorAll(".user-creation-form");
+    const newGroupRadios = document.querySelectorAll('.newGroup');
+    const existingGroupRadios = document.querySelectorAll('.existingGroup');
+    const existingGroupSections = document.querySelectorAll('.existingGroupSection');
+    const adminCheckboxSections = document.querySelectorAll('.adminCheckboxSection');
+    const regularAdminCheckboxSections = document.querySelectorAll('.regularAdminCheckboxSection');
+    const adminCheckboxes = document.querySelectorAll('.adminCheckbox');
+    const errorSpans = document.querySelectorAll('.error-span');
+    
+    // Handle instance admin form controls
+    setupInstanceAdminFormControls();
 
     // Take over form submission
     forms.forEach(form => form.addEventListener("submit", (event) => {
         event.preventDefault();
         sendData(form);
     }));
+    
+    // Setup instance admin form controls
+    function setupInstanceAdminFormControls() {
+        if (newGroupRadios.length === 0 || existingGroupRadios.length === 0) {
+            // Not an instance admin form, no need to set up controls
+            return;
+        }
+        
+        // Initial state - new group selected
+        adminCheckboxes.forEach(checkbox => {
+            checkbox.checked = true;
+            checkbox.disabled = true;
+        });
+        
+        // Set up event listeners for radio buttons
+        newGroupRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.checked) {
+                    existingGroupSections.forEach(section => section.classList.add('hidden'));
+                    adminCheckboxSections.forEach(section => section.classList.remove('hidden'));
+                    regularAdminCheckboxSections.forEach(section => section.classList.add('hidden'));
+                    adminCheckboxes.forEach(checkbox => {
+                        checkbox.checked = true;
+                        checkbox.disabled = true;
+                    });
+                }
+            });
+        });
+        
+        existingGroupRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.checked) {
+                    existingGroupSections.forEach(section => section.classList.remove('hidden'));
+                    adminCheckboxSections.forEach(section => section.classList.add('hidden'));
+                    regularAdminCheckboxSections.forEach(section => section.classList.remove('hidden'));
+                }
+            });
+        });
+    }
 
     async function sendData(form) {
         // Associate the FormData object with the form element
@@ -39,7 +88,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
     
     async function showError(response) {
         text = await response.text();
-        const errorSpans = document.querySelectorAll(".error-span");
         errorSpans.forEach(errorSpan => {
             if (response.status < 500) {
                 errorSpan.innerText = text;
