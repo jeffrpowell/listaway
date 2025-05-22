@@ -30,16 +30,36 @@ services:
 ```
 3. Make a `.env` file
 ```
+# Required configuration
 LISTAWAY_AUTH_KEY=[random alphanumeric 128-character string]
 PORT=8080
 POSTGRES_USER=listaway
 POSTGRES_PASSWORD=password
 POSTGRES_HOST=[pghost]
 POSTGRES_DATABASE=listaway
+
+# Optional SMTP configuration for password reset emails
+# SMTP_HOST=smtp.example.com        # SMTP server hostname
+# SMTP_PORT=587                     # SMTP server port (typically 25, 465, or 587)
+# SMTP_USER=username               # SMTP authentication username
+# SMTP_PASSWORD=password           # SMTP authentication password
+# SMTP_FROM=noreply@example.com    # Sender email address
+# SMTP_SECURE=true                 # Use TLS/SSL (true/false)
+# APP_URL=https://listaway.your-domain.com     # Base URL of your application (for reset links)
 ```
 4. `docker compose up`
 5. [https://localhost:8080/](https://localhost:8080/) (All paths will 303 to [https://localhost:8080/admin/register](https://localhost:8080/admin/register))
 
+
+## Password Reset Feature
+
+Listaway includes a password reset feature that allows users to reset their password via email. When a user requests a password reset:
+
+1. The system generates a secure token and stores it in the database.
+2. An email with a password reset link is sent to the user's registered email.
+3. The link is valid for 1 hour and can only be used once.
+
+To enable email delivery for password resets, configure the SMTP settings in your `.env` file as shown above. If SMTP is not configured, the application will log the reset emails to the console instead of sending them.
 
 ## Build from source
 This repository is provided with a configured devcontainer that is available to assist in quickly bootstrapping a local development environment suitable to build and run this application locally. 

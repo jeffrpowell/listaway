@@ -17,6 +17,15 @@ const (
 	ENV_POSTGRES_PASSWORD string = "POSTGRES_PASSWORD"
 	ENV_POSTGRES_HOST     string = "POSTGRES_HOST"
 	ENV_POSTGRES_DB       string = "POSTGRES_DB"
+
+	// SMTP configuration for password reset emails
+	ENV_SMTP_HOST     string = "SMTP_HOST"
+	ENV_SMTP_PORT     string = "SMTP_PORT"
+	ENV_SMTP_USER     string = "SMTP_USER"
+	ENV_SMTP_PASSWORD string = "SMTP_PASSWORD"
+	ENV_SMTP_FROM     string = "SMTP_FROM"
+	ENV_SMTP_SECURE   string = "SMTP_SECURE" // true for TLS/SSL, false for unencrypted
+	ENV_APP_URL       string = "APP_URL"     // base URL for the application (for reset links)
 )
 
 // Database consts
@@ -28,9 +37,21 @@ const (
 	DB_TABLE_LIST       string = "listaway.list"
 	DB_TABLE_USER       string = "listaway.user"
 	DB_TABLE_ITEM       string = "listaway.item"
+	DB_TABLE_RESET      string = "listaway.reset_tokens"
 )
 
 var DB_CONNECTION_STRING string = getDbConnectionString()
+
+// SMTP configuration with defaults
+var (
+	SMTP_HOST     string = loadEnvWithDefault(ENV_SMTP_HOST, "")
+	SMTP_PORT     string = loadEnvWithDefault(ENV_SMTP_PORT, "587")
+	SMTP_USER     string = loadEnvWithDefault(ENV_SMTP_USER, "")
+	SMTP_PASSWORD string = loadEnvWithDefault(ENV_SMTP_PASSWORD, "")
+	SMTP_FROM     string = loadEnvWithDefault(ENV_SMTP_FROM, "noreply@example.com")
+	SMTP_SECURE   string = loadEnvWithDefault(ENV_SMTP_SECURE, "true")
+	APP_URL       string = loadEnvWithDefault(ENV_APP_URL, "http://localhost:8080")
+)
 
 // Handler consts
 const (
