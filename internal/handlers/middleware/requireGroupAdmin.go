@@ -50,8 +50,15 @@ func RequireGroupAdmin(userIdPathVarName string) Middleware {
 				log.Print(err)
 				return
 			}
+			instanceAdmin, err := database.UserIsInstanceAdmin(selfUserId)
+			if err != nil {
+				http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+				log.Print(err)
+				return
+			}
 			// Check #2 - is this admin in the same group as the target user?
-			if selfGroupId != targetGroupId {
+			// Instance admins are an exception to this rule
+			if !instanceAdmin && selfGroupId != targetGroupId {
 				http.Error(w, "Forbidden", http.StatusForbidden)
 				log.Printf("Admin from group %d tried to access user from group %d", selfGroupId, targetGroupId)
 				return
