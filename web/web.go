@@ -31,6 +31,8 @@ var (
 	userAdmin     = parseSplitLayout("dist/userAdmin.html")
 	allUsers      = parseSplitLayout("dist/allUsers.html")
 	userCreate    = parseSplitLayout("dist/userCreate.html")
+	resetRequest  = parseSplitLayout("dist/resetRequest.html")
+	resetForm     = parseSplitLayout("dist/resetForm.html")
 )
 
 func init() {
@@ -138,6 +140,34 @@ func RegisterAdmin(w io.Writer, params registerAdminParams) {
 
 func LoginPage(w io.Writer) {
 	if err := login.Execute(w, globalWebParams{ShowNavbar: false, ChunkName: "login"}); err != nil {
+		log.Print(err)
+	}
+}
+
+// Password Reset pages
+
+type resetRequestPageParams struct {
+	globalWebParams
+}
+
+type resetFormPageParams struct {
+	globalWebParams
+	TokenValid bool
+}
+
+func ResetRequestPage(w io.Writer) {
+	if err := resetRequest.Execute(w, resetRequestPageParams{
+		globalWebParams: globalWebParams{ShowNavbar: false, ChunkName: "resetRequest"},
+	}); err != nil {
+		log.Print(err)
+	}
+}
+
+func ResetFormPage(w io.Writer, tokenValid bool) {
+	if err := resetForm.Execute(w, resetFormPageParams{
+		globalWebParams: globalWebParams{ShowNavbar: false, ChunkName: "resetForm"},
+		TokenValid:      tokenValid,
+	}); err != nil {
 		log.Print(err)
 	}
 }
