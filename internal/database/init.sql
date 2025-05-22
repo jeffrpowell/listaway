@@ -67,4 +67,16 @@ BEGIN
     
 END $$;
 
-CREATE INDEX IF NOT EXISTS user_groupid_idx ON listaway.user (groupid)
+CREATE INDEX IF NOT EXISTS user_groupid_idx ON listaway.user (groupid);
+
+----------------------------------------------------
+--          listaway.reset_tokens table
+----------------------------------------------------
+CREATE TABLE IF NOT EXISTS listaway.reset_tokens (
+    token VARCHAR PRIMARY KEY,
+    email VARCHAR NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    expires_at TIMESTAMP NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS reset_tokens_email_idx ON listaway.reset_tokens (email);

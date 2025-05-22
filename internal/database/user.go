@@ -74,6 +74,36 @@ func checkPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
+// GetUserByEmail returns the user ID if the email exists, -1 if not found
+func GetUserByEmail(email string) (int, error) {
+	db := getDatabaseConnection()
+	defer db.Close()
+	row := db.QueryRow("SELECT id FROM "+constants.DB_TABLE_USER+" WHERE email = $1", email)
+	var userId int
+	err := row.Scan(&userId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return -1, nil
+		}
+		return -1, err
+	}
+	return userId, nil
+}
+
+// UpdateUserPassword updates a user's password given their email
+func UpdateUserPassword(email, newPassword string) error {
+	db := getDatabaseConnection()
+	defer db.Close()
+
+	hash, err := hashPassword(newPassword)
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Exec("UPDATE "+constants.DB_TABLE_USER+" SET passwordhash = $1 WHERE email = $2", hash, email)
+	return err
+}
+
 func UserIsAdmin(userId int) (bool, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
