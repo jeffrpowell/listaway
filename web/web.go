@@ -29,6 +29,7 @@ var (
 	sharedList    = parseSplitLayout("dist/sharedList.html")
 	sharedList404 = parseSingleLayout("dist/sharedList404.html")
 	userAdmin     = parseSplitLayout("dist/userAdmin.html")
+	allUsers      = parseSplitLayout("dist/allUsers.html")
 	userCreate    = parseSplitLayout("dist/userCreate.html")
 )
 
@@ -104,9 +105,10 @@ func parseSingleLayout(file string) *template.Template {
 }
 
 type globalWebParams struct {
-	ShowNavbar bool
-	ShowAdmin  bool
-	ChunkName  string
+	ShowNavbar        bool
+	ShowAdmin         bool
+	ShowInstanceAdmin bool
+	ChunkName         string
 }
 
 // Register Admin page
@@ -148,12 +150,13 @@ type listsPageParams struct {
 	globalWebParams
 }
 
-func ListsPageParams(lists []constants.List, showAdmin bool) listsPageParams {
+func ListsPageParams(lists []constants.List, showAdmin bool, showInstanceAdmin bool) listsPageParams {
 	return listsPageParams{
 		globalWebParams: globalWebParams{
-			ShowNavbar: true,
-			ShowAdmin:  showAdmin,
-			ChunkName:  "lists",
+			ShowNavbar:        true,
+			ShowAdmin:         showAdmin,
+			ShowInstanceAdmin: showInstanceAdmin,
+			ChunkName:         "lists",
 		},
 		Lists:          lists,
 		SharedListPath: constants.SHARED_LIST_PATH,
@@ -168,11 +171,12 @@ func ListsPage(w io.Writer, params listsPageParams) {
 
 // Create List page
 
-func CreateListParams(showAdmin bool) globalWebParams {
+func CreateListParams(showAdmin bool, showInstanceAdmin bool) globalWebParams {
 	return globalWebParams{
-		ShowNavbar: true,
-		ShowAdmin:  showAdmin,
-		ChunkName:  "listCreate",
+		ShowNavbar:        true,
+		ShowAdmin:         showAdmin,
+		ShowInstanceAdmin: showInstanceAdmin,
+		ChunkName:         "listCreate",
 	}
 }
 
@@ -190,12 +194,13 @@ type editListParams struct {
 	globalWebParams
 }
 
-func EditListParams(list constants.List, showAdmin bool) editListParams {
+func EditListParams(list constants.List, showAdmin bool, showInstanceAdmin bool) editListParams {
 	return editListParams{
 		globalWebParams: globalWebParams{
-			ShowNavbar: true,
-			ShowAdmin:  showAdmin,
-			ChunkName:  "listEdit",
+			ShowNavbar:        true,
+			ShowAdmin:         showAdmin,
+			ShowInstanceAdmin: showInstanceAdmin,
+			ChunkName:         "listEdit",
 		},
 		List:           list,
 		SharedListPath: constants.SHARED_LIST_PATH,
@@ -216,12 +221,13 @@ type listItemsPageParams struct {
 	globalWebParams
 }
 
-func ListItemsPageParams(list constants.List, items []constants.Item, showAdmin bool) listItemsPageParams {
+func ListItemsPageParams(list constants.List, items []constants.Item, showAdmin bool, showInstanceAdmin bool) listItemsPageParams {
 	return listItemsPageParams{
 		globalWebParams: globalWebParams{
-			ShowNavbar: true,
-			ShowAdmin:  showAdmin,
-			ChunkName:  "listItems",
+			ShowNavbar:        true,
+			ShowAdmin:         showAdmin,
+			ShowInstanceAdmin: showInstanceAdmin,
+			ChunkName:         "listItems",
 		},
 		List:  list,
 		Items: items,
@@ -243,12 +249,13 @@ type createEditItemParams struct {
 	EditMode bool
 }
 
-func CreateItemParams(list constants.List, showAdmin bool) createEditItemParams {
+func CreateItemParams(list constants.List, showAdmin bool, showInstanceAdmin bool) createEditItemParams {
 	return createEditItemParams{
 		globalWebParams: globalWebParams{
-			ShowNavbar: true,
-			ShowAdmin:  showAdmin,
-			ChunkName:  "itemCreate",
+			ShowNavbar:        true,
+			ShowAdmin:         showAdmin,
+			ShowInstanceAdmin: showInstanceAdmin,
+			ChunkName:         "itemCreate",
 		},
 		List:     list,
 		Item:     constants.Item{},
@@ -256,12 +263,13 @@ func CreateItemParams(list constants.List, showAdmin bool) createEditItemParams 
 	}
 }
 
-func EditItemParams(list constants.List, item constants.Item, showAdmin bool) createEditItemParams {
+func EditItemParams(list constants.List, item constants.Item, showAdmin bool, showInstanceAdmin bool) createEditItemParams {
 	return createEditItemParams{
 		globalWebParams: globalWebParams{
-			ShowNavbar: true,
-			ShowAdmin:  showAdmin,
-			ChunkName:  "itemCreate",
+			ShowNavbar:        true,
+			ShowAdmin:         showAdmin,
+			ShowInstanceAdmin: showInstanceAdmin,
+			ChunkName:         "itemCreate",
 		},
 		List:     list,
 		Item:     item,
@@ -284,12 +292,13 @@ type sharedListItemsPageParams struct {
 	globalWebParams
 }
 
-func SharedListItemsPageParams(shareCode string, list constants.List, items []constants.Item, showAdmin bool) sharedListItemsPageParams {
+func SharedListItemsPageParams(shareCode string, list constants.List, items []constants.Item, showAdmin bool, showInstanceAdmin bool) sharedListItemsPageParams {
 	return sharedListItemsPageParams{
 		globalWebParams: globalWebParams{
-			ShowNavbar: true,
-			ShowAdmin:  showAdmin,
-			ChunkName:  "sharedList",
+			ShowNavbar:        true,
+			ShowAdmin:         showAdmin,
+			ShowInstanceAdmin: showInstanceAdmin,
+			ChunkName:         "sharedList",
 		},
 		List:      list,
 		Items:     items,
@@ -334,12 +343,13 @@ type userAdminPageParams struct {
 	globalWebParams
 }
 
-func UserAdminPageParams(users []constants.UserRead, selfId int, showAdmin bool) userAdminPageParams {
+func UserAdminPageParams(users []constants.UserRead, selfId int, showAdmin bool, showInstanceAdmin bool) userAdminPageParams {
 	return userAdminPageParams{
 		globalWebParams: globalWebParams{
-			ShowNavbar: true,
-			ShowAdmin:  showAdmin,
-			ChunkName:  "userAdmin",
+			ShowNavbar:        true,
+			ShowAdmin:         showAdmin,
+			ShowInstanceAdmin: showInstanceAdmin,
+			ChunkName:         "userAdmin",
 		},
 		Users:  users,
 		SelfId: selfId,
@@ -352,17 +362,53 @@ func UserAdminPage(w io.Writer, params userAdminPageParams) {
 	}
 }
 
-// Create User page
+// All Users page (Instance Admin)
 
-func CreateUserParams(showAdmin bool) globalWebParams {
-	return globalWebParams{
-		ShowNavbar: true,
-		ShowAdmin:  showAdmin,
-		ChunkName:  "userCreate",
+type allUsersPageParams struct {
+	Users  []constants.UserRead
+	SelfId int
+	globalWebParams
+}
+
+func AllUsersPageParams(users []constants.UserRead, selfId int, showInstanceAdmin bool) allUsersPageParams {
+	return allUsersPageParams{
+		globalWebParams: globalWebParams{
+			ShowNavbar:        true,
+			ShowAdmin:         true,
+			ShowInstanceAdmin: showInstanceAdmin,
+			ChunkName:         "allUsers",
+		},
+		Users:  users,
+		SelfId: selfId,
 	}
 }
 
-func CreateUserPage(w io.Writer, params globalWebParams) {
+func AllUsersPage(w io.Writer, params allUsersPageParams) {
+	if err := allUsers.Execute(w, params); err != nil {
+		log.Print(err)
+	}
+}
+
+// Create User page
+
+type createUserPageParams struct {
+	globalWebParams
+	GroupAdmins []constants.UserRead
+}
+
+func CreateUserParams(showAdmin bool, showInstanceAdmin bool, groupAdmins []constants.UserRead) createUserPageParams {
+	return createUserPageParams{
+		globalWebParams: globalWebParams{
+			ShowNavbar:        true,
+			ShowAdmin:         showAdmin,
+			ShowInstanceAdmin: showInstanceAdmin,
+			ChunkName:         "userCreate",
+		},
+		GroupAdmins: groupAdmins,
+	}
+}
+
+func CreateUserPage(w io.Writer, params createUserPageParams) {
 	if err := userCreate.Execute(w, params); err != nil {
 		log.Print(err)
 	}

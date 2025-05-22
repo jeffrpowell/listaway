@@ -37,3 +37,15 @@ func IsUserAdmin(r *http.Request) bool {
 	}
 	return admin
 }
+
+func IsUserInstanceAdmin(r *http.Request) bool {
+	userId, err := GetUserId(r)
+	if err != nil {
+		return false
+	}
+	instanceAdmin, err := database.UserIsInstanceAdmin(userId)
+	if err != nil {
+		return false
+	}
+	return instanceAdmin
+}

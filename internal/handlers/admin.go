@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/jeffrpowell/listaway/internal/constants"
@@ -111,50 +112,131 @@ func userAdminGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	admin := helper.IsUserAdmin(r)
-	params := web.UserAdminPageParams(users, selfId, admin)
+	instanceAdmin := helper.IsUserInstanceAdmin(r)
+	params := web.UserAdminPageParams(users, selfId, admin, instanceAdmin)
 	web.UserAdminPage(w, params)
 }
 
 /* Create user page */
 func createUserGET(w http.ResponseWriter, r *http.Request) {
 	admin := helper.IsUserAdmin(r)
-	params := web.CreateUserParams(admin)
+	instanceAdmin := helper.IsUserInstanceAdmin(r)
+
+	var groupAdmins []constants.UserRead
+	if instanceAdmin {
+		// Fetch all group admins for instance admin to select from
+		var err error
+		groupAdmins, err = database.GetAllGroupAdmins()
+		if err != nil {
+			http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+			log.Print(err)
+			return
+		}
+	}
+
+	params := web.CreateUserParams(admin, instanceAdmin, groupAdmins)
 	web.CreateUserPage(w, params)
 }
 
 /* Submit new user */
 func createUserPUT(w http.ResponseWriter, r *http.Request) {
-	var admin = r.FormValue("admin") == "on"
+	// Get current user's info
 	selfId, err := helper.GetUserId(r)
 	if err != nil {
 		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
 		log.Print(err)
 		return
 	}
-	groupId, err := database.GetUserGroupId(selfId)
-	if err != nil {
-		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
-		log.Print(err)
-		return
+
+	// Check if the current user is an instance admin
+	instanceAdmin := helper.IsUserInstanceAdmin(r)
+
+	var groupId int
+	var admin = r.FormValue("admin") == "on"
+
+	// Handle the different cases based on user type
+	if instanceAdmin {
+		// Instance admin has special creation options
+		userCreationType := r.FormValue("userCreationType")
+
+		switch userCreationType {
+		case "newGroup":
+			// Create a new group with this user as the group admin
+			// Get the next available group ID from the database layer
+			var err error
+			groupId, err = database.GetNextAvailableGroupId()
+			if err != nil {
+				http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+				log.Print(err)
+				return
+			}
+
+			// Force admin to be true for new group
+			admin = true
+
+		case "existingGroup":
+			// Add user to an existing group
+			existingGroupAdmin := r.FormValue("existingGroupAdmin")
+			if existingGroupAdmin == "" {
+				http.Error(w, "No group selected", http.StatusBadRequest)
+				return
+			}
+
+			// Convert the existingGroupAdmin (user ID) to an int
+			existingGroupAdminId, err := strconv.Atoi(existingGroupAdmin)
+			if err != nil {
+				http.Error(w, "Invalid group selection", http.StatusBadRequest)
+				return
+			}
+
+			// Get the group ID of the selected admin
+			groupId, err = database.GetUserGroupId(existingGroupAdminId)
+			if err != nil {
+				http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+				log.Print(err)
+				return
+			}
+
+		default:
+			http.Error(w, "Invalid user creation type", http.StatusBadRequest)
+			return
+		}
+	} else {
+		// Regular admin - use their group ID
+		groupId, err = database.GetUserGroupId(selfId)
+		if err != nil {
+			http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+			log.Print(err)
+			return
+		}
 	}
+
+	// Create the new user
 	newUser := constants.UserRegister{
 		GroupId:       groupId,
 		Email:         r.FormValue("email"),
 		Name:          r.FormValue("name"),
 		Password:      r.FormValue("password"),
 		Admin:         admin,
-		InstanceAdmin: false,
+		InstanceAdmin: false, // Never create a new user as instance admin via this form
 	}
+
 	if invalid, reason := newUserIsInvalid(newUser); invalid {
 		http.Error(w, reason, http.StatusBadRequest)
 		return
 	}
+
 	err = database.RegisterUser(newUser)
 	if err != nil {
 		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
 		log.Print(err)
 	} else {
-		w.Header().Add("Location", "/admin/users")
+		// Return to appropriate page - all users for instance admin, users in group for group admin
+		if instanceAdmin {
+			w.Header().Add("Location", "/admin/allusers")
+		} else {
+			w.Header().Add("Location", "/admin/users")
+		}
 		w.WriteHeader(http.StatusNoContent)
 	}
 }
@@ -200,6 +282,17 @@ func toggleUserAdmin(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Invalid userId supplied in path", http.StatusBadRequest)
 		log.Print(err)
+		return
+	}
+	// Don't allow users to demote themselves
+	selfId, err := helper.GetUserId(r)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	if userId == selfId {
+		http.Error(w, "Cannot change your own admin status", http.StatusForbidden)
 		return
 	}
 	admin, err := database.UserIsAdmin(userId)

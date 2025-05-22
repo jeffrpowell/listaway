@@ -14,6 +14,7 @@
             <div class="flex items-center space-x-4">
                 <span class="logout text-white cursor-pointer">Logout</span>
                 {{if .ShowAdmin}}<a href="/admin/users" class="text-white">User Admin</a>{{end}}
+                {{if .ShowInstanceAdmin}}<a href="/admin/allusers" class="text-white">All Users</a>{{end}}
             </div>
         </div>
     </div>
@@ -27,6 +28,7 @@
             <a href="/" class="text-white text-lg font-bold">Listaway</a>
             <div class="hidden md:flex items-center space-x-4">
                 {{if .ShowAdmin}}<a href="/admin/users" class="text-white">User Admin</a>{{end}}
+                {{if .ShowInstanceAdmin}}<a href="/admin/allusers" class="text-white">All Users</a>{{end}}
                 <span class="logout text-white cursor-pointer">Logout</span>
             </div>
         </div>

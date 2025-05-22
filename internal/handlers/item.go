@@ -42,7 +42,8 @@ func createItemGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	admin := helper.IsUserAdmin(r)
-	web.CreateEditItemPage(w, web.CreateItemParams(list, admin))
+	instanceAdmin := helper.IsUserInstanceAdmin(r)
+	web.CreateEditItemPage(w, web.CreateItemParams(list, admin, instanceAdmin))
 }
 
 /* Create item */
@@ -90,7 +91,8 @@ func itemEditGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	admin := helper.IsUserAdmin(r)
-	web.CreateEditItemPage(w, web.EditItemParams(list, item, admin))
+	instanceAdmin := helper.IsUserInstanceAdmin(r)
+	web.CreateEditItemPage(w, web.EditItemParams(list, item, admin, instanceAdmin))
 }
 
 /* Update item */
