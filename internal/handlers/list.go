@@ -54,15 +54,26 @@ func listsGET(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
+	
+	// Get user's lists
 	lists, err := database.GetLists(userId)
 	if err != nil {
 		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
 		log.Print(err)
 		return
 	}
+	
+	// Get user's collections
+	collections, err := database.GetCollections(userId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	
 	admin := helper.IsUserAdmin(r)
 	instanceAdmin := helper.IsUserInstanceAdmin(r)
-	listsPage := web.ListsPageParams(lists, admin, instanceAdmin)
+	listsPage := web.ListsPageParams(lists, collections, admin, instanceAdmin)
 	web.ListsPage(w, listsPage)
 }
 

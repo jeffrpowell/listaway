@@ -16,6 +16,13 @@ module.exports = {
       userAdmin: './app/pages/userAdmin.js',
       userCreate: './app/pages/userCreate.js',
       allUsers: './app/pages/allUsers.js',
+      // Collection feature pages
+      collections: './app/pages/collections.js',
+      collectionCreate: './app/pages/collectionCreate.js',
+      collectionDetail: './app/pages/collectionDetail.js',
+      collectionEdit: './app/pages/collectionEdit.js',
+      sharedCollection: './app/pages/sharedCollection.js',
+      sharedCollection404: './app/pages/sharedCollection404.js',
     },
     output: {
         filename: '[name].js',

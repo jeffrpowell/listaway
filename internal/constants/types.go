@@ -47,3 +47,23 @@ type Item struct {
 	Priority sql.NullInt64  `json:"priority"`
 	Notes    sql.NullString `json:"notes"`
 }
+
+type Collection struct {
+	Id          uint64
+	Name        string
+	Description sql.NullString
+	ShareCode   sql.NullString
+}
+
+type CollectionPostParams struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+type CollectionList struct {
+	ListId       uint64
+	Name         string
+	Description  sql.NullString
+	ShareCode    sql.NullString
+	DisplayOrder int
+}
