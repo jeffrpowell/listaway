@@ -1,0 +1,39 @@
+{{define "all"}}
+  <div class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold">{{.Collection.Name}}</h1>
+      <p class="text-gray-600 mt-2">{{if .Collection.Description.Valid}}{{.Collection.Description.String}}{{end}}</p>
+      <p class="text-sm text-gray-500 mt-2">This is a shared collection. The link to access it is shareable.</p>
+    </div>
+    
+    <div class="space-y-8">
+      {{range .Lists}}
+      <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <div class="p-6">
+          <h2 class="text-2xl font-semibold mb-3">{{.Name}}</h2>
+          <p class="text-gray-600 mb-4">{{if .Description.Valid}}{{.Description.String}}{{end}}</p>
+          
+          <div id="listItems-{{.ListId}}" class="mt-4">
+            <p class="text-center text-gray-500 py-4">Loading items...</p>
+          </div>
+          
+          {{if .ShareCode.Valid}}
+          <div class="mt-4 text-right">
+            <a href="/sharedlist/{{.ShareCode.String}}" class="text-blue-600 hover:text-blue-800 text-sm">
+              View individual list
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          </div>
+          {{end}}
+        </div>
+      </div>
+      {{else}}
+      <div class="text-center py-12 bg-white shadow-md rounded-lg">
+        <h3 class="text-xl font-medium text-gray-500">This collection has no lists.</h3>
+      </div>
+      {{end}}
+    </div>
+  </div>
+{{end}}

@@ -80,3 +80,30 @@ CREATE TABLE IF NOT EXISTS listaway.reset_tokens (
 );
 
 CREATE INDEX IF NOT EXISTS reset_tokens_email_idx ON listaway.reset_tokens (email);
+
+----------------------------------------------------
+--          listaway.collection table
+----------------------------------------------------
+CREATE TABLE IF NOT EXISTS listaway.collection (
+    id SERIAL PRIMARY KEY,
+    userid BIGINT NOT NULL,
+    name VARCHAR NOT NULL,
+    description VARCHAR NULL,
+    sharecode VARCHAR
+);
+
+CREATE INDEX IF NOT EXISTS collection_userid_idx ON listaway.collection (userid);
+CREATE INDEX IF NOT EXISTS collection_sharecode_idx ON listaway.collection (sharecode);
+
+----------------------------------------------------
+--          listaway.collection_list table
+----------------------------------------------------
+CREATE TABLE IF NOT EXISTS listaway.collection_list (
+    collectionid BIGINT NOT NULL,
+    listid BIGINT NOT NULL,
+    displayorder INT NOT NULL DEFAULT 0,
+    PRIMARY KEY (collectionid, listid)
+);
+
+CREATE INDEX IF NOT EXISTS collection_list_collectionid_idx ON listaway.collection_list (collectionid);
+CREATE INDEX IF NOT EXISTS collection_list_listid_idx ON listaway.collection_list (listid)
