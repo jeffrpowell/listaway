@@ -19,19 +19,25 @@ import (
 //go:embed dist/*
 var staticFiles embed.FS
 var (
-	registerAdmin = parseSingleLayout("dist/registerAdmin.html")
-	login         = parseSingleLayout("dist/login.html")
-	lists         = parseSingleLayout("dist/lists.html")
-	createList    = parseSingleLayout("dist/listCreate.html")
-	editList      = parseSingleLayout("dist/listEdit.html")
-	listItems     = parseSingleLayout("dist/listItems.html")
-	createItem    = parseSingleLayout("dist/itemCreate.html")
-	sharedList    = parseSingleLayout("dist/sharedList.html")
-	sharedList404 = parseSingleLayout("dist/sharedList404.html")
-	userAdmin     = parseSingleLayout("dist/userAdmin.html")
-	allUsers      = parseSingleLayout("dist/allUsers.html")
-	userCreate    = parseSingleLayout("dist/userCreate.html")
-	resetForm     = parseSingleLayout("dist/resetForm.html")
+	registerAdmin       = parseSingleLayout("dist/registerAdmin.html")
+	login               = parseSingleLayout("dist/login.html")
+	lists               = parseSingleLayout("dist/lists.html")
+	createList          = parseSingleLayout("dist/listCreate.html")
+	editList            = parseSingleLayout("dist/listEdit.html")
+	listItems           = parseSingleLayout("dist/listItems.html")
+	createItem          = parseSingleLayout("dist/itemCreate.html")
+	sharedList          = parseSingleLayout("dist/sharedList.html")
+	sharedList404       = parseSingleLayout("dist/sharedList404.html")
+	resetForm           = parseSingleLayout("dist/resetForm.html")
+	collections         = parseSingleLayout("dist/collections.html")
+	createCollection    = parseSingleLayout("dist/collectionCreate.html")
+	editCollection      = parseSingleLayout("dist/collectionEdit.html")
+	collectionDetail    = parseSingleLayout("dist/collectionDetail.html")
+	sharedCollection    = parseSingleLayout("dist/sharedCollection.html")
+	sharedCollection404 = parseSingleLayout("dist/sharedCollection404.html")
+	userAdmin           = parseSingleLayout("dist/userAdmin.html")
+	allUsers            = parseSingleLayout("dist/allUsers.html")
+	userCreate          = parseSingleLayout("dist/userCreate.html")
 )
 
 func init() {
@@ -168,12 +174,14 @@ func ResetFormPage(w io.Writer, tokenValid bool) {
 // Lists page
 
 type listsPageParams struct {
-	Lists          []constants.List
-	SharedListPath string
+	Lists                []constants.List
+	Collections          []constants.Collection
+	SharedListPath       string
+	SharedCollectionPath string
 	globalWebParams
 }
 
-func ListsPageParams(lists []constants.List, showAdmin bool, showInstanceAdmin bool) listsPageParams {
+func ListsPageParams(lists []constants.List, collections []constants.Collection, showAdmin bool, showInstanceAdmin bool) listsPageParams {
 	return listsPageParams{
 		globalWebParams: globalWebParams{
 			ShowNavbar:        true,
@@ -181,8 +189,10 @@ func ListsPageParams(lists []constants.List, showAdmin bool, showInstanceAdmin b
 			ShowInstanceAdmin: showInstanceAdmin,
 			ChunkName:         "lists",
 		},
-		Lists:          lists,
-		SharedListPath: constants.SHARED_LIST_PATH,
+		Lists:                lists,
+		Collections:          collections,
+		SharedListPath:       constants.SHARED_LIST_PATH,
+		SharedCollectionPath: constants.SHARED_COLLECTION_PATH,
 	}
 }
 
@@ -435,6 +445,150 @@ func CreateUserParams(showAdmin bool, showInstanceAdmin bool, groupAdmins []cons
 
 func CreateUserPage(w io.Writer, params createUserPageParams) {
 	if err := userCreate.Execute(w, params); err != nil {
+		log.Print(err)
+	}
+}
+
+// Collections page
+type collectionsPageParams struct {
+	Collections          []constants.Collection
+	SharedCollectionPath string
+	globalWebParams
+}
+
+func CollectionsPageParams(collections []constants.Collection, showAdmin bool, showInstanceAdmin bool) collectionsPageParams {
+	return collectionsPageParams{
+		globalWebParams: globalWebParams{
+			ShowNavbar:        true,
+			ShowAdmin:         showAdmin,
+			ShowInstanceAdmin: showInstanceAdmin,
+			ChunkName:         "collections",
+		},
+		Collections:          collections,
+		SharedCollectionPath: constants.SHARED_COLLECTION_PATH,
+	}
+}
+
+func CollectionsPage(w io.Writer, params collectionsPageParams) {
+	if err := collections.Execute(w, params); err != nil {
+		log.Print(err)
+	}
+}
+
+// Create Collection page
+func CreateCollectionParams(showAdmin bool, showInstanceAdmin bool) globalWebParams {
+	return globalWebParams{
+		ShowNavbar:        true,
+		ShowAdmin:         showAdmin,
+		ShowInstanceAdmin: showInstanceAdmin,
+		ChunkName:         "collectionCreate",
+	}
+}
+
+func CreateCollectionPage(w io.Writer, params globalWebParams) {
+	if err := createCollection.Execute(w, params); err != nil {
+		log.Print(err)
+	}
+}
+
+// Edit Collection page
+type editCollectionParams struct {
+	Collection           constants.Collection
+	SharedCollectionPath string
+	globalWebParams
+}
+
+func EditCollectionParams(collection constants.Collection, showAdmin bool, showInstanceAdmin bool) editCollectionParams {
+	return editCollectionParams{
+		globalWebParams: globalWebParams{
+			ShowNavbar:        true,
+			ShowAdmin:         showAdmin,
+			ShowInstanceAdmin: showInstanceAdmin,
+			ChunkName:         "collectionEdit",
+		},
+		Collection:           collection,
+		SharedCollectionPath: constants.SHARED_COLLECTION_PATH,
+	}
+}
+
+func EditCollectionPage(w io.Writer, params editCollectionParams) {
+	if err := editCollection.Execute(w, params); err != nil {
+		log.Print(err)
+	}
+}
+
+// Collection Detail page
+type collectionDetailPageParams struct {
+	Collection constants.Collection
+	Lists      []constants.CollectionList
+	globalWebParams
+}
+
+func CollectionDetailPageParams(collection constants.Collection, lists []constants.CollectionList, showAdmin bool, showInstanceAdmin bool) collectionDetailPageParams {
+	return collectionDetailPageParams{
+		globalWebParams: globalWebParams{
+			ShowNavbar:        true,
+			ShowAdmin:         showAdmin,
+			ShowInstanceAdmin: showInstanceAdmin,
+			ChunkName:         "collectionDetail",
+		},
+		Collection: collection,
+		Lists:      lists,
+	}
+}
+
+func CollectionDetailPage(w io.Writer, params collectionDetailPageParams) {
+	if err := collectionDetail.Execute(w, params); err != nil {
+		log.Print(err)
+	}
+}
+
+// Shared Collection page
+type sharedCollectionPageParams struct {
+	Collection constants.Collection
+	Lists      []constants.CollectionList
+	ShareCode  string
+	globalWebParams
+}
+
+func SharedCollectionPageParams(shareCode string, collection constants.Collection, lists []constants.CollectionList, showAdmin bool, showInstanceAdmin bool) sharedCollectionPageParams {
+	return sharedCollectionPageParams{
+		globalWebParams: globalWebParams{
+			ShowNavbar:        true,
+			ShowAdmin:         showAdmin,
+			ShowInstanceAdmin: showInstanceAdmin,
+			ChunkName:         "sharedCollection",
+		},
+		Collection: collection,
+		Lists:      lists,
+		ShareCode:  shareCode,
+	}
+}
+
+func SharedCollectionPage(w io.Writer, params sharedCollectionPageParams) {
+	if err := sharedCollection.Execute(w, params); err != nil {
+		log.Print(err)
+	}
+}
+
+// Shared Collection 404 page
+type sharedCollection404PageParams struct {
+	ShareCode string
+	globalWebParams
+}
+
+func SharedCollection404PageParams(shareCode string) sharedCollection404PageParams {
+	return sharedCollection404PageParams{
+		globalWebParams: globalWebParams{
+			ShowNavbar: false,
+			ChunkName:  "sharedCollection404",
+		},
+		ShareCode: shareCode,
+	}
+}
+
+func SharedCollection404Page(w io.Writer, params sharedCollection404PageParams) {
+	if err := sharedCollection404.Execute(w, params); err != nil {
 		log.Print(err)
 	}
 }

@@ -1,0 +1,32 @@
+{{define "all"}}
+  <div class="container mx-auto px-4 py-8">
+    <div class="mb-6">
+      <h1 class="text-3xl font-bold">Create New Collection</h1>
+      <p class="text-gray-600 mt-2">Create a collection to group related lists together.</p>
+    </div>
+    
+    <div class="bg-white shadow-md rounded-lg p-6">
+      <form class="collection-form space-y-4">
+        <div class="form-control">
+          <label for="name" class="label">
+            <span class="label-text">Collection Name</span>
+          </label>
+          <input type="text" id="name" name="name" class="input input-bordered w-full" required />
+        </div>
+        
+        <div class="form-control">
+          <label for="description" class="label">
+            <span class="label-text">Description (Optional)</span>
+          </label>
+          <textarea id="description" name="description" class="textarea textarea-bordered h-24" placeholder="Describe the purpose of this collection..."></textarea>
+        </div>
+        
+        <div class="flex justify-end space-x-3 mt-6">
+          <a href="/collections" class="btn btn-outline">Cancel</a>
+          <button type="submit" class="opacity-50 cursor-not-allowed btn btn-primary">Create Collection</button>
+        </div>
+        <span class="error-span text-red-500 italic mt-2 hidden"></span>
+      </form>
+    </div>
+  </div>
+{{end}}

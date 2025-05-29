@@ -30,14 +30,16 @@ const (
 
 // Database consts
 const (
-	DB_DEFAULT_USER     string = "listaway"
-	DB_DEFAULT_PASSWORD string = "listaway"
-	DB_DEFAULT_HOST     string = "localhost"
-	DB_DEFAULT_DB       string = "listaway"
-	DB_TABLE_LIST       string = "listaway.list"
-	DB_TABLE_USER       string = "listaway.user"
-	DB_TABLE_ITEM       string = "listaway.item"
-	DB_TABLE_RESET      string = "listaway.reset_tokens"
+	DB_DEFAULT_USER          string = "listaway"
+	DB_DEFAULT_PASSWORD      string = "listaway"
+	DB_DEFAULT_HOST          string = "localhost"
+	DB_DEFAULT_DB            string = "listaway"
+	DB_TABLE_LIST            string = "listaway.list"
+	DB_TABLE_USER            string = "listaway.user"
+	DB_TABLE_ITEM            string = "listaway.item"
+	DB_TABLE_RESET           string = "listaway.reset_tokens"
+	DB_TABLE_COLLECTION      string = "listaway.collection"
+	DB_TABLE_COLLECTION_LIST string = "listaway.collection_list"
 )
 
 var DB_CONNECTION_STRING string = getDbConnectionString()
@@ -55,9 +57,10 @@ var (
 
 // Handler consts
 const (
-	COOKIE_NAME_SESSION string = "session"
-	SHARED_LIST_PATH    string = "sharedlist"
-	defaultPort         string = "8080"
+	COOKIE_NAME_SESSION    string = "session"
+	SHARED_LIST_PATH       string = "sharedlist"
+	SHARED_COLLECTION_PATH string = "sharedcollection"
+	defaultPort            string = "8080"
 )
 
 var PORT string = loadEnvWithDefault(ENV_PORT, defaultPort)
