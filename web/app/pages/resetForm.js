@@ -1,3 +1,5 @@
+require("../index")
+
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.querySelector('.reset-form');
     if (!form) return;

@@ -1,5 +1,11 @@
 require("../index")
 
+const pwdGroup = document.getElementById("password-group");
+const pwdInput = document.getElementById("password");
+const submitBtn = document.getElementById("submit-btn");
+const forgotLink = document.getElementById("forgot-link");
+const errorSpan = document.getElementById("error-span");
+
 async function sendData(form) {
     const formData = new FormData(form);
     const mode = form.dataset.mode;              // "login" or "reset"
@@ -27,8 +33,7 @@ async function sendData(form) {
                 window.location.href = response.headers.get("Location");
             } else {
                 // reset requested – show a success message
-                alert("If that email is in our system you’ll receive reset instructions shortly.");
-                // Optional: go back to login form automatically
+                showError(200);
                 showLoginForm();
             }
         }
@@ -39,18 +44,11 @@ async function sendData(form) {
 }
 
 // Take over form submission
-const forms = document.querySelectorAll(".login-form");
-forms.forEach(form => form.addEventListener("submit", (event) => {
-    event.preventDefault();
+const form = document.getElementById("login-form");
+form.addEventListener("submit", e => {
+    e.preventDefault();
     sendData(form);
-}));
-
-// cache a few elements
-const pwdGroup = document.getElementById("password-group");
-const pwdInput = document.getElementById("password");
-const submitBtn = document.getElementById("submit-btn");
-const forgotLink = document.getElementById("forgot-link");
-const errorSpan = document.querySelector(".error-span");
+});
 
 // Show the reset‑password “mode”
 function showResetForm() {
@@ -68,7 +66,6 @@ function showLoginForm() {
     pwdInput.disabled = false;
     submitBtn.innerText = "Sign In";
     forgotLink.innerText = "Forgot password?";
-    errorSpan.classList.add("hidden");     // clear any lingering error
 }
 
 // Toggle when someone clicks the link
@@ -85,6 +82,8 @@ forgotLink.addEventListener("click", e => {
 function showError(statusCode) {
     if (statusCode === 401) {
         errorSpan.innerText = "Email or password is not recognized.";
+    } else if (statusCode === 200){
+        errorSpan.innerText = "If that email is in our system, it will receive reset instructions shortly."
     } else {
         errorSpan.innerText = "Unexpected error occurred. Please try again later.";
     }

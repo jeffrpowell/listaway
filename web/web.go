@@ -20,7 +20,7 @@ import (
 var staticFiles embed.FS
 var (
 	registerAdmin = parseSingleLayout("dist/registerAdmin.html")
-	login         = parseSplitLayout("dist/login.html")
+	login         = parseSingleLayout("dist/login.html")
 	lists         = parseSingleLayout("dist/lists.html")
 	createList    = parseSingleLayout("dist/listCreate.html")
 	editList      = parseSingleLayout("dist/listEdit.html")
@@ -31,7 +31,6 @@ var (
 	userAdmin     = parseSingleLayout("dist/userAdmin.html")
 	allUsers      = parseSingleLayout("dist/allUsers.html")
 	userCreate    = parseSingleLayout("dist/userCreate.html")
-	resetRequest  = parseSingleLayout("dist/resetRequest.html")
 	resetForm     = parseSingleLayout("dist/resetForm.html")
 )
 
@@ -146,29 +145,21 @@ func LoginPage(w io.Writer) {
 	}
 }
 
-// Password Reset pages
-
-type resetRequestPageParams struct {
-	globalWebParams
-}
-
+// Password Reset page
 type resetFormPageParams struct {
 	globalWebParams
 	TokenValid bool
 }
 
-func ResetRequestPage(w io.Writer) {
-	if err := resetRequest.Execute(w, resetRequestPageParams{
-		globalWebParams: globalWebParams{ShowNavbar: false, ChunkName: "resetRequest"},
-	}); err != nil {
-		log.Print(err)
-	}
-}
-
 func ResetFormPage(w io.Writer, tokenValid bool) {
 	if err := resetForm.Execute(w, resetFormPageParams{
-		globalWebParams: globalWebParams{ShowNavbar: false, ChunkName: "resetForm"},
-		TokenValid:      tokenValid,
+		globalWebParams: globalWebParams{
+			ShowNavbar:        false,
+			ShowAdmin:         false,
+			ShowInstanceAdmin: false,
+			ChunkName:         "resetForm",
+		},
+		TokenValid: tokenValid,
 	}); err != nil {
 		log.Print(err)
 	}

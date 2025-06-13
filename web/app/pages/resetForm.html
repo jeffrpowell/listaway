@@ -1,28 +1,45 @@
 {{define "all"}}
-<h1 class="text-3xl font-bold text-center mb-8">Set New Password</h1>
-<form class="reset-form bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-    <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="new-password">
-            New Password
-        </label>
-        <input
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="new-password" type="password" name="password" placeholder="New Password" autocomplete="new-password">
+<!-- Responsive container with flex layout that changes direction on different screen sizes -->
+<div class="flex flex-col md:flex-row self-center items-center justify-center my-auto w-full">
+
+    <!-- Intro Section (Full width on mobile, 2/3 on larger screens) -->
+    <div class="w-full md:w-2/3 md:mr-8 text-center md:text-left mb-8 md:mb-0">
+        <h1 class="text-3xl md:text-5xl font-bold mb-4">Listaway</h1>
+        <p class="text-gray-600 md:text-xl md:text-gray-800">Reset your password to regain access to your account.</p>
     </div>
-    <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="confirm-password">
-            Confirm Password
-        </label>
-        <input
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="confirm-password" type="password" name="confirmPassword" placeholder="Confirm Password" autocomplete="new-password">
+
+    <!-- Form Section (Full width on mobile, 1/3 on larger screens) -->
+    <div class="w-full md:w-1/3">
+        {{if .TokenValid}}
+        <form class="reset-form bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <h2 class="text-2xl font-bold mb-6 text-center">Set New Password</h2>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="new-password">
+                    New Password
+                </label>
+                <input
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="new-password" type="password" name="password" placeholder="New Password" autocomplete="new-password">
+            </div>
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="confirm-password">
+                    Confirm Password
+                </label>
+                <input
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                    id="confirm-password" type="password" name="confirmPassword" placeholder="Confirm Password" autocomplete="new-password">
+            </div>
+            <div class="flex items-center justify-between">
+                <button type="submit"
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Set Password
+                </button>
+                <span class="reset-form-error-span text-red-500 italic hidden"></span>
+            </div>
+        </form>
+        {{else}}
+        <span class="reset-form-error-span text-red-500 italic">Invalid reset token provided. Please use the form on the <a href="/auth" class="text-blue-500 underline">login page</a> to submit a new password reset request.</span>
+        {{end}}
     </div>
-    <div class="flex items-center justify-between">
-        <button type="submit"
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-            Set Password
-        </button>
-        <span class="reset-form-error-span text-red-500 italic hidden"></span>
-    </div>
-</form>
+</div>
 {{end}}
