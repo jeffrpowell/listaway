@@ -4,13 +4,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/smtp"
-	"strconv"
 	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/jeffrpowell/listaway/internal/constants"
 	"github.com/jeffrpowell/listaway/internal/database"
+	"github.com/jeffrpowell/listaway/internal/handlers/helper"
 	"github.com/jeffrpowell/listaway/internal/handlers/middleware"
 	"github.com/jeffrpowell/listaway/web"
 )
@@ -83,7 +82,7 @@ func sendResetEmail(email, token string) {
 	resetURL := fmt.Sprintf("%s/reset/%s", baseURL, token)
 
 	// Email template
-	emailSubject := "Password Reset Request"
+	emailSubject := "Password Reset Request - Listaway"
 	// Build plain text email body
 	plainBody := fmt.Sprintf(
 		"Hello,\n\nA password reset was requested for your Listaway account.\n\n"+
@@ -92,34 +91,13 @@ func sendResetEmail(email, token string) {
 			"If you did not request this password reset, please ignore this email.\n\n"+
 			"Regards,\nThe Listaway Team", resetURL)
 
-	// If SMTP is not configured, just log the email
-	if constants.SMTP_HOST == "" || constants.SMTP_USER == "" {
-		log.Printf("[EMAIL STUB] To: %s, Subject: %s\nBody:\n%s", email, emailSubject, plainBody)
+	// Build MIME email with headers
+	err, shouldReturn := helper.SendEmailOverSMTP(email, emailSubject, plainBody)
+	if shouldReturn {
+		//error already logged, proceed up the call stack
 		return
 	}
 
-	// Build MIME email with headers
-	mimeHeaders := "MIME-Version: 1.0\r\n" +
-		"Content-Type: text/plain; charset=UTF-8\r\n" +
-		"From: " + constants.SMTP_FROM + "\r\n" +
-		"To: " + email + "\r\n" +
-		"Subject: " + emailSubject + "\r\n\r\n" +
-		plainBody
-
-	// Set up authentication
-	auth := smtp.PlainAuth("", constants.SMTP_USER, constants.SMTP_PASSWORD, constants.SMTP_HOST)
-
-	// Determine port
-	smtpPort, _ := strconv.Atoi(constants.SMTP_PORT)
-	if smtpPort == 0 {
-		smtpPort = 587 // Default to 587 if port is invalid
-	}
-
-	// Send email
-	smtpAddr := fmt.Sprintf("%s:%d", constants.SMTP_HOST, smtpPort)
-	to := []string{email}
-
-	err := smtp.SendMail(smtpAddr, auth, constants.SMTP_FROM, to, []byte(mimeHeaders))
 	if err != nil {
 		log.Printf("Failed to send password reset email: %v", err)
 		return
