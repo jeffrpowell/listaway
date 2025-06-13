@@ -48,7 +48,7 @@ var (
 	SMTP_PORT     string = loadEnvWithDefault(ENV_SMTP_PORT, "587")
 	SMTP_USER     string = loadEnvWithDefault(ENV_SMTP_USER, "")
 	SMTP_PASSWORD string = loadEnvWithDefault(ENV_SMTP_PASSWORD, "")
-	SMTP_FROM     string = loadEnvWithDefault(ENV_SMTP_FROM, "noreply@example.com")
+	SMTP_FROM     string = loadEnvWithDefault(ENV_SMTP_FROM, "noreply@listaway.dev")
 	SMTP_SECURE   string = loadEnvWithDefault(ENV_SMTP_SECURE, "true")
 	APP_URL       string = loadEnvWithDefault(ENV_APP_URL, "http://localhost:8080")
 )

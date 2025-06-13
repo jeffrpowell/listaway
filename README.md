@@ -38,14 +38,14 @@ POSTGRES_PASSWORD=password
 POSTGRES_HOST=[pghost]
 POSTGRES_DATABASE=listaway
 
-# Optional SMTP configuration for password reset emails
-# SMTP_HOST=smtp.example.com        # SMTP server hostname
-# SMTP_PORT=587                     # SMTP server port (typically 25, 465, or 587)
-# SMTP_USER=username               # SMTP authentication username
-# SMTP_PASSWORD=password           # SMTP authentication password
-# SMTP_FROM=noreply@example.com    # Sender email address
-# SMTP_SECURE=true                 # Use TLS/SSL (true/false)
-# APP_URL=https://listaway.your-domain.com     # Base URL of your application (for reset links)
+# Optional SMTP configuration for password reset emails (defaults will cause email bodies to be logged instead of sent outbound)
+# SMTP_HOST=smtp.example.com        # SMTP server hostname (default "")
+# SMTP_PORT=587                     # SMTP server port (typically 25, 465, or 587, default 587)
+# SMTP_USER=username               # SMTP authentication username (default "")
+# SMTP_PASSWORD=password           # SMTP authentication password (default "")
+# SMTP_FROM=noreply@example.com    # Sender email address (default "noreply@listaway.dev)
+# SMTP_SECURE=true                 # Use TLS/SSL (true/false, default true)
+# APP_URL=https://listaway.your-domain.com     # Base URL of your application (for reset links, default "http://localhost:8080")
 ```
 4. `docker compose up`
 5. [https://localhost:8080/](https://localhost:8080/) (All paths will 303 to [https://localhost:8080/admin/register](https://localhost:8080/admin/register))
