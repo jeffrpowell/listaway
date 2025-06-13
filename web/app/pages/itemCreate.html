@@ -1,4 +1,4 @@
-{{define "mobile"}}
+{{define "all"}}
 <form class="list-form" data-list-id="{{.List.Id}}" data-edit-mode="{{.EditMode}}" data-item-id="{{.Item.Id}}">
     <label class="block text-gray-700 text-sm font-bold mb-2">
         Item name
@@ -30,7 +30,4 @@
     </button>
     <span class="error-span text-red-500 italic mt-2 hidden"></span>
 </form>
-{{end}}
-{{define "wide"}}
-    {{template "mobile" .}}
 {{end}}
