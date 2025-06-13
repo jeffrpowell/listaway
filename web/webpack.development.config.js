@@ -16,6 +16,7 @@ module.exports = {
       userAdmin: './app/pages/userAdmin.js',
       userCreate: './app/pages/userCreate.js',
       allUsers: './app/pages/allUsers.js',
+      resetForm: './app/pages/resetForm.js',
     },
     output: {
         filename: '[name].js',

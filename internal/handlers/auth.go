@@ -18,9 +18,62 @@ import (
 func init() {
 	constants.ROUTER.HandleFunc("/", middleware.DefaultMiddlewareChain(rootHandler)).Methods("GET")
 	constants.ROUTER.HandleFunc("/auth", middleware.DefaultPublicMiddlewareChain(authHandler))
-	constants.ROUTER.HandleFunc("/reset", middleware.DefaultPublicMiddlewareChain(resetHandler))
+	constants.ROUTER.HandleFunc("/reset", middleware.DefaultPublicMiddlewareChain(resetHandler)).Methods("POST")
 	constants.ROUTER.HandleFunc("/reset/{token}", middleware.DefaultPublicMiddlewareChain(resetTokenHandler))
 	constants.ADMIN_EXISTS = database.AdminUserExists()
+}
+
+func rootHandler(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/list", http.StatusPermanentRedirect)
+}
+
+func authHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		authGET(w, r)
+	case "POST":
+		authPOST(w, r)
+	case "DELETE":
+		authDELETE(w, r)
+	default:
+		http.Error(w, "", http.StatusMethodNotAllowed)
+	}
+}
+
+/* Password reset POST */
+func resetHandler(w http.ResponseWriter, r *http.Request) {
+	email := r.FormValue("email")
+	if email == "" {
+		http.Error(w, "Email required", http.StatusBadRequest)
+		return
+	}
+
+	// Check if user exists with this email
+	userID, err := database.GetUserByEmail(email)
+	if err != nil {
+		log.Printf("Error checking user email: %v", err)
+		http.Error(w, "An unexpected error occurred", http.StatusInternalServerError)
+		return
+	}
+
+	// Always return success even if email not found (security best practice)
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("If your email is registered, a reset link has been sent."))
+
+	// Only proceed if user was found
+	if userID == -1 {
+		return
+	}
+
+	// Generate token and store in database
+	token, err := database.CreatePasswordResetToken(email)
+	if err != nil {
+		log.Printf("Error creating reset token: %v", err)
+		return
+	}
+
+	// Send reset email
+	sendResetEmail(email, token)
 }
 
 // Helper: send reset email with SMTP server if configured
@@ -75,68 +128,7 @@ func sendResetEmail(email, token string) {
 	log.Printf("Password reset email sent to %s", email)
 }
 
-func rootHandler(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/list", http.StatusPermanentRedirect)
-}
-
-func authHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		authGET(w, r)
-	case "POST":
-		authPOST(w, r)
-	case "DELETE":
-		authDELETE(w, r)
-	default:
-		http.Error(w, "", http.StatusMethodNotAllowed)
-	}
-}
-
-// Handle GET/POST /reset
-func resetHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		web.ResetRequestPage(w)
-	case "POST":
-		email := r.FormValue("email")
-		if email == "" {
-			http.Error(w, "Email required", http.StatusBadRequest)
-			return
-		}
-
-		// Check if user exists with this email
-		userID, err := database.GetUserByEmail(email)
-		if err != nil {
-			log.Printf("Error checking user email: %v", err)
-			http.Error(w, "An unexpected error occurred", http.StatusInternalServerError)
-			return
-		}
-
-		// Always return success even if email not found (security best practice)
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("If your email is registered, a reset link has been sent."))
-
-		// Only proceed if user was found
-		if userID == -1 {
-			return
-		}
-
-		// Generate token and store in database
-		token, err := database.CreatePasswordResetToken(email)
-		if err != nil {
-			log.Printf("Error creating reset token: %v", err)
-			return
-		}
-
-		// Send reset email
-		sendResetEmail(email, token)
-
-	default:
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-	}
-}
-
-// Handle GET/POST /reset/{token}
+/* Password Reset page */
 func resetTokenHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	token := vars["token"]
@@ -160,12 +152,6 @@ func resetTokenHandler(w http.ResponseWriter, r *http.Request) {
 		web.ResetFormPage(w, true)
 	case "POST":
 		password := r.FormValue("password")
-		if len(password) < 8 {
-			http.Error(w, "Password must be at least 8 characters.", http.StatusBadRequest)
-			return
-		}
-
-		// Update password in database
 		err := database.UpdateUserPassword(email, password)
 		if err != nil {
 			log.Printf("Error updating user password: %v", err)
@@ -173,7 +159,6 @@ func resetTokenHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// Invalidate the token
 		_ = database.InvalidatePasswordResetToken(token)
 
 		w.WriteHeader(http.StatusOK)
