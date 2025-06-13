@@ -1,4 +1,4 @@
-{{define "mobile"}}
+{{define "all"}}
     {{if (eq (len .Lists) 0)}}
     Welcome to Listaway! Let's start off by <a href="/list/create" class="underline">creating your first list</a>.
     {{else}}
@@ -41,7 +41,4 @@
         </tfoot>
     </table>
     {{end}}
-{{end}}
-{{define "wide"}}
-    {{template "mobile" .}}
 {{end}}
