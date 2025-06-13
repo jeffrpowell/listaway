@@ -31,8 +31,8 @@ var (
 	userAdmin     = parseSingleLayout("dist/userAdmin.html")
 	allUsers      = parseSingleLayout("dist/allUsers.html")
 	userCreate    = parseSingleLayout("dist/userCreate.html")
-	resetRequest  = parseSplitLayout("dist/resetRequest.html")
-	resetForm     = parseSplitLayout("dist/resetForm.html")
+	resetRequest  = parseSingleLayout("dist/resetRequest.html")
+	resetForm     = parseSingleLayout("dist/resetForm.html")
 )
 
 func init() {
