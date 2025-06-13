@@ -23,7 +23,7 @@
 	// End of Docker-from-Docker recommendations
 	"containerEnv": {
 		"POSTGRES_USER": "listaway",
-		"POSTGRES_PASSWORD": "listaway",
+		"POSTGRES_PASSWORD": "password",
 		"POSTGRES_DB": "listaway",
 		"POSTGRES_HOST": "db",
 		"LISTAWAY_AUTH_KEY": "zjVzypwJaRyIAz9blNPAmSiKoXb92NW9lgiVNgbHeAD0TRHPhicIh7YVzg4s6JBbjUZVQTaF5JIepCiMqQrUqe1Vs0bLwhrVbdHh03GCXuwbTjuXVYAZuGZ1XN4cHXpitySaRVO95Dxlv27crLpvJEYC3RJu0U7Hw85jkgidDvHjXpB16dLSqW60lfq9EAvPFWjT"

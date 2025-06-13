@@ -2,7 +2,7 @@
 <h1 class="text-3xl font-bold text-center mb-8">Listaway</h1>
 
 <!-- Login Form -->
-<form class="login-form bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+<form class="login-form bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" data-mode="login">
     <div class="mb-4">
         <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
             Email
@@ -11,7 +11,9 @@
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="email" type="email" name="email" placeholder="Email" autocomplete="email">
     </div>
-    <div class="mb-6">
+
+    <!-- wrap the password block so we can hide/show it easily -->
+    <div class="password-group mb-6">
         <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
             Password
         </label>
@@ -20,12 +22,14 @@
             id="password" type="password" name="password" placeholder="******************"
             autocomplete="current-password">
         <div class="text-right mt-2">
-            <a href="/reset" class="text-blue-500 hover:underline text-sm">Forgot password?</a>
+            <a href="#" class="forgot-link text-blue-500 hover:underline text-sm">
+                Forgot password?
+            </a>
         </div>
     </div>
     <div class="flex items-center justify-between">
         <button type="submit"
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            class="submit-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
             Sign In
         </button>
         <span class="error-span text-red-500 italic hidden"></span>
