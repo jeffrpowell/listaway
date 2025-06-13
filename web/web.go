@@ -121,8 +121,10 @@ type registerAdminParams struct {
 func RegisterAdminParams(adminExists bool) registerAdminParams {
 	return registerAdminParams{
 		globalWebParams: globalWebParams{
-			ShowNavbar: false,
-			ChunkName:  "registerAdmin",
+			ShowNavbar:        false,
+			ShowAdmin:         false,
+			ShowInstanceAdmin: false,
+			ChunkName:         "registerAdmin",
 		},
 		AdminExists: adminExists,
 	}
@@ -322,8 +324,10 @@ type sharedList404PageParams struct {
 func SharedList404PageParams(shareCode string) sharedList404PageParams {
 	return sharedList404PageParams{
 		globalWebParams: globalWebParams{
-			ShowNavbar: false,
-			ChunkName:  "sharedList404",
+			ShowNavbar:        false,
+			ShowAdmin:         false,
+			ShowInstanceAdmin: false,
+			ChunkName:         "sharedList404",
 		},
 		ShareCode: shareCode,
 	}
