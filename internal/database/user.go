@@ -11,7 +11,7 @@ import (
 func AdminUserExists() bool {
 	db := getDatabaseConnection()
 	defer db.Close()
-	row := db.QueryRow("SELECT COUNT(1) FROM " + constants.DB_TABLE_USER + " WHERE admin = true")
+	row := db.QueryRow("SELECT COUNT(1) FROM " + constants.DB_TABLE_USER + " WHERE instanceadmin = true")
 
 	var numAdmins int
 	err := row.Scan(&numAdmins)
@@ -211,13 +211,13 @@ func GetAllGroupAdmins() ([]constants.UserRead, error) {
 func GetNextAvailableGroupId() (int, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	
+
 	row := db.QueryRow("SELECT COALESCE(MAX(groupid), 0) + 1 FROM " + constants.DB_TABLE_USER)
-	
+
 	var nextGroupId int
 	if err := row.Scan(&nextGroupId); err != nil {
 		return -1, err
 	}
-	
+
 	return nextGroupId, nil
 }
