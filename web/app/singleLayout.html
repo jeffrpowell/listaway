@@ -1,5 +1,19 @@
 {{define "content"}}
-<div class="container block mx-auto p-4">
-    {{block "all" .}}{{end}}
-</div>
+    {{if .ShowNavbar}}
+    <!-- Desktop top-navbar -->
+    <div class="w-full bg-gray-800 fixed top-0 left-0 z-50">
+        <div class="flex justify-between items-center py-2 px-4">
+            <a href="/" class="text-white text-lg font-bold">Listaway</a>
+            <div class="hidden md:flex items-center space-x-4">
+                {{if .ShowAdmin}}<a href="/admin/users" class="text-white">User Admin</a>{{end}}
+                {{if .ShowInstanceAdmin}}<a href="/admin/allusers" class="text-white">All Users</a>{{end}}
+                <span class="logout text-white cursor-pointer">Logout</span>
+            </div>
+        </div>
+    </div>
+    {{end}}
+    <!-- Desktop content -->
+    <div class="container mx-auto p-4 mt-12 z-0">
+        {{block "all" .}}{{end}}
+    </div>
 {{end}}
