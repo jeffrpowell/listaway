@@ -1,6 +1,6 @@
 {{define "content"}}
     {{if .ShowNavbar}}
-    <!-- Desktop top-navbar -->
+    <!-- Top navbar -->
     <div class="w-full bg-gray-800 fixed top-0 left-0 z-50">
         <div class="flex justify-between items-center py-2 px-4">
             <a href="/" class="text-white text-lg font-bold">Listaway</a>
@@ -12,7 +12,7 @@
         </div>
     </div>
     {{end}}
-    <!-- Desktop content -->
+    <!-- Content -->
     <div class="container mx-auto p-4 mt-12 z-0">
         {{block "all" .}}{{end}}
     </div>
