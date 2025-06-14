@@ -1,5 +1,4 @@
 require("../navbar");
-require("../collectionNav");
 
 // Store list data
 let listsWithItems = new Map();

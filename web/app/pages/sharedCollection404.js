@@ -1,3 +1,4 @@
+require('../navbar')
 // Simple script for shared collection 404 page
 
 // No special functionality needed for the 404 page

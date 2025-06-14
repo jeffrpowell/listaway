@@ -1,6 +1,5 @@
-require('../index')
 require("../navbar")
-require("../collectionNav")
+
 import { themeQuartz } from '@ag-grid-community/theming';
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 import { createGrid } from "@ag-grid-community/core";

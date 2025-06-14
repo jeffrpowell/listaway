@@ -1,5 +1,4 @@
 require("../navbar");
-require("../collectionNav");
 
 // Store collection data
 let collectionId = null;
