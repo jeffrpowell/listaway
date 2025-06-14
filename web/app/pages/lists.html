@@ -12,12 +12,12 @@
                 </div>
                 
                 {{if (eq (len .Lists) 0)}}
-                <div class="bg-white shadow rounded-lg p-6 text-center">
+                <div class="bg-white shadow-sm rounded-lg p-6 text-center">
                     <p class="text-gray-500">You don't have any lists yet.</p>
                     <p class="mt-2">Get started by <a href="/list/create" class="text-blue-600 hover:underline">creating your first list</a>.</p>
                 </div>
                 {{else}}
-                <div class="bg-white shadow overflow-hidden rounded-lg">
+                <div class="bg-white shadow-sm overflow-hidden rounded-lg">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
@@ -70,14 +70,14 @@
                 </div>
                 
                 {{if (eq (len .Collections) 0)}}
-                <div class="bg-white shadow rounded-lg p-6 text-center">
+                <div class="bg-white shadow-sm rounded-lg p-6 text-center">
                     <p class="text-gray-500">You don't have any collections yet.</p>
                     <p class="mt-2">Create a collection to group your lists by <a href="/collections/create" class="text-blue-600 hover:underline">creating your first collection</a>.</p>
                 </div>
                 {{else}}
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {{range .Collections}}
-                    <div class="bg-white shadow rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-200">
+                    <div class="bg-white shadow-sm rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-200">
                         <div class="p-4">
                             <h3 class="text-lg font-semibold mb-2">{{.Name}}</h3>
                             <p class="text-gray-600 text-sm mb-4">{{if .Description.Valid}}{{.Description.String}}{{else}}No description{{end}}</p>

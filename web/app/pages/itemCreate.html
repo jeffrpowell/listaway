@@ -4,28 +4,28 @@
         Item name
     </label>
     <input
-        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        class="shadow-sm appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-hidden focus:shadow-outline"
         type="text" name="name" placeholder="Name" value="{{if eq .EditMode true}}{{.Item.Name}}{{end}}">
     <label class="block text-gray-700 text-sm font-bold mb-2">
         URL
     </label>
     <input
-        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        class="shadow-sm appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-hidden focus:shadow-outline"
         type="url" name="url" placeholder="Optional" value="{{if and .EditMode .Item.URL.Valid}}{{.Item.URL.String}}{{end}}">
     <label class="block text-gray-700 text-sm font-bold mb-2">
         Priority
     </label>
     <input
-        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        class="shadow-sm appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-hidden focus:shadow-outline"
         type="number" name="priority" placeholder="Optional" value="{{if and .EditMode .Item.Priority.Valid}}{{.Item.Priority.Int64}}{{end}}">
     <label class="block text-gray-700 text-sm font-bold mb-2">
         Notes
     </label>
     <input
-        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        class="shadow-sm appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-hidden focus:shadow-outline"
         type="text" name="notes" placeholder="Optional" value="{{if and .EditMode .Item.Notes.Valid}}{{.Item.Notes.String}}{{end}}">
     <button type="submit"
-        class="{{if eq .EditMode false}} opacity-50 cursor-not-allowed {{end}}bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-2 rounded focus:outline-none focus:shadow-outline">
+        class="{{if eq .EditMode false}} opacity-50 cursor-not-allowed {{end}}bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-2 rounded-sm focus:outline-hidden focus:shadow-outline">
         Save
     </button>
     <span class="error-span text-red-500 italic mt-2 hidden"></span>
