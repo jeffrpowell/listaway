@@ -29,7 +29,6 @@ var (
 	sharedList          = parseSingleLayout("dist/sharedList.html")
 	sharedList404       = parseSingleLayout("dist/sharedList404.html")
 	resetForm           = parseSingleLayout("dist/resetForm.html")
-	collections         = parseSingleLayout("dist/collections.html")
 	createCollection    = parseSingleLayout("dist/collectionCreate.html")
 	editCollection      = parseSingleLayout("dist/collectionEdit.html")
 	collectionDetail    = parseSingleLayout("dist/collectionDetail.html")
@@ -445,32 +444,6 @@ func CreateUserParams(showAdmin bool, showInstanceAdmin bool, groupAdmins []cons
 
 func CreateUserPage(w io.Writer, params createUserPageParams) {
 	if err := userCreate.Execute(w, params); err != nil {
-		log.Print(err)
-	}
-}
-
-// Collections page
-type collectionsPageParams struct {
-	Collections          []constants.Collection
-	SharedCollectionPath string
-	globalWebParams
-}
-
-func CollectionsPageParams(collections []constants.Collection, showAdmin bool, showInstanceAdmin bool) collectionsPageParams {
-	return collectionsPageParams{
-		globalWebParams: globalWebParams{
-			ShowNavbar:        true,
-			ShowAdmin:         showAdmin,
-			ShowInstanceAdmin: showInstanceAdmin,
-			ChunkName:         "collections",
-		},
-		Collections:          collections,
-		SharedCollectionPath: constants.SHARED_COLLECTION_PATH,
-	}
-}
-
-func CollectionsPage(w io.Writer, params collectionsPageParams) {
-	if err := collections.Execute(w, params); err != nil {
 		log.Print(err)
 	}
 }

@@ -1,6 +1,4 @@
-require('../index');
 require('../navbar');
-require('../collectionNav');
 
 document.addEventListener('DOMContentLoaded', (event) => {
     const collectionNameInputs = document.getElementsByName('name');

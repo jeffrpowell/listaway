@@ -1,5 +1,4 @@
 require("../navbar")
-require("../collectionNav")
 
 document.addEventListener('DOMContentLoaded', (event) => {
     

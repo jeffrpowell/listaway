@@ -17,7 +17,7 @@ import (
 
 func init() {
 	// Collection routes
-	constants.ROUTER.HandleFunc("/collections", middleware.DefaultMiddlewareChain(collectionsHandler))
+	constants.ROUTER.HandleFunc("/collections", middleware.DefaultMiddlewareChain(collectionsPOST)).Methods("GET")
 	constants.ROUTER.HandleFunc("/collections/create", middleware.DefaultMiddlewareChain(createCollectionGET)).Methods("GET")
 	constants.ROUTER.HandleFunc("/collections/namecheck", middleware.DefaultMiddlewareChain(collectionNameCheckGET)).Methods("GET")
 	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}", middleware.Chain(collectionHandler, append(middleware.DefaultMiddlewareSlice, middleware.CollectionIdOwner("collectionId"))...))
@@ -27,55 +27,6 @@ func init() {
 	// Collection sharing routes
 	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}/share", middleware.Chain(collectionShareHandler, append(middleware.DefaultMiddlewareSlice, middleware.CollectionIdOwner("collectionId"))...))
 	constants.ROUTER.HandleFunc("/"+constants.SHARED_COLLECTION_PATH+"/{shareCode}", middleware.DefaultPublicMiddlewareChain(sharedCollectionGET)).Methods("GET")
-}
-
-// collectionsHandler handles requests for /collections
-func collectionsHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case "GET":
-		collectionsGET(w, r)
-	case "POST":
-		collectionsPOST(w, r)
-	default:
-		http.Error(w, "", http.StatusMethodNotAllowed)
-	}
-}
-
-// collectionsGET handles GET requests for /collections
-func collectionsGET(w http.ResponseWriter, r *http.Request) {
-	// Check if the Accept header indicates JSON is wanted
-	acceptHeader := r.Header.Get("Accept")
-	wantsJSON := acceptHeader == "application/json"
-
-	userId, err := helper.GetUserId(r)
-	if err != nil {
-		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
-		log.Print(err)
-		return
-	}
-
-	collections, err := database.GetCollections(userId)
-	if err != nil {
-		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
-		log.Print(err)
-		return
-	}
-
-	// Return JSON if requested, otherwise render the HTML page
-	if wantsJSON {
-		w.Header().Set("Content-Type", "application/json")
-		if err := json.NewEncoder(w).Encode(collections); err != nil {
-			http.Error(w, "Error encoding JSON response", http.StatusInternalServerError)
-			log.Print(err)
-		}
-	} else {
-		admin := helper.IsUserAdmin(r)
-		instanceAdmin := helper.IsUserInstanceAdmin(r)
-		
-		// Render the collections page
-		collectionsPage := web.CollectionsPageParams(collections, admin, instanceAdmin)
-		web.CollectionsPage(w, collectionsPage)
-	}
 }
 
 // collectionsPOST handles POST requests for /collections
@@ -182,7 +133,7 @@ func collectionGET(w http.ResponseWriter, r *http.Request) {
 	} else {
 		admin := helper.IsUserAdmin(r)
 		instanceAdmin := helper.IsUserInstanceAdmin(r)
-		
+
 		// Render the collection detail page
 		collectionDetailPage := web.CollectionDetailPageParams(collection, lists, admin, instanceAdmin)
 		web.CollectionDetailPage(w, collectionDetailPage)
@@ -338,7 +289,7 @@ func collectionListDELETE(w http.ResponseWriter, r *http.Request) {
 func createCollectionGET(w http.ResponseWriter, r *http.Request) {
 	admin := helper.IsUserAdmin(r)
 	instanceAdmin := helper.IsUserInstanceAdmin(r)
-	
+
 	// Render the collection creation page
 	params := web.CreateCollectionParams(admin, instanceAdmin)
 	web.CreateCollectionPage(w, params)
@@ -361,7 +312,7 @@ func editCollectionGET(w http.ResponseWriter, r *http.Request) {
 
 	admin := helper.IsUserAdmin(r)
 	instanceAdmin := helper.IsUserInstanceAdmin(r)
-	
+
 	// Render the collection edit page
 	editParams := web.EditCollectionParams(collection, admin, instanceAdmin)
 	web.EditCollectionPage(w, editParams)
