@@ -492,12 +492,13 @@ func EditCollectionPage(w io.Writer, params editCollectionParams) {
 
 // Collection Detail page
 type collectionDetailPageParams struct {
-	Collection constants.Collection
-	Lists      []constants.CollectionList
+	Collection        constants.Collection
+	ListsInCollection []constants.CollectionList
+	AllLists          []constants.List
 	globalWebParams
 }
 
-func CollectionDetailPageParams(collection constants.Collection, lists []constants.CollectionList, showAdmin bool, showInstanceAdmin bool) collectionDetailPageParams {
+func CollectionDetailPageParams(collection constants.Collection, listsInCollection []constants.CollectionList, allLists []constants.List, showAdmin bool, showInstanceAdmin bool) collectionDetailPageParams {
 	return collectionDetailPageParams{
 		globalWebParams: globalWebParams{
 			ShowNavbar:        true,
@@ -505,8 +506,9 @@ func CollectionDetailPageParams(collection constants.Collection, lists []constan
 			ShowInstanceAdmin: showInstanceAdmin,
 			ChunkName:         "collectionDetail",
 		},
-		Collection: collection,
-		Lists:      lists,
+		Collection:        collection,
+		ListsInCollection: listsInCollection,
+		AllLists:          allLists,
 	}
 }
 
