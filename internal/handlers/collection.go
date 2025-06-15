@@ -17,7 +17,7 @@ import (
 
 func init() {
 	// Collection routes
-	constants.ROUTER.HandleFunc("/collections", middleware.DefaultMiddlewareChain(collectionsPOST)).Methods("GET")
+	constants.ROUTER.HandleFunc("/collections", middleware.DefaultMiddlewareChain(collectionsPOST)).Methods("POST")
 	constants.ROUTER.HandleFunc("/collections/create", middleware.DefaultMiddlewareChain(createCollectionGET)).Methods("GET")
 	constants.ROUTER.HandleFunc("/collections/namecheck", middleware.DefaultMiddlewareChain(collectionNameCheckGET)).Methods("GET")
 	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}", middleware.Chain(collectionHandler, append(middleware.DefaultMiddlewareSlice, middleware.CollectionIdOwner("collectionId"))...))
@@ -38,19 +38,10 @@ func collectionsPOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var params constants.CollectionPostParams
-	err = json.NewDecoder(r.Body).Decode(&params)
-	if err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
-		return
-	}
+	var listName string = r.FormValue("name")
+	//Don't trust client input
 
-	if params.Name == "" {
-		http.Error(w, "Name is required", http.StatusBadRequest)
-		return
-	}
-
-	taken, err := database.CollectionNameTaken(userId, params.Name)
+	taken, err := database.CollectionNameTaken(userId, listName)
 	if err != nil {
 		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
 		log.Print(err)
@@ -61,7 +52,8 @@ func collectionsPOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newId, err := database.CreateCollection(userId, params.Name, params.Description)
+	var description string = r.FormValue("description")
+	newId, err := database.CreateCollection(userId, listName, description)
 	if err != nil {
 		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
 		log.Print(err)
@@ -88,6 +80,12 @@ func collectionHandler(w http.ResponseWriter, r *http.Request) {
 
 // collectionGET handles GET requests for /collections/{collectionId}
 func collectionGET(w http.ResponseWriter, r *http.Request) {
+	userId, err := helper.GetUserId(r)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
 	// Check if the Accept header indicates JSON is wanted
 	acceptHeader := r.Header.Get("Accept")
 	wantsJSON := acceptHeader == "application/json"
@@ -105,7 +103,14 @@ func collectionGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	lists, err := database.GetCollectionLists(collectionId)
+	listsInCollection, err := database.GetCollectionLists(collectionId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+
+	allLists, err := database.GetLists(userId)
 	if err != nil {
 		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
 		log.Print(err)
@@ -122,7 +127,7 @@ func collectionGET(w http.ResponseWriter, r *http.Request) {
 
 		response := CollectionResponse{
 			Collection: collection,
-			Lists:      lists,
+			Lists:      listsInCollection,
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -135,7 +140,7 @@ func collectionGET(w http.ResponseWriter, r *http.Request) {
 		instanceAdmin := helper.IsUserInstanceAdmin(r)
 
 		// Render the collection detail page
-		collectionDetailPage := web.CollectionDetailPageParams(collection, lists, admin, instanceAdmin)
+		collectionDetailPage := web.CollectionDetailPageParams(collection, listsInCollection, allLists, admin, instanceAdmin)
 		web.CollectionDetailPage(w, collectionDetailPage)
 	}
 }
