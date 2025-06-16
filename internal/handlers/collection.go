@@ -23,6 +23,7 @@ func init() {
 	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}", middleware.Chain(collectionHandler, append(middleware.DefaultMiddlewareSlice, middleware.CollectionIdOwner("collectionId"))...))
 	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}/edit", middleware.Chain(editCollectionGET, append(middleware.DefaultMiddlewareSlice, middleware.CollectionIdOwner("collectionId"))...)).Methods("GET")
 	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}/lists/{listId:[0-9]+}", middleware.Chain(collectionListHandler, append(middleware.DefaultMiddlewareSlice, middleware.CollectionIdOwner("collectionId"), middleware.ListIdOwner("listId"))...))
+	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}/lists", middleware.Chain(collectionListsPOST, append(middleware.DefaultMiddlewareSlice, middleware.CollectionIdOwner("collectionId"))...)).Methods("POST")
 
 	// Collection sharing routes
 	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}/share", middleware.Chain(collectionShareHandler, append(middleware.DefaultMiddlewareSlice, middleware.CollectionIdOwner("collectionId"))...))
@@ -117,17 +118,36 @@ func collectionGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Calculate available lists that are not in the collection
+	availableLists := make([]constants.List, 0)
+	listIdsInCollection := make(map[int]bool)
+
+	// Create a map of list IDs that are already in the collection
+	for _, collectionList := range listsInCollection {
+		listIdsInCollection[int(collectionList.ListId)] = true
+	}
+
+	// Filter lists to only include those not already in the collection
+	for _, list := range allLists {
+		_, exists := listIdsInCollection[int(list.Id)]
+		if !exists {
+			availableLists = append(availableLists, list)
+		}
+	}
+
 	// Return JSON if requested, otherwise render the HTML page
 	if wantsJSON {
 		// Construct a response with both collection details and lists
 		type CollectionResponse struct {
-			Collection constants.Collection       `json:"collection"`
-			Lists      []constants.CollectionList `json:"lists"`
+			Collection     constants.Collection       `json:"collection"`
+			Lists          []constants.CollectionList `json:"lists"`
+			AvailableLists []constants.List           `json:"availableLists"`
 		}
 
 		response := CollectionResponse{
-			Collection: collection,
-			Lists:      listsInCollection,
+			Collection:     collection,
+			Lists:          listsInCollection,
+			AvailableLists: availableLists,
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -140,7 +160,14 @@ func collectionGET(w http.ResponseWriter, r *http.Request) {
 		instanceAdmin := helper.IsUserInstanceAdmin(r)
 
 		// Render the collection detail page
-		collectionDetailPage := web.CollectionDetailPageParams(collection, listsInCollection, allLists, admin, instanceAdmin)
+		collectionDetailPage := web.CollectionDetailPageParams(
+			collection,
+			listsInCollection,
+			availableLists,
+			allLists,
+			admin,
+			instanceAdmin,
+		)
 		web.CollectionDetailPage(w, collectionDetailPage)
 	}
 }
@@ -242,34 +269,14 @@ func collectionListPUT(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Parse request for display order
-	type DisplayOrderParams struct {
-		DisplayOrder int `json:"displayOrder"`
-	}
-
-	var params DisplayOrderParams
-	params.DisplayOrder = 0 // Default value
-
-	// Try to decode the request body into the struct
-	if r.ContentLength > 0 {
-		err = json.NewDecoder(r.Body).Decode(&params)
+	// If not in collection, add it
+	if !inCollection {
+		err = database.AddListToCollection(collectionId, listId)
 		if err != nil {
-			// If we can't decode, just use the default display order
-			log.Printf("Could not decode display order params: %v", err)
+			http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+			log.Print(err)
+			return
 		}
-	}
-
-	// Add or update list in collection
-	if inCollection {
-		err = database.UpdateListDisplayOrder(collectionId, listId, params.DisplayOrder)
-	} else {
-		err = database.AddListToCollection(collectionId, listId, params.DisplayOrder)
-	}
-
-	if err != nil {
-		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
-		log.Print(err)
-		return
 	}
 
 	w.WriteHeader(http.StatusNoContent)
@@ -326,7 +333,7 @@ func editCollectionGET(w http.ResponseWriter, r *http.Request) {
 // collectionShareHandler handles requests for /collections/{collectionId}/share
 func collectionShareHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
-	case "PUT":
+	case "PUT", "POST": // Accept both PUT (API) and POST (form submission)
 		collectionSharePUT(w, r)
 	case "DELETE":
 		collectionShareDELETE(w, r)

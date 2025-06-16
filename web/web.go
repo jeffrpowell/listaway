@@ -494,11 +494,12 @@ func EditCollectionPage(w io.Writer, params editCollectionParams) {
 type collectionDetailPageParams struct {
 	Collection        constants.Collection
 	ListsInCollection []constants.CollectionList
-	AllLists          []constants.List
+	AvailableLists    []constants.List       // Lists not currently in the collection
+	AllLists          []constants.List       // All lists for fallback
 	globalWebParams
 }
 
-func CollectionDetailPageParams(collection constants.Collection, listsInCollection []constants.CollectionList, allLists []constants.List, showAdmin bool, showInstanceAdmin bool) collectionDetailPageParams {
+func CollectionDetailPageParams(collection constants.Collection, listsInCollection []constants.CollectionList, availableLists []constants.List, allLists []constants.List, showAdmin bool, showInstanceAdmin bool) collectionDetailPageParams {
 	return collectionDetailPageParams{
 		globalWebParams: globalWebParams{
 			ShowNavbar:        true,
@@ -508,6 +509,7 @@ func CollectionDetailPageParams(collection constants.Collection, listsInCollecti
 		},
 		Collection:        collection,
 		ListsInCollection: listsInCollection,
+		AvailableLists:    availableLists,
 		AllLists:          allLists,
 	}
 }

@@ -190,11 +190,11 @@ func UnpublishCollectionShareCode(collectionId int) error {
 }
 
 // AddListToCollection adds a list to a collection
-func AddListToCollection(collectionId int, listId int, displayOrder int) error {
+func AddListToCollection(collectionId int, listId int) error {
 	db := getDatabaseConnection()
 	defer db.Close()
-	_, err := db.Exec(`INSERT INTO listaway.collection_list (collectionid, listid, displayorder) VALUES($1, $2, $3) 
-	ON CONFLICT (collectionid, listid) DO UPDATE SET displayorder = $3`, collectionId, listId, displayOrder)
+	_, err := db.Exec(`INSERT INTO listaway.collection_list (collectionid, listid) VALUES($1, $2) 
+	ON CONFLICT (collectionid, listid) DO NOTHING`, collectionId, listId)
 	return err
 }
 
@@ -210,15 +210,15 @@ func RemoveListFromCollection(collectionId int, listId int) error {
 func GetCollectionLists(collectionId int) ([]constants.CollectionList, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	
+
 	rows, err := db.Query(`
-		SELECT l.id, l.name, l.description, l.sharecode, cl.displayorder 
+		SELECT l.id, l.name, l.description, l.sharecode 
 		FROM listaway.list l
 		JOIN listaway.collection_list cl ON l.id = cl.listid
 		WHERE cl.collectionid = $1
-		ORDER BY cl.displayorder ASC, l.name ASC
+		ORDER BY l.name ASC
 	`, collectionId)
-	
+
 	if err != nil {
 		return nil, err
 	}
@@ -228,7 +228,7 @@ func GetCollectionLists(collectionId int) ([]constants.CollectionList, error) {
 	for rows.Next() {
 		var cl constants.CollectionList
 
-		err := rows.Scan(&cl.ListId, &cl.Name, &cl.Description, &cl.ShareCode, &cl.DisplayOrder)
+		err := rows.Scan(&cl.ListId, &cl.Name, &cl.Description, &cl.ShareCode)
 		if err != nil {
 			return nil, err
 		}
@@ -251,12 +251,4 @@ func ListInCollection(collectionId int, listId int) (bool, error) {
 		return false, err
 	}
 	return matches != 0, nil
-}
-
-// UpdateListDisplayOrder updates the display order of a list in a collection
-func UpdateListDisplayOrder(collectionId int, listId int, displayOrder int) error {
-	db := getDatabaseConnection()
-	defer db.Close()
-	_, err := db.Exec(`UPDATE listaway.collection_list SET displayorder = $3 WHERE collectionid = $1 AND listid = $2`, collectionId, listId, displayOrder)
-	return err
 }
