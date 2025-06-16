@@ -78,7 +78,7 @@ forgotLink.addEventListener("click", e => {
     }
 });
 
-// existing error display (unchanged)
+// existing error display
 function showError(statusCode) {
     if (statusCode === 401) {
         errorSpan.innerText = "Email or password is not recognized.";

@@ -65,5 +65,4 @@ type CollectionList struct {
 	Name         string
 	Description  sql.NullString
 	ShareCode    sql.NullString
-	DisplayOrder int
 }

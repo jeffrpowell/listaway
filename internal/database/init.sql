@@ -101,7 +101,6 @@ CREATE INDEX IF NOT EXISTS collection_sharecode_idx ON listaway.collection (shar
 CREATE TABLE IF NOT EXISTS listaway.collection_list (
     collectionid BIGINT NOT NULL,
     listid BIGINT NOT NULL,
-    displayorder INT NOT NULL DEFAULT 0,
     PRIMARY KEY (collectionid, listid)
 );
 

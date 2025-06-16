@@ -53,7 +53,6 @@
       <table class="table w-full">
         <thead>
           <tr>
-            <th class="w-10">Order</th>
             <th>List Name</th>
             <th>Description</th>
             <th class="w-32">Actions</th>
@@ -61,32 +60,19 @@
         </thead>
         <tbody id="listTable">
           {{range .ListsInCollection}}
-          <tr data-list-id="{{.ListId}}" data-display-order="{{.DisplayOrder}}">
+          {{$listId := .ListId}}
+          <tr>
+            <script>
+              // Set data attributes via JavaScript to avoid minifier lowercasing
+              document.currentScript.parentElement.setAttribute('data-list-id', '{{$listId}}');
+            </script>
             <td>
-              <div class="flex items-center space-x-1">
-                <button class="btn btn-xs btn-ghost" onclick="moveListUp({{.ListId}})" {{if eq .DisplayOrder
-                  0}}disabled{{end}}>
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-                  </svg>
-                </button>
-                <span>{{.DisplayOrder}}</span>
-                <button class="btn btn-xs btn-ghost" onclick="moveListDown({{.ListId}})">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-              </div>
-            </td>
-            <td>
-              <a href="/lists/{{.ListId}}" class="font-medium text-blue-600 hover:text-blue-800">{{.Name}}</a>
+              <a href="/list/{{.ListId}}" class="font-medium text-blue-600 hover:text-blue-800">{{.Name}}</a>
             </td>
             <td>{{if .Description.Valid}}{{.Description.String}}{{end}}</td>
             <td>
               <div class="flex space-x-1">
-                <a href="/lists/{{.ListId}}" class="btn btn-xs btn-ghost" title="View List">
+                <a href="/list/{{.ListId}}" class="btn btn-xs btn-ghost" title="View List">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -117,16 +103,6 @@
       </table>
     </div>
   </div>
-
-  <div class="flex justify-between mt-8">
-    <a href="/collections" class="btn btn-outline">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24"
-        stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-      </svg>
-      Back to Collections
-    </a>
-  </div>
 </div>
 
 <!-- Add List Modal -->
@@ -136,13 +112,18 @@
     <p class="py-2">Select lists to add to this collection:</p>
     <div class="py-4 max-h-60 overflow-y-auto" id="availableListsContainer">
       <div class="space-y-2">
-        {{range .AllLists}}
+        {{range .AvailableLists}}
         <div class="form-control">
           <label class="label cursor-pointer justify-start">
-            <input type="checkbox" class="checkbox checkbox-primary mr-2" value="${list.Id}" />
+            <input type="checkbox" class="checkbox checkbox-primary mr-2" value="{{.Id}}" />
             <span class="label-text">{{.Name}}</span>
           </label>
           {{if .Description.Valid}}<p class="text-xs text-gray-500 ml-6">{{.Description.String}}</p>{{end}}
+        </div>
+        {{end}}
+        {{if eq (len .AvailableLists) 0}}
+        <div class="text-center text-gray-500 py-4">
+          <p>No available lists to add</p>
         </div>
         {{end}}
       </div>
