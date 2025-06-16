@@ -1,0 +1,77 @@
+name: Listaway Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: listaway
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: listaway_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'yarn'
+          cache-dependency-path: 'web/yarn.lock'
+
+      - name: Install frontend dependencies
+        run: yarn --cwd web install
+
+      - name: Build frontend assets
+        run: yarn --cwd web run build
+
+      - name: Initialize test database
+        run: |
+          psql -h localhost -U listaway -d listaway_test -c "CREATE SCHEMA IF NOT EXISTS listaway;"
+          psql -h localhost -U listaway -d listaway_test -f internal/database/init.sql
+        env:
+          PGPASSWORD: password
+
+      - name: Run Go unit tests
+        run: go test -v -race -short ./internal/...
+        env:
+          TEST_POSTGRES_HOST: localhost
+          TEST_POSTGRES_USER: listaway
+          TEST_POSTGRES_PASSWORD: password
+          TEST_POSTGRES_DATABASE: listaway_test
+          TEST_POSTGRES_PORT: 5432
+
+      - name: Run template tests
+        run: go test -v ./web/...
+        env:
+          TEST_POSTGRES_HOST: localhost
+          TEST_POSTGRES_USER: listaway
+          TEST_POSTGRES_PASSWORD: password
+          TEST_POSTGRES_DATABASE: listaway_test
+          TEST_POSTGRES_PORT: 5432
+
+      # E2E tests would require additional setup with headless Chrome
+      # They are skipped by default in the test run but could be enabled for specific workflows
