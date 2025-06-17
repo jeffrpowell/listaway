@@ -69,7 +69,12 @@
                     <a href="/collections/create" class="btn btn-primary">New Collection</a>
                 </div>
                 
-                {{if (eq (len .Collections) 0)}}
+                {{if (lt (len .Lists) 2)}}
+                <div class="bg-white shadow-sm rounded-lg p-6 text-center">
+                    <p class="text-gray-500">You need to create at least two lists before leveraging the collections feature.</p>
+                    <p class="mt-2">Want to <a href="/list/create" class="text-blue-600 hover:underline">create another list</a> now?</p>
+                </div>
+                {{else if (eq (len .Collections) 0)}}
                 <div class="bg-white shadow-sm rounded-lg p-6 text-center">
                     <p class="text-gray-500">You don't have any collections yet.</p>
                     <p class="mt-2">Create a collection to group your lists by <a href="/collections/create" class="text-blue-600 hover:underline">creating your first collection</a>.</p>
