@@ -20,9 +20,9 @@ func init() {
 	constants.ROUTER.HandleFunc("/collections", middleware.DefaultMiddlewareChain(collectionsPOST)).Methods("POST")
 	constants.ROUTER.HandleFunc("/collections/create", middleware.DefaultMiddlewareChain(createCollectionGET)).Methods("GET")
 	constants.ROUTER.HandleFunc("/collections/namecheck", middleware.DefaultMiddlewareChain(collectionNameCheckGET)).Methods("GET")
-	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}", middleware.Chain(collectionHandler, append(middleware.DefaultMiddlewareSlice, middleware.CollectionIdOwner("collectionId"))...))
-	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}/edit", middleware.Chain(editCollectionGET, append(middleware.DefaultMiddlewareSlice, middleware.CollectionIdOwner("collectionId"))...)).Methods("GET")
-	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}/lists/{listId:[0-9]+}", middleware.Chain(collectionListHandler, append(middleware.DefaultMiddlewareSlice, middleware.CollectionIdOwner("collectionId"), middleware.ListIdOwner("listId"))...))
+	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}", middleware.Chain(collectionHandler, append([]middleware.Middleware{middleware.CollectionIdOwner("collectionId")}, middleware.DefaultMiddlewareSlice...)...))
+	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}/edit", middleware.Chain(editCollectionGET, append([]middleware.Middleware{middleware.CollectionIdOwner("collectionId")}, middleware.DefaultMiddlewareSlice...)...)).Methods("GET")
+	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}/lists/{listId:[0-9]+}", middleware.Chain(collectionListHandler, append([]middleware.Middleware{middleware.ListIdOwner("listId"), middleware.CollectionIdOwner("collectionId")}, middleware.DefaultMiddlewareSlice...)...))
 
 	// Collection sharing routes
 	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}/share", middleware.Chain(collectionShareHandler, append(middleware.DefaultMiddlewareSlice, middleware.CollectionIdOwner("collectionId"))...))
@@ -143,12 +143,13 @@ func collectionGET(w http.ResponseWriter, r *http.Request) {
 			log.Print(err)
 			return
 		}
-		
+
 		admin := helper.IsUserAdmin(r)
 		instanceAdmin := helper.IsUserInstanceAdmin(r)
 
 		// Render the collection detail page
 		collectionDetailPage := web.CollectionDetailPageParams(
+			r,
 			collection,
 			listIdsInCollection,
 			listIdsWithShareCode,
@@ -320,7 +321,7 @@ func createCollectionGET(w http.ResponseWriter, r *http.Request) {
 	instanceAdmin := helper.IsUserInstanceAdmin(r)
 
 	// Render the collection creation page
-	params := web.CreateCollectionParams(admin, instanceAdmin)
+	params := web.CreateCollectionParams(r, admin, instanceAdmin)
 	web.CreateCollectionPage(w, params)
 }
 
@@ -343,7 +344,7 @@ func editCollectionGET(w http.ResponseWriter, r *http.Request) {
 	instanceAdmin := helper.IsUserInstanceAdmin(r)
 
 	// Render the collection edit page
-	editParams := web.EditCollectionParams(collection, admin, instanceAdmin)
+	editParams := web.EditCollectionParams(r, collection, admin, instanceAdmin)
 	web.EditCollectionPage(w, editParams)
 }
 
@@ -417,7 +418,7 @@ func sharedCollectionGET(w http.ResponseWriter, r *http.Request) {
 	instanceAdmin := helper.IsUserInstanceAdmin(r)
 
 	// Call the web package function to render the shared collection page
-	sharedCollectionPage := web.SharedCollectionPageParams(shareCode, collection, lists, admin, instanceAdmin)
+	sharedCollectionPage := web.SharedCollectionPageParams(r, shareCode, collection, lists, admin, instanceAdmin)
 	web.SharedCollectionPage(w, sharedCollectionPage)
 }
 

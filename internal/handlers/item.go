@@ -15,10 +15,10 @@ import (
 )
 
 func init() {
-	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item", middleware.Chain(itemPUT, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...)).Methods("PUT")
-	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item/create", middleware.Chain(createItemGET, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...)).Methods("GET")
-	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item/{itemId:[0-9]+}", middleware.Chain(itemHandler, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...))
-	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item/{itemId:[0-9]+}/edit", middleware.Chain(itemEditGET, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...)).Methods("GET")
+	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item", middleware.Chain(itemPUT, append([]middleware.Middleware{middleware.ListIdOwner("listId")}, middleware.DefaultMiddlewareSlice...)...)).Methods("PUT")
+	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item/create", middleware.Chain(createItemGET, append([]middleware.Middleware{middleware.ListIdOwner("listId")}, middleware.DefaultMiddlewareSlice...)...)).Methods("GET")
+	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item/{itemId:[0-9]+}", middleware.Chain(itemHandler, append([]middleware.Middleware{middleware.ListIdOwner("listId")}, middleware.DefaultMiddlewareSlice...)...))
+	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/item/{itemId:[0-9]+}/edit", middleware.Chain(itemEditGET, append([]middleware.Middleware{middleware.ListIdOwner("listId")}, middleware.DefaultMiddlewareSlice...)...)).Methods("GET")
 }
 
 func itemHandler(w http.ResponseWriter, r *http.Request) {
@@ -43,7 +43,7 @@ func createItemGET(w http.ResponseWriter, r *http.Request) {
 	}
 	admin := helper.IsUserAdmin(r)
 	instanceAdmin := helper.IsUserInstanceAdmin(r)
-	web.CreateEditItemPage(w, web.CreateItemParams(list, admin, instanceAdmin))
+	web.CreateEditItemPage(w, web.CreateItemParams(r, list, admin, instanceAdmin))
 }
 
 /* Create item */
@@ -92,7 +92,7 @@ func itemEditGET(w http.ResponseWriter, r *http.Request) {
 	}
 	admin := helper.IsUserAdmin(r)
 	instanceAdmin := helper.IsUserInstanceAdmin(r)
-	web.CreateEditItemPage(w, web.EditItemParams(list, item, admin, instanceAdmin))
+	web.CreateEditItemPage(w, web.EditItemParams(r, list, item, admin, instanceAdmin))
 }
 
 /* Update item */

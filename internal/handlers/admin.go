@@ -16,11 +16,11 @@ import (
 
 func init() {
 	constants.ROUTER.HandleFunc("/admin/register", middleware.DefaultPublicMiddlewareChain(registerAdminHandler))
-	constants.ROUTER.HandleFunc("/admin/users", middleware.Chain(userAdminGET, append(middleware.DefaultMiddlewareSlice, middleware.RequireAdmin())...)).Methods("GET")
-	constants.ROUTER.HandleFunc("/admin/users/create", middleware.Chain(createUserHandler, append(middleware.DefaultMiddlewareSlice, middleware.RequireAdmin())...))
-	constants.ROUTER.HandleFunc("/admin/user/{userId:[0-9]+}/listscount", middleware.Chain(userListCountGET, append(middleware.DefaultMiddlewareSlice, middleware.RequireGroupAdmin("userId"))...)).Methods("GET")
-	constants.ROUTER.HandleFunc("/admin/user/{userId:[0-9]+}", middleware.Chain(deleteUser, append(middleware.DefaultMiddlewareSlice, middleware.RequireGroupAdmin("userId"))...)).Methods("DELETE")
-	constants.ROUTER.HandleFunc("/admin/user/{userId:[0-9]+}/toggleadmin", middleware.Chain(toggleUserAdmin, append(middleware.DefaultMiddlewareSlice, middleware.RequireGroupAdmin("userId"))...)).Methods("POST")
+	constants.ROUTER.HandleFunc("/admin/users", middleware.Chain(userAdminGET, append([]middleware.Middleware{middleware.RequireAdmin()}, middleware.DefaultMiddlewareSlice...)...)).Methods("GET")
+	constants.ROUTER.HandleFunc("/admin/users/create", middleware.Chain(createUserHandler, append([]middleware.Middleware{middleware.RequireAdmin()}, middleware.DefaultMiddlewareSlice...)...))
+	constants.ROUTER.HandleFunc("/admin/user/{userId:[0-9]+}/listscount", middleware.Chain(userListCountGET, append([]middleware.Middleware{middleware.RequireGroupAdmin("userId")}, middleware.DefaultMiddlewareSlice...)...)).Methods("GET")
+	constants.ROUTER.HandleFunc("/admin/user/{userId:[0-9]+}", middleware.Chain(deleteUser, append([]middleware.Middleware{middleware.RequireGroupAdmin("userId")}, middleware.DefaultMiddlewareSlice...)...)).Methods("DELETE")
+	constants.ROUTER.HandleFunc("/admin/user/{userId:[0-9]+}/toggleadmin", middleware.Chain(toggleUserAdmin, append([]middleware.Middleware{middleware.RequireGroupAdmin("userId")}, middleware.DefaultMiddlewareSlice...)...)).Methods("POST")
 }
 
 func registerAdminHandler(w http.ResponseWriter, r *http.Request) {
@@ -113,7 +113,7 @@ func userAdminGET(w http.ResponseWriter, r *http.Request) {
 	}
 	admin := helper.IsUserAdmin(r)
 	instanceAdmin := helper.IsUserInstanceAdmin(r)
-	params := web.UserAdminPageParams(users, selfId, admin, instanceAdmin)
+	params := web.UserAdminPageParams(r, users, selfId, admin, instanceAdmin)
 	web.UserAdminPage(w, params)
 }
 
@@ -134,7 +134,7 @@ func createUserGET(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	params := web.CreateUserParams(admin, instanceAdmin, groupAdmins)
+	params := web.CreateUserParams(r, admin, instanceAdmin, groupAdmins)
 	web.CreateUserPage(w, params)
 }
 

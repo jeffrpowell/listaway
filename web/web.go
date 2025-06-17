@@ -86,8 +86,8 @@ func minifyTemplates(filenames ...string) (*template.Template, error) {
 			tmpl = template.New(name)
 		}
 		tmpl = tmpl.Funcs(template.FuncMap{
-			"containsUint64": slices.Contains[[]uint64]},
-		)
+			"containsUint64": slices.Contains[[]uint64],
+		})
 
 		b, err := staticFiles.ReadFile(filename)
 		if err != nil {
@@ -111,11 +111,31 @@ func parseSingleLayout(file string) *template.Template {
 	return template.Must(minifyTemplates("dist/root.html", "dist/singleLayout.html", file))
 }
 
+func isAuthenticated(r *http.Request) bool {
+	if r == nil {
+		return false
+	}
+	session, _ := constants.COOKIE_STORE.Get(r, constants.COOKIE_NAME_SESSION)
+	auth, ok := session.Values["authenticated"].(bool)
+	return ok && auth
+}
+
+func newGlobalWebParams(r *http.Request, showNavbar, showAdmin, showInstanceAdmin bool, chunkName string) globalWebParams {
+	return globalWebParams{
+		ShowNavbar:        showNavbar,
+		ShowAdmin:         showAdmin,
+		ShowInstanceAdmin: showInstanceAdmin,
+		ChunkName:         chunkName,
+		IsAuthenticated:   isAuthenticated(r),
+	}
+}
+
 type globalWebParams struct {
 	ShowNavbar        bool
 	ShowAdmin         bool
 	ShowInstanceAdmin bool
 	ChunkName         string
+	IsAuthenticated   bool
 }
 
 // Register Admin page
@@ -181,14 +201,9 @@ type listsPageParams struct {
 	globalWebParams
 }
 
-func ListsPageParams(lists []constants.List, collections []constants.Collection, showAdmin bool, showInstanceAdmin bool) listsPageParams {
+func ListsPageParams(r *http.Request, lists []constants.List, collections []constants.Collection, showAdmin bool, showInstanceAdmin bool) listsPageParams {
 	return listsPageParams{
-		globalWebParams: globalWebParams{
-			ShowNavbar:        true,
-			ShowAdmin:         showAdmin,
-			ShowInstanceAdmin: showInstanceAdmin,
-			ChunkName:         "lists",
-		},
+		globalWebParams:      newGlobalWebParams(r, true, showAdmin, showInstanceAdmin, "lists"),
 		Lists:                lists,
 		Collections:          collections,
 		SharedListPath:       constants.SHARED_LIST_PATH,
@@ -204,13 +219,8 @@ func ListsPage(w io.Writer, params listsPageParams) {
 
 // Create List page
 
-func CreateListParams(showAdmin bool, showInstanceAdmin bool) globalWebParams {
-	return globalWebParams{
-		ShowNavbar:        true,
-		ShowAdmin:         showAdmin,
-		ShowInstanceAdmin: showInstanceAdmin,
-		ChunkName:         "listCreate",
-	}
+func CreateListParams(r *http.Request, showAdmin bool, showInstanceAdmin bool) globalWebParams {
+	return newGlobalWebParams(r, true, showAdmin, showInstanceAdmin, "listCreate")
 }
 
 func CreateListPage(w io.Writer, params globalWebParams) {
@@ -227,16 +237,11 @@ type editListParams struct {
 	globalWebParams
 }
 
-func EditListParams(list constants.List, showAdmin bool, showInstanceAdmin bool) editListParams {
+func EditListParams(r *http.Request, list constants.List, showAdmin bool, showInstanceAdmin bool) editListParams {
 	return editListParams{
-		globalWebParams: globalWebParams{
-			ShowNavbar:        true,
-			ShowAdmin:         showAdmin,
-			ShowInstanceAdmin: showInstanceAdmin,
-			ChunkName:         "listEdit",
-		},
-		List:           list,
-		SharedListPath: constants.SHARED_LIST_PATH,
+		globalWebParams: newGlobalWebParams(r, true, showAdmin, showInstanceAdmin, "listEdit"),
+		List:            list,
+		SharedListPath:  constants.SHARED_LIST_PATH,
 	}
 }
 
@@ -254,16 +259,11 @@ type listItemsPageParams struct {
 	globalWebParams
 }
 
-func ListItemsPageParams(list constants.List, items []constants.Item, showAdmin bool, showInstanceAdmin bool) listItemsPageParams {
+func ListItemsPageParams(r *http.Request, list constants.List, items []constants.Item, showAdmin bool, showInstanceAdmin bool) listItemsPageParams {
 	return listItemsPageParams{
-		globalWebParams: globalWebParams{
-			ShowNavbar:        true,
-			ShowAdmin:         showAdmin,
-			ShowInstanceAdmin: showInstanceAdmin,
-			ChunkName:         "listItems",
-		},
-		List:  list,
-		Items: items,
+		globalWebParams: newGlobalWebParams(r, true, showAdmin, showInstanceAdmin, "listItems"),
+		List:            list,
+		Items:           items,
 	}
 }
 
@@ -282,31 +282,21 @@ type createEditItemParams struct {
 	EditMode bool
 }
 
-func CreateItemParams(list constants.List, showAdmin bool, showInstanceAdmin bool) createEditItemParams {
+func CreateItemParams(r *http.Request, list constants.List, showAdmin bool, showInstanceAdmin bool) createEditItemParams {
 	return createEditItemParams{
-		globalWebParams: globalWebParams{
-			ShowNavbar:        true,
-			ShowAdmin:         showAdmin,
-			ShowInstanceAdmin: showInstanceAdmin,
-			ChunkName:         "itemCreate",
-		},
-		List:     list,
-		Item:     constants.Item{},
-		EditMode: false,
+		globalWebParams: newGlobalWebParams(r, true, showAdmin, showInstanceAdmin, "itemCreate"),
+		List:            list,
+		Item:            constants.Item{},
+		EditMode:        false,
 	}
 }
 
-func EditItemParams(list constants.List, item constants.Item, showAdmin bool, showInstanceAdmin bool) createEditItemParams {
+func EditItemParams(r *http.Request, list constants.List, item constants.Item, showAdmin bool, showInstanceAdmin bool) createEditItemParams {
 	return createEditItemParams{
-		globalWebParams: globalWebParams{
-			ShowNavbar:        true,
-			ShowAdmin:         showAdmin,
-			ShowInstanceAdmin: showInstanceAdmin,
-			ChunkName:         "itemCreate",
-		},
-		List:     list,
-		Item:     item,
-		EditMode: true,
+		globalWebParams: newGlobalWebParams(r, true, showAdmin, showInstanceAdmin, "itemCreate"),
+		List:            list,
+		Item:            item,
+		EditMode:        true,
 	}
 }
 
@@ -327,14 +317,9 @@ type sharedListItemsPageParams struct {
 	globalWebParams
 }
 
-func SharedListItemsPageParams(shareCode string, list constants.List, items []constants.Item, showAdmin bool, showInstanceAdmin bool) sharedListItemsPageParams {
+func SharedListItemsPageParams(r *http.Request, shareCode string, list constants.List, items []constants.Item, showAdmin bool, showInstanceAdmin bool) sharedListItemsPageParams {
 	return sharedListItemsPageParams{
-		globalWebParams: globalWebParams{
-			ShowNavbar:        true,
-			ShowAdmin:         showAdmin,
-			ShowInstanceAdmin: showInstanceAdmin,
-			ChunkName:         "sharedList",
-		},
+		globalWebParams:     newGlobalWebParams(r, true, showAdmin, showInstanceAdmin, "sharedList"),
 		List:                list,
 		Items:               items,
 		ShareCode:           shareCode,
@@ -344,14 +329,9 @@ func SharedListItemsPageParams(shareCode string, list constants.List, items []co
 }
 
 // NestedSharedListItemsPageParams creates parameters for a shared list that's being viewed from a parent collection
-func NestedSharedListItemsPageParams(shareCode string, collectionShareCode string, list constants.List, items []constants.Item, showAdmin bool, showInstanceAdmin bool) sharedListItemsPageParams {
+func NestedSharedListItemsPageParams(r *http.Request, shareCode string, collectionShareCode string, list constants.List, items []constants.Item, showAdmin bool, showInstanceAdmin bool) sharedListItemsPageParams {
 	return sharedListItemsPageParams{
-		globalWebParams: globalWebParams{
-			ShowNavbar:        true,
-			ShowAdmin:         showAdmin,
-			ShowInstanceAdmin: showInstanceAdmin,
-			ChunkName:         "sharedList",
-		},
+		globalWebParams:     newGlobalWebParams(r, true, showAdmin, showInstanceAdmin, "sharedList"),
 		List:                list,
 		Items:               items,
 		ShareCode:           shareCode,
@@ -399,16 +379,11 @@ type userAdminPageParams struct {
 	globalWebParams
 }
 
-func UserAdminPageParams(users []constants.UserRead, selfId int, showAdmin bool, showInstanceAdmin bool) userAdminPageParams {
+func UserAdminPageParams(r *http.Request, users []constants.UserRead, selfId int, showAdmin bool, showInstanceAdmin bool) userAdminPageParams {
 	return userAdminPageParams{
-		globalWebParams: globalWebParams{
-			ShowNavbar:        true,
-			ShowAdmin:         showAdmin,
-			ShowInstanceAdmin: showInstanceAdmin,
-			ChunkName:         "userAdmin",
-		},
-		Users:  users,
-		SelfId: selfId,
+		globalWebParams: newGlobalWebParams(r, true, showAdmin, showInstanceAdmin, "userAdmin"),
+		Users:           users,
+		SelfId:          selfId,
 	}
 }
 
@@ -426,16 +401,11 @@ type allUsersPageParams struct {
 	globalWebParams
 }
 
-func AllUsersPageParams(users []constants.UserRead, selfId int, showInstanceAdmin bool) allUsersPageParams {
+func AllUsersPageParams(r *http.Request, users []constants.UserRead, selfId int, showInstanceAdmin bool) allUsersPageParams {
 	return allUsersPageParams{
-		globalWebParams: globalWebParams{
-			ShowNavbar:        true,
-			ShowAdmin:         true,
-			ShowInstanceAdmin: showInstanceAdmin,
-			ChunkName:         "allUsers",
-		},
-		Users:  users,
-		SelfId: selfId,
+		globalWebParams: newGlobalWebParams(r, true, true, showInstanceAdmin, "allUsers"),
+		Users:           users,
+		SelfId:          selfId,
 	}
 }
 
@@ -452,15 +422,10 @@ type createUserPageParams struct {
 	GroupAdmins []constants.UserRead
 }
 
-func CreateUserParams(showAdmin bool, showInstanceAdmin bool, groupAdmins []constants.UserRead) createUserPageParams {
+func CreateUserParams(r *http.Request, showAdmin bool, showInstanceAdmin bool, groupAdmins []constants.UserRead) createUserPageParams {
 	return createUserPageParams{
-		globalWebParams: globalWebParams{
-			ShowNavbar:        true,
-			ShowAdmin:         showAdmin,
-			ShowInstanceAdmin: showInstanceAdmin,
-			ChunkName:         "userCreate",
-		},
-		GroupAdmins: groupAdmins,
+		globalWebParams: newGlobalWebParams(r, true, showAdmin, showInstanceAdmin, "userCreate"),
+		GroupAdmins:     groupAdmins,
 	}
 }
 
@@ -471,13 +436,8 @@ func CreateUserPage(w io.Writer, params createUserPageParams) {
 }
 
 // Create Collection page
-func CreateCollectionParams(showAdmin bool, showInstanceAdmin bool) globalWebParams {
-	return globalWebParams{
-		ShowNavbar:        true,
-		ShowAdmin:         showAdmin,
-		ShowInstanceAdmin: showInstanceAdmin,
-		ChunkName:         "collectionCreate",
-	}
+func CreateCollectionParams(r *http.Request, showAdmin bool, showInstanceAdmin bool) globalWebParams {
+	return newGlobalWebParams(r, true, showAdmin, showInstanceAdmin, "collectionCreate")
 }
 
 func CreateCollectionPage(w io.Writer, params globalWebParams) {
@@ -493,14 +453,9 @@ type editCollectionParams struct {
 	globalWebParams
 }
 
-func EditCollectionParams(collection constants.Collection, showAdmin bool, showInstanceAdmin bool) editCollectionParams {
+func EditCollectionParams(r *http.Request, collection constants.Collection, showAdmin bool, showInstanceAdmin bool) editCollectionParams {
 	return editCollectionParams{
-		globalWebParams: globalWebParams{
-			ShowNavbar:        true,
-			ShowAdmin:         showAdmin,
-			ShowInstanceAdmin: showInstanceAdmin,
-			ChunkName:         "collectionEdit",
-		},
+		globalWebParams:      newGlobalWebParams(r, true, showAdmin, showInstanceAdmin, "collectionEdit"),
 		Collection:           collection,
 		SharedCollectionPath: constants.SHARED_COLLECTION_PATH,
 	}
@@ -522,14 +477,9 @@ type collectionDetailPageParams struct {
 	globalWebParams
 }
 
-func CollectionDetailPageParams(collection constants.Collection, listIdsInCollection []uint64, listIdsWithShareCode []uint64, allLists []constants.List, showAdmin bool, showInstanceAdmin bool) collectionDetailPageParams {
+func CollectionDetailPageParams(r *http.Request, collection constants.Collection, listIdsInCollection []uint64, listIdsWithShareCode []uint64, allLists []constants.List, showAdmin bool, showInstanceAdmin bool) collectionDetailPageParams {
 	return collectionDetailPageParams{
-		globalWebParams: globalWebParams{
-			ShowNavbar:        true,
-			ShowAdmin:         showAdmin,
-			ShowInstanceAdmin: showInstanceAdmin,
-			ChunkName:         "collectionDetail",
-		},
+		globalWebParams:      newGlobalWebParams(r, true, showAdmin, showInstanceAdmin, "collectionDetail"),
 		Collection:           collection,
 		ListIdsInCollection:  listIdsInCollection,
 		ListIdsWithShareCode: listIdsWithShareCode,
@@ -552,17 +502,12 @@ type sharedCollectionPageParams struct {
 	globalWebParams
 }
 
-func SharedCollectionPageParams(shareCode string, collection constants.Collection, lists []constants.List, showAdmin bool, showInstanceAdmin bool) sharedCollectionPageParams {
+func SharedCollectionPageParams(r *http.Request, shareCode string, collection constants.Collection, lists []constants.List, showAdmin bool, showInstanceAdmin bool) sharedCollectionPageParams {
 	return sharedCollectionPageParams{
-		globalWebParams: globalWebParams{
-			ShowNavbar:        true,
-			ShowAdmin:         showAdmin,
-			ShowInstanceAdmin: showInstanceAdmin,
-			ChunkName:         "sharedCollection",
-		},
-		Collection: collection,
-		Lists:      lists,
-		ShareCode:  shareCode,
+		globalWebParams: newGlobalWebParams(r, true, showAdmin, showInstanceAdmin, "sharedCollection"),
+		Collection:      collection,
+		Lists:           lists,
+		ShareCode:       shareCode,
 	}
 }
 
