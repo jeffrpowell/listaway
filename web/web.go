@@ -319,9 +319,11 @@ func CreateEditItemPage(w io.Writer, params createEditItemParams) {
 // Shared List Items page
 
 type sharedListItemsPageParams struct {
-	List      constants.List
-	Items     []constants.Item
-	ShareCode string
+	List                constants.List
+	Items               []constants.Item
+	ShareCode           string
+	CollectionShareCode string
+	HasParentCollection bool
 	globalWebParams
 }
 
@@ -333,9 +335,28 @@ func SharedListItemsPageParams(shareCode string, list constants.List, items []co
 			ShowInstanceAdmin: showInstanceAdmin,
 			ChunkName:         "sharedList",
 		},
-		List:      list,
-		Items:     items,
-		ShareCode: shareCode,
+		List:                list,
+		Items:               items,
+		ShareCode:           shareCode,
+		HasParentCollection: false,
+		CollectionShareCode: "",
+	}
+}
+
+// NestedSharedListItemsPageParams creates parameters for a shared list that's being viewed from a parent collection
+func NestedSharedListItemsPageParams(shareCode string, collectionShareCode string, list constants.List, items []constants.Item, showAdmin bool, showInstanceAdmin bool) sharedListItemsPageParams {
+	return sharedListItemsPageParams{
+		globalWebParams: globalWebParams{
+			ShowNavbar:        true,
+			ShowAdmin:         showAdmin,
+			ShowInstanceAdmin: showInstanceAdmin,
+			ChunkName:         "sharedList",
+		},
+		List:                list,
+		Items:               items,
+		ShareCode:           shareCode,
+		HasParentCollection: true,
+		CollectionShareCode: collectionShareCode,
 	}
 }
 
@@ -493,11 +514,11 @@ func EditCollectionPage(w io.Writer, params editCollectionParams) {
 
 // Collection Detail page
 type collectionDetailPageParams struct {
-	Collection          constants.Collection
-	ListIdsInCollection []uint64
+	Collection           constants.Collection
+	ListIdsInCollection  []uint64
 	ListIdsWithShareCode []uint64
-	AllLists            []constants.List
-	SharedListPath      string
+	AllLists             []constants.List
+	SharedListPath       string
 	globalWebParams
 }
 
@@ -509,11 +530,11 @@ func CollectionDetailPageParams(collection constants.Collection, listIdsInCollec
 			ShowInstanceAdmin: showInstanceAdmin,
 			ChunkName:         "collectionDetail",
 		},
-		Collection:          collection,
-		ListIdsInCollection: listIdsInCollection,
+		Collection:           collection,
+		ListIdsInCollection:  listIdsInCollection,
 		ListIdsWithShareCode: listIdsWithShareCode,
-		AllLists:            allLists,
-		SharedListPath:      constants.SHARED_LIST_PATH,
+		AllLists:             allLists,
+		SharedListPath:       constants.SHARED_LIST_PATH,
 	}
 }
 
@@ -560,8 +581,10 @@ type sharedCollection404PageParams struct {
 func SharedCollection404PageParams(shareCode string) sharedCollection404PageParams {
 	return sharedCollection404PageParams{
 		globalWebParams: globalWebParams{
-			ShowNavbar: false,
-			ChunkName:  "sharedCollection404",
+			ShowNavbar:        false,
+			ShowAdmin:         false,
+			ShowInstanceAdmin: false,
+			ChunkName:         "sharedCollection404",
 		},
 		ShareCode: shareCode,
 	}

@@ -241,13 +241,14 @@ func RemoveListFromCollection(collectionId int, listId int) error {
 	return err
 }
 
-// GetCollectionLists retrieves all lists in a collection
+// GetCollectionLists retrieves all lists in a collection with item counts
 func GetCollectionLists(collectionId int) ([]constants.List, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
 
 	rows, err := db.Query(`
-		SELECT l.id, l.name, l.description, l.sharecode 
+		SELECT l.id, l.name, l.description, l.sharecode, 
+		       (SELECT COUNT(i.id) FROM listaway.item i WHERE i.listid = l.id) as item_count
 		FROM listaway.list l
 		JOIN listaway.collection_list cl ON l.id = cl.listid
 		WHERE cl.collectionid = $1
@@ -262,11 +263,14 @@ func GetCollectionLists(collectionId int) ([]constants.List, error) {
 	var collectionLists []constants.List
 	for rows.Next() {
 		var cl constants.List
+		var itemCount int
 
-		err := rows.Scan(&cl.Id, &cl.Name, &cl.Description, &cl.ShareCode)
+		err := rows.Scan(&cl.Id, &cl.Name, &cl.Description, &cl.ShareCode, &itemCount)
 		if err != nil {
 			return nil, err
 		}
+		// Add item count to the list
+		cl.ItemCount = itemCount
 		collectionLists = append(collectionLists, cl)
 	}
 	if err := rows.Err(); err != nil {

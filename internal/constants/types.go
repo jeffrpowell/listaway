@@ -25,6 +25,7 @@ type List struct {
 	Name        string
 	Description sql.NullString
 	ShareCode   sql.NullString
+	ItemCount   int        // Number of items in the list
 }
 
 type ListPostParams struct {

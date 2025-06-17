@@ -3,6 +3,16 @@
 {{end}}
 {{define "all"}}
 <div class="list-form">
+    {{if .HasParentCollection}}
+    <div class="mb-6">
+        <a href="/sharedcollection/{{.CollectionShareCode}}" class="inline-flex items-center text-blue-600 hover:text-blue-800">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to Collection
+        </a>
+    </div>
+    {{end}}
     <div class="flex flex-col mb-4">
         <h1 class="list-name-header text-gray-800 font-bold text-2xl relative">{{.List.Name}}</h1>
         <div>
