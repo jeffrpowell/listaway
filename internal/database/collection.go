@@ -120,9 +120,44 @@ func confirmNameMatchesCollectionName(db *sql.DB, collectionId int, confirmation
 }
 
 // GenerateCollectionShareCode generates a unique share code for a collection
+// and ensures all lists within the collection have share codes as well
 func GenerateCollectionShareCode(collectionId int) (string, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
+
+	// First, get all lists in this collection that don't have share codes yet
+	rows, err := db.Query(`
+		SELECT l.id 
+		FROM listaway.list l
+		JOIN listaway.collection_list cl ON l.id = cl.listid
+		WHERE cl.collectionid = $1 AND l.sharecode IS NULL
+	`, collectionId)
+
+	if err != nil {
+		return "", err
+	}
+	defer rows.Close()
+
+	// Generate a share code for each list that doesn't have one
+	for rows.Next() {
+		var listId int
+		err := rows.Scan(&listId)
+		if err != nil {
+			return "", err
+		}
+		
+		// Generate a share code for this list
+		_, err = GenerateShareCode(listId)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	if err = rows.Err(); err != nil {
+		return "", err
+	}
+
+	// Now generate the collection share code
 	code, err := createUniqueCollectionShareCode(db)
 	if err != nil {
 		return "", err

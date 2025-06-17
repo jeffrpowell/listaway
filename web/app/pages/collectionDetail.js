@@ -57,7 +57,26 @@ document.addEventListener('DOMContentLoaded', () => {
     checkbox.addEventListener('change', async (event) => {
       const listId = event.target.dataset.listId;
       const collectionId = event.target.dataset.collectionId;
+      const hasSharecode = event.target.dataset.hasSharecode === 'true';
+      const collectionHasSharecode = event.target.dataset.collectionHasSharecode === 'true';
       const isChecked = event.target.checked;
+
+      let shouldProceed = true;
+
+      // If the checkbox is being checked AND the list doesn't have a share code, show a confirmation
+      if (collectionHasSharecode && isChecked && !hasSharecode) {
+        shouldProceed = confirm(
+          "Adding this list to a collection with a share code will generate a share code for this list as well. " +
+          "This means the list will be publicly accessible via its share link. " +
+          "Do you want to continue?"
+        );
+        
+        if (!shouldProceed) {
+          // User cancelled, revert checkbox state
+          event.target.checked = false;
+          return;
+        }
+      }
 
       // Show loading indicator
       showStatus(listId, 'loading');
@@ -85,6 +104,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // Check if response was successful
         if (response.ok) {
           showStatus(listId, 'success');
+          
+          // If we just added a list to a collection and generated its share code, update the data attribute
+          if (isChecked && !hasSharecode) {
+            event.target.dataset.hasSharecode = 'true';
+            
+            // Refresh the page after a brief delay to show the new share code
+            setTimeout(() => {
+              window.location.reload();
+            }, 1500);
+          }
         } else {
           throw new Error(`Request failed with status ${response.status}`);
         }

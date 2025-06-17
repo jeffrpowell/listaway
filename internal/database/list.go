@@ -168,3 +168,28 @@ func UnpublishShareCode(listId int) error {
 	_, err := db.Exec(`UPDATE listaway.list SET sharecode = NULL WHERE id = $1`, listId)
 	return err
 }
+
+// GetListIdsWithShareCode retrieves all list IDs for a user that have share codes
+func GetListIdsWithShareCode(userId int) ([]uint64, error) {
+	db := getDatabaseConnection()
+	defer db.Close()
+	rows, err := db.Query("SELECT id FROM "+constants.DB_TABLE_LIST+" WHERE userId = $1 AND sharecode IS NOT NULL", userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var listIdsWithShareCode []uint64
+	for rows.Next() {
+		var id uint64
+		err := rows.Scan(&id)
+		if err != nil {
+			return nil, err
+		}
+		listIdsWithShareCode = append(listIdsWithShareCode, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return listIdsWithShareCode, nil
+}
