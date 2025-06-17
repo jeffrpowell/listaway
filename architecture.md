@@ -4,6 +4,21 @@
 
 ```
 listaway/
+├── .devcontainer/        # Development container configuration
+│   ├── Dockerfile        # Container definition
+│   ├── .env              # Environment variables
+│   ├── amd64/            # AMD64 architecture specific files
+│   └── arm64/            # ARM64 architecture specific files
+├── .github/              # GitHub configuration
+│   ├── workflows/        # GitHub Actions workflows
+│   │   └── release.yml   # Release automation
+│   └── dependabot.yml    # Dependency update configuration
+├── .vscode/              # VS Code configuration
+│   └── launch.json       # Debug configuration
+├── .windsurf/            # Windsurf AI assistant configuration
+│   ├── features/         # Feature definitions
+│   ├── rules/            # Custom rules
+│   └── workflows/        # Workflow templates
 ├── cmd/
 │   └── listaway/         # Application entry point
 │       └── main.go       # Main application file
@@ -48,7 +63,8 @@ listaway/
      - Users: User management and authentication
      - Lists: List creation and management
      - Items: List items management
-     - Collections: Grouping and organizing related lists
+     - Collections: Grouping and sharing related sets of lists
+     - Reset Tokens: Password reset tokens
 
 4. **Handlers** (`internal/handlers/`)
    - Implements HTTP request handlers for all application endpoints
@@ -62,13 +78,34 @@ listaway/
    - Handles serving of static files and web application routes
 
 2. **Frontend Application** (`web/app/`)
-   - Contains the JavaScript application code
-   - Likely implements the user interface for the list management functionality
+   - All user interface code for the application
+   - Built with nested HTML snippets (powered by the Go html/template package via `web/web.go`), TailwindCSS, and vanilla Javascript.
 
 3. **Build Configuration**
    - Uses Webpack for bundling assets (development and production configurations)
    - Implements Tailwind CSS for styling
    - Uses PostCSS for CSS processing
+
+### Development Infrastructure
+
+1. **Development Container** (`.devcontainer/`)
+   - Provides a consistent development environment using containers
+   - Includes configuration for both AMD64 and ARM64 architectures
+   - Contains Dockerfile and environment settings
+
+2. **GitHub Integration** (`.github/`)
+   - Workflows for CI/CD automation via GitHub Actions
+   - Release automation for application deployment
+   - Dependabot configuration for automated dependency updates
+
+3. **IDE Configuration** (`.vscode/`)
+   - Visual Studio Code settings for consistent development experience
+   - Debug configurations for Go application
+
+4. **AI Assistant Configuration** (`.windsurf/`)
+   - Configuration for Windsurf AI coding assistant
+   - Custom workflows, rules, and feature definitions
+   - Helps with maintaining project standards and automating common tasks
 
 ## Summary
 
