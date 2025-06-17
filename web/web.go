@@ -493,11 +493,10 @@ func EditCollectionPage(w io.Writer, params editCollectionParams) {
 
 // Collection Detail page
 type collectionDetailPageParams struct {
-	Collection           constants.Collection
-	ListIdsInCollection  []uint64
-	AllLists             []constants.List
-	SharedListPath       string
-	SharedCollectionPath string
+	Collection          constants.Collection
+	ListIdsInCollection []uint64
+	AllLists            []constants.List
+	SharedListPath      string
 	globalWebParams
 }
 
@@ -509,11 +508,10 @@ func CollectionDetailPageParams(collection constants.Collection, listIdsInCollec
 			ShowInstanceAdmin: showInstanceAdmin,
 			ChunkName:         "collectionDetail",
 		},
-		Collection:           collection,
-		ListIdsInCollection:  listIdsInCollection,
-		AllLists:             allLists,
-		SharedListPath:       constants.SHARED_LIST_PATH,
-		SharedCollectionPath: constants.SHARED_COLLECTION_PATH,
+		Collection:          collection,
+		ListIdsInCollection: listIdsInCollection,
+		AllLists:            allLists,
+		SharedListPath:      constants.SHARED_LIST_PATH,
 	}
 }
 
