@@ -1,4 +1,3 @@
-require('../index')
 require('../navbar')
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -71,7 +70,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         try {
             const response = await fetch("/list", {
                 method: "PUT",
-                // Set the FormData instance as the request body
                 headers: {
                     "Accept": "text/plain",
                     "Content-Type": "application/x-www-form-urlencoded"
