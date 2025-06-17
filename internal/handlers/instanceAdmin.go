@@ -13,8 +13,8 @@ import (
 )
 
 func init() {
-	constants.ROUTER.HandleFunc("/admin/allusers", middleware.Chain(allUsersGET, append(middleware.DefaultMiddlewareSlice, middleware.RequireInstanceAdmin())...)).Methods("GET")
-	constants.ROUTER.HandleFunc("/admin/user/{userId:[0-9]+}/toggleinstanceadmin", middleware.Chain(toggleUserInstanceAdmin, append(middleware.DefaultMiddlewareSlice, middleware.RequireInstanceAdmin())...)).Methods("POST")
+	constants.ROUTER.HandleFunc("/admin/allusers", middleware.Chain(allUsersGET, append([]middleware.Middleware{middleware.RequireInstanceAdmin()}, middleware.DefaultMiddlewareSlice...)...)).Methods("GET")
+	constants.ROUTER.HandleFunc("/admin/user/{userId:[0-9]+}/toggleinstanceadmin", middleware.Chain(toggleUserInstanceAdmin, append([]middleware.Middleware{middleware.RequireInstanceAdmin()}, middleware.DefaultMiddlewareSlice...)...)).Methods("POST")
 }
 
 // All Users page - for Instance Administrators
@@ -35,7 +35,7 @@ func allUsersGET(w http.ResponseWriter, r *http.Request) {
 	}
 
 	isInstanceAdmin := true // We're in RequireInstanceAdmin middleware, so this is always true
-	params := web.AllUsersPageParams(users, selfId, isInstanceAdmin)
+	params := web.AllUsersPageParams(r, users, selfId, isInstanceAdmin)
 	web.AllUsersPage(w, params)
 }
 

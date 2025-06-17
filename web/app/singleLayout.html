@@ -7,7 +7,11 @@
             <div class="hidden md:flex items-center space-x-4">
                 {{if .ShowAdmin}}<a href="/admin/users" class="text-white">User Admin</a>{{end}}
                 {{if .ShowInstanceAdmin}}<a href="/admin/allusers" class="text-white">All Users</a>{{end}}
-                <span class="logout text-white cursor-pointer">Logout</span>
+                {{if .IsAuthenticated}}
+                    <span class="logout text-white cursor-pointer">Logout</span>
+                {{else}}
+                    <a href="/auth" class="text-white">Login</a>
+                {{end}}
             </div>
         </div>
     </div>

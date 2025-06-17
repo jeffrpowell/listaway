@@ -16,6 +16,4 @@ async function logout() {
 }
 
 const logouts = document.querySelectorAll(".logout");
-logouts.forEach(logoutEl => logoutEl.addEventListener("click", (event) => {
-    logout();
-}));
+logouts.forEach(logoutEl => logoutEl.addEventListener("click", logout));

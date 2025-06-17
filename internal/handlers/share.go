@@ -15,7 +15,7 @@ import (
 )
 
 func init() {
-	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/share", middleware.Chain(listShareHandler, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...))
+	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/share", middleware.Chain(listShareHandler, append([]middleware.Middleware{middleware.ListIdOwner("listId")}, middleware.DefaultMiddlewareSlice...)...))
 	constants.ROUTER.HandleFunc("/"+constants.SHARED_LIST_PATH+"/{shareCode}", middleware.DefaultPublicMiddlewareChain(shareGET)).Methods("GET")
 	constants.ROUTER.HandleFunc("/"+constants.SHARED_LIST_PATH+"/{shareCode}/items", middleware.DefaultPublicMiddlewareChain(sharedItemsGET)).Methods("GET")
 	// New route for nested shared list view within a collection
@@ -80,7 +80,7 @@ func shareGET(w http.ResponseWriter, r *http.Request) {
 	}
 	admin := helper.IsUserAdmin(r)
 	instanceAdmin := helper.IsUserInstanceAdmin(r)
-	sharedListItemsPage := web.SharedListItemsPageParams(shareCode, list, items, admin, instanceAdmin)
+	sharedListItemsPage := web.SharedListItemsPageParams(r, shareCode, list, items, admin, instanceAdmin)
 	web.SharedListItemsPage(w, sharedListItemsPage)
 }
 
@@ -116,7 +116,7 @@ func nestedShareGET(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	listShareCode := vars["listShareCode"]
 	collectionShareCode := vars["collectionShareCode"]
-	
+
 	// Verify that the collection exists
 	collection, err := database.GetCollectionFromShareCode(collectionShareCode)
 	if err != nil {
@@ -169,7 +169,7 @@ func nestedShareGET(w http.ResponseWriter, r *http.Request) {
 	instanceAdmin := helper.IsUserInstanceAdmin(r)
 
 	// Render with collection context
-	sharedListItemsPage := web.NestedSharedListItemsPageParams(listShareCode, collectionShareCode, list, items, admin, instanceAdmin)
+	sharedListItemsPage := web.NestedSharedListItemsPageParams(r, listShareCode, collectionShareCode, list, items, admin, instanceAdmin)
 	web.SharedListItemsPage(w, sharedListItemsPage)
 }
 
@@ -177,7 +177,7 @@ func nestedShareGET(w http.ResponseWriter, r *http.Request) {
 func nestedSharedItemsGET(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	listShareCode := vars["listShareCode"]
-	
+
 	// Get the list from the share code
 	list, err := database.GetListFromShareCode(listShareCode)
 	if err != nil {

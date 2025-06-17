@@ -17,9 +17,9 @@ func init() {
 	constants.ROUTER.HandleFunc("/list", middleware.DefaultMiddlewareChain(listsHandler))
 	constants.ROUTER.HandleFunc("/list/create", middleware.DefaultMiddlewareChain(createListGET)).Methods("GET")
 	constants.ROUTER.HandleFunc("/list/namecheck", middleware.DefaultMiddlewareChain(nameCheckGET)).Methods("GET")
-	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}", middleware.Chain(listHandler, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...))
-	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/edit", middleware.Chain(editListGET, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...)).Methods("GET")
-	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/items", middleware.Chain(listItemsGET, append(middleware.DefaultMiddlewareSlice, middleware.ListIdOwner("listId"))...)).Methods("GET")
+	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}", middleware.Chain(listHandler, append([]middleware.Middleware{middleware.ListIdOwner("listId")}, middleware.DefaultMiddlewareSlice...)...))
+	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/edit", middleware.Chain(editListGET, append([]middleware.Middleware{middleware.ListIdOwner("listId")}, middleware.DefaultMiddlewareSlice...)...)).Methods("GET")
+	constants.ROUTER.HandleFunc("/list/{listId:[0-9]+}/items", middleware.Chain(listItemsGET, append([]middleware.Middleware{middleware.ListIdOwner("listId")}, middleware.DefaultMiddlewareSlice...)...)).Methods("GET")
 }
 
 func listsHandler(w http.ResponseWriter, r *http.Request) {
@@ -54,7 +54,7 @@ func listsGET(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
-	
+
 	// Get user's lists
 	lists, err := database.GetLists(userId)
 	if err != nil {
@@ -62,7 +62,7 @@ func listsGET(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
-	
+
 	// Get user's collections
 	collections, err := database.GetCollections(userId)
 	if err != nil {
@@ -70,10 +70,10 @@ func listsGET(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
-	
+
 	admin := helper.IsUserAdmin(r)
 	instanceAdmin := helper.IsUserInstanceAdmin(r)
-	listsPage := web.ListsPageParams(lists, collections, admin, instanceAdmin)
+	listsPage := web.ListsPageParams(r, lists, collections, admin, instanceAdmin)
 	web.ListsPage(w, listsPage)
 }
 
@@ -81,7 +81,7 @@ func listsGET(w http.ResponseWriter, r *http.Request) {
 func createListGET(w http.ResponseWriter, r *http.Request) {
 	admin := helper.IsUserAdmin(r)
 	instanceAdmin := helper.IsUserInstanceAdmin(r)
-	params := web.CreateListParams(admin, instanceAdmin)
+	params := web.CreateListParams(r, admin, instanceAdmin)
 	web.CreateListPage(w, params)
 }
 
@@ -148,7 +148,7 @@ func editListGET(w http.ResponseWriter, r *http.Request) {
 	}
 	admin := helper.IsUserAdmin(r)
 	instanceAdmin := helper.IsUserInstanceAdmin(r)
-	editListPageParams := web.EditListParams(list, admin, instanceAdmin)
+	editListPageParams := web.EditListParams(r, list, admin, instanceAdmin)
 	web.EditListPage(w, editListPageParams)
 }
 
@@ -230,7 +230,7 @@ func listGET(w http.ResponseWriter, r *http.Request) {
 	}
 	admin := helper.IsUserAdmin(r)
 	instanceAdmin := helper.IsUserInstanceAdmin(r)
-	listItemsPage := web.ListItemsPageParams(list, items, admin, instanceAdmin)
+	listItemsPage := web.ListItemsPageParams(r, list, items, admin, instanceAdmin)
 	web.ListItemsPage(w, listItemsPage)
 }
 
