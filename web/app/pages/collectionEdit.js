@@ -126,6 +126,80 @@ function updateCollection(collectionData) {
   });
 }
 
+// Setup share modal
+function setupShareModal() {
+  const modal = document.getElementById('shareLinkModal');
+  if (!modal) return;
+
+  // Close when clicking outside the modal box
+  modal.addEventListener('click', function (e) {
+    if (e.target === this) {
+      closeShareModal();
+    }
+  });
+}
+
+// Publish collection
+window.publishCollection = function (id) {
+  // Create and submit a form to publish the collection
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = `/collections/${id}/share`;
+
+  document.body.appendChild(form);
+  form.submit();
+};
+
+// Share link handling
+window.copyShareLink = function (shareCode) {
+  const modal = document.getElementById('shareLinkModal');
+  const shareLink = document.getElementById('shareLink');
+
+  if (modal && shareLink) {
+    // Generate full URL for sharing
+    const url = `${window.location.origin}/sharedcollection/${shareCode}`;
+    shareLink.value = url;
+
+    // Display the modal
+    modal.classList.add('modal-open');
+  }
+};
+
+// Copy to clipboard
+window.copyToClipboard = function () {
+  const shareLink = document.getElementById('shareLink');
+  if (shareLink) {
+    shareLink.select();
+    shareLink.setSelectionRange(0, 99999); // For mobile devices
+
+    navigator.clipboard.writeText(shareLink.value)
+      .then(() => {
+        // Show success indicator
+        const copyBtn = shareLink.nextElementSibling;
+        if (copyBtn) {
+          const originalText = copyBtn.innerHTML;
+          copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg> Copied!';
+
+          setTimeout(() => {
+            copyBtn.innerHTML = originalText;
+          }, 2000);
+        }
+      })
+      .catch(err => {
+        console.error('Failed to copy text: ', err);
+        alert('Failed to copy to clipboard. Please copy the link manually.');
+      });
+  }
+};
+
+// Close share modal
+window.closeShareModal = function () {
+  const modal = document.getElementById('shareLinkModal');
+  if (modal) {
+    modal.classList.remove('modal-open');
+  }
+};
+
 // Show delete confirmation modal
 window.confirmDeleteCollection = function() {
   const modal = document.getElementById('deleteModal');
