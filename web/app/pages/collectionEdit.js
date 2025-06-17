@@ -1,248 +1,332 @@
-require("../navbar");
+require('../index')
+require('../navbar')
 
-// Store collection data
-let collectionId = null;
-let collectionName = null;
+document.addEventListener('DOMContentLoaded', (event) => {
+    const collectionNameHeaders = document.querySelectorAll('.collection-name-header');
+    const collectionNameInputs = document.querySelectorAll('.collection-name-input');
+    const editNameActions = document.querySelectorAll('.edit-name-edit-actions');
+    const saveNameButtons = document.querySelectorAll('.btn-save-collection-name');
+    const editNameSpinners = document.querySelectorAll('.edit-name-spinner');
+    const cancelNameButtons = document.querySelectorAll('.btn-cancel-collection-name');
+    const readNameActions = document.querySelectorAll('.edit-name-read-actions');
+    const editNameButtons = document.querySelectorAll('.btn-edit-collection-name');
+    const editNameErrors = document.querySelectorAll('.edit-name-error');
+    const collectionDescriptionInputs = document.querySelectorAll('.collection-description-input');
+    const descriptionSavedIcons = document.querySelectorAll('.description-saved-icon');
+    const descriptionErrors = document.querySelectorAll('.description-error');
+    const generateShareButtons = document.querySelectorAll('.btn-generate-share');
+    const shareLinks = document.querySelectorAll('.share-link');
+    const copyShareLinkButtons = document.querySelectorAll('.btn-copy-share-link');
+    const copyShareLinkEmptyIcons = document.querySelectorAll('.clipboard-empty');
+    const copyShareLinkCheckIcons = document.querySelectorAll('.clipboard-check');
+    const unpublishShareButtons = document.querySelectorAll('.btn-unpublish-share');
+    const collectionItemsRedirectButtons = document.querySelectorAll('.collection-items-redirect');
+    const deleteCollectionButtons = document.querySelectorAll('.collection-delete');
+    const deleteCollectionConfirmationSpans = document.querySelectorAll('.collection-delete-confirmation-span');
+    const deleteCollectionConfirmationInputs = document.querySelectorAll('.collection-delete-confirmation');
+    var formReadyToSubmit = false;
+    var firstDeleteClickDone = false;
 
-// Event handler when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-  // Get collection ID and name from the form
-  const idInput = document.getElementById('collectionId');
-  const nameInput = document.getElementById('name');
-  
-  if (idInput) collectionId = idInput.value;
-  if (nameInput) collectionName = nameInput.value;
-  
-  // Initialize form handling
-  initializeForm();
-  initializeDeleteModal();
-});
-
-// Initialize form behavior
-function initializeForm() {
-  const form = document.getElementById('editCollectionForm');
-  if (form) {
-    form.addEventListener('submit', handleFormSubmit);
-  }
-}
-
-// Initialize delete modal
-function initializeDeleteModal() {
-  const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-  if (confirmDeleteBtn) {
-    confirmDeleteBtn.addEventListener('click', () => {
-      const input = document.getElementById('confirmCollectionName');
-      if (input && input.value === collectionName) {
-        deleteCollection(collectionName);
-      } else {
-        // Show error message for incorrect name
-        input.classList.add('input-error');
-        setTimeout(() => {
-          input.classList.remove('input-error');
-        }, 1500);
-      }
+    editNameButtons.forEach(editNameBtn => {
+        editNameBtn.addEventListener('click', (event) => {
+            collectionNameHeaders.forEach(el => el.classList.add('hidden'));
+            collectionNameInputs.forEach(el => el.classList.remove('hidden'));
+            readNameActions.forEach(el => el.classList.add('hidden'));
+            editNameActions.forEach(el => el.classList.remove('hidden'));
+        });
     });
-  }
-}
-
-// Handle form submission
-function handleFormSubmit(event) {
-  event.preventDefault();
-  
-  // Get form data
-  const nameInput = document.getElementById('name');
-  const descriptionInput = document.getElementById('description');
-  
-  // Validate inputs
-  if (!nameInput || !nameInput.value.trim()) {
-    showInputError(nameInput, 'Collection name is required');
-    return;
-  }
-  
-  // Prepare collection data
-  const collectionData = {
-    name: nameInput.value.trim(),
-    description: descriptionInput ? descriptionInput.value.trim() : ''
-  };
-  
-  // Submit the data
-  updateCollection(collectionData);
-}
-
-// Show error on input
-function showInputError(inputElement, message) {
-  if (inputElement) {
-    inputElement.classList.add('input-error');
     
-    // Add error message if not already present
-    let errorMessage = inputElement.nextElementSibling;
-    if (!errorMessage || !errorMessage.classList.contains('error-message')) {
-      errorMessage = document.createElement('p');
-      errorMessage.className = 'text-error text-sm mt-1 error-message';
-      errorMessage.textContent = message;
-      inputElement.parentNode.insertBefore(errorMessage, inputElement.nextSibling);
-    }
-    
-    // Focus the input
-    inputElement.focus();
-    
-    // Remove error styling after a delay
-    setTimeout(() => {
-      inputElement.classList.remove('input-error');
-    }, 3000);
-  }
-}
+    cancelNameButtons.forEach(cancelNameBtn => {
+        cancelNameBtn.addEventListener('click', (event) => {
+            collectionNameHeaders.forEach(el => el.classList.remove('hidden'));
+            collectionNameInputs.forEach(el => el.classList.add('hidden'));
+            editNameActions.forEach(el => el.classList.add('hidden'));
+            editNameSpinners.forEach(el => el.classList.add('hidden'));
+            readNameActions.forEach(el => el.classList.remove('hidden'));
+        });
+    });
 
-// Update collection via API
-function updateCollection(collectionData) {
-  fetch(`/collections/${collectionId}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(collectionData)
-  })
-  .then(response => {
-    if (!response.ok) {
-      if (response.status === 409) {
-        // Handle name conflict
-        throw new Error('You already have a collection with that name');
-      }
-      throw new Error('Network response was not ok');
-    }
-    // Redirect back to the collection detail page
-    window.location.href = `/collections/${collectionId}`;
-  })
-  .catch(error => {
-    console.error('Error updating collection:', error);
-    
-    // Show error message to user
-    const nameInput = document.getElementById('name');
-    if (nameInput && error.message.includes('already have a collection')) {
-      showInputError(nameInput, error.message);
-    } else {
-      alert('Failed to update collection: ' + error.message);
-    }
-  });
-}
+    collectionNameInputs.forEach(collectionNameInput => 
+        collectionNameInput.addEventListener('input', async (event) => {
+            editNameErrors.forEach(errorSpan => {
+                errorSpan.classList.add('hidden');
+                errorSpan.textContent = '';
+            });
+            saveNameButtons.forEach(saveNameButton => saveNameButton.classList.add("opacity-50", "cursor-not-allowed"));
+            if (collectionNameInput.value.trim() !== '') {
+                debouncedCheckCollectionName(editNameErrors, collectionNameInput.value.trim());
+            }
+            else {
+                formReadyToSubmit = false;
+            }
+        })
+    );
 
-// Setup share modal
-function setupShareModal() {
-  const modal = document.getElementById('shareLinkModal');
-  if (!modal) return;
+    var debouncedCheckCollectionName = debounce(checkCollectionName, 500);
 
-  // Close when clicking outside the modal box
-  modal.addEventListener('click', function (e) {
-    if (e.target === this) {
-      closeShareModal();
-    }
-  });
-}
+    async function checkCollectionName(errorSpans, name) {
+        try {
+            const response = await fetch(`/collections/namecheck?name=${encodeURIComponent(name)}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
 
-// Publish collection
-window.publishCollection = function (id) {
-  // Create and submit a form to publish the collection
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = `/collections/${id}/share`;
+            if (response.status === 200) {
+                saveNameButtons.forEach(saveNameButton => saveNameButton.classList.remove("opacity-50", "cursor-not-allowed"));
+                formReadyToSubmit = true;
+                
+                // Use one-time event listener to avoid multiple bindings
+                saveNameButtons.forEach(saveNameButton => {
+                    // Remove previous event listeners
+                    const newBtn = saveNameButton.cloneNode(true);
+                    saveNameButton.parentNode.replaceChild(newBtn, saveNameButton);
+                    
+                    newBtn.addEventListener('click', async (event) => {
+                        if (!formReadyToSubmit) {
+                            return;
+                        }
+                        
+                        const collectionId = saveNameButton.dataset.collectionId;
+                        let collectionName;
+                        collectionNameInputs.forEach(collectionNameInput => {
+                            collectionName = collectionNameInput.value.trim();
+                        });
 
-  document.body.appendChild(form);
-  form.submit();
-};
-
-// Share link handling
-window.copyShareLink = function (shareCode) {
-  const modal = document.getElementById('shareLinkModal');
-  const shareLink = document.getElementById('shareLink');
-
-  if (modal && shareLink) {
-    // Generate full URL for sharing
-    const url = `${window.location.origin}/sharedcollection/${shareCode}`;
-    shareLink.value = url;
-
-    // Display the modal
-    modal.classList.add('modal-open');
-  }
-};
-
-// Copy to clipboard
-window.copyToClipboard = function () {
-  const shareLink = document.getElementById('shareLink');
-  if (shareLink) {
-    shareLink.select();
-    shareLink.setSelectionRange(0, 99999); // For mobile devices
-
-    navigator.clipboard.writeText(shareLink.value)
-      .then(() => {
-        // Show success indicator
-        const copyBtn = shareLink.nextElementSibling;
-        if (copyBtn) {
-          const originalText = copyBtn.innerHTML;
-          copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg> Copied!';
-
-          setTimeout(() => {
-            copyBtn.innerHTML = originalText;
-          }, 2000);
+                        let description;
+                        for (const collectionDescriptionInput of collectionDescriptionInputs) {
+                            description = collectionDescriptionInput.value;
+                            break;
+                        }
+                        
+                        if (collectionName) {
+                            // Hide the form error message if it exists
+                            editNameErrors.forEach(errorSpan => {
+                                errorSpan.classList.add('hidden');
+                                errorSpan.textContent = '';
+                            });
+                            
+                            editNameSpinners.forEach(el => el.classList.remove('hidden'));
+                            
+                            try {
+                                const response = await fetch(`/collections/${collectionId}`, {
+                                    method: 'PUT',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        name: collectionName,
+                                        description: description
+                                    })
+                                });
+                                
+                                if (response.status === 204) {
+                                    collectionNameHeaders.forEach(el => {
+                                        el.textContent = collectionName;
+                                        el.classList.remove('hidden');
+                                    });
+                                    collectionNameInputs.forEach(el => el.classList.add('hidden'));
+                                    editNameActions.forEach(el => el.classList.add('hidden'));
+                                    readNameActions.forEach(el => el.classList.remove('hidden'));
+                                } else {
+                                    editNameErrors.forEach(errorSpan => {
+                                        errorSpan.classList.remove('hidden');
+                                    });
+                                }
+                                formReadyToSubmit = false;
+                            } catch (error) {
+                                console.error('Error saving collection name:', error);
+                                editNameErrors.forEach(errorSpan => {
+                                    errorSpan.classList.remove('hidden');
+                                });
+                            } finally {
+                                editNameSpinners.forEach(el => el.classList.add('hidden'));
+                            }
+                        }
+                    })
+                });
+            } else {
+                formReadyToSubmit = false;
+                
+                // Show error message for name conflict
+                errorSpans.forEach(errorSpan => {
+                    errorSpan.textContent = 'A collection with this name already exists.';
+                    errorSpan.classList.remove('hidden');
+                });
+            }
+        } catch (error) {
+            console.error('Error checking collection name:', error);
+            formReadyToSubmit = false;
         }
-      })
-      .catch(err => {
-        console.error('Failed to copy text: ', err);
-        alert('Failed to copy to clipboard. Please copy the link manually.');
-      });
-  }
-};
-
-// Close share modal
-window.closeShareModal = function () {
-  const modal = document.getElementById('shareLinkModal');
-  if (modal) {
-    modal.classList.remove('modal-open');
-  }
-};
-
-// Show delete confirmation modal
-window.confirmDeleteCollection = function() {
-  const modal = document.getElementById('deleteModal');
-  const input = document.getElementById('confirmCollectionName');
-  
-  if (modal && input) {
-    // Reset input field
-    input.value = '';
-    input.classList.remove('input-error');
-    
-    // Show modal
-    modal.classList.add('modal-open');
-  }
-};
-
-// Close delete modal
-window.closeDeleteModal = function() {
-  const modal = document.getElementById('deleteModal');
-  if (modal) {
-    modal.classList.remove('modal-open');
-  }
-};
-
-// Delete collection
-function deleteCollection(confirmationName) {
-  fetch(`/collections/${collectionId}?name=${encodeURIComponent(confirmationName)}`, {
-    method: 'DELETE'
-  })
-  .then(response => {
-    if (!response.ok) {
-      if (response.status === 409) {
-        throw new Error('Confirmation name doesn\'t match');
-      }
-      throw new Error('Network response was not ok');
     }
-    // Redirect to collections page
-    window.location.href = '/collections';
-  })
-  .catch(error => {
-    console.error('Error deleting collection:', error);
-    alert('Failed to delete collection: ' + error.message);
+
+    // Auto-save description on input changes with debounce
+    collectionDescriptionInputs.forEach(descriptionInput => {
+        let saveTimeout;
+        descriptionInput.addEventListener('input', (event) => {
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => {
+                saveDescription(descriptionInput.dataset.collectionId, descriptionInput.value);
+            }, 1000);
+        });
+    });
+
+    async function saveDescription(collectionId, description) {
+        try {
+            let collectionName;
+            for (const collectionNameHeader of collectionNameHeaders) {
+                collectionName = collectionNameHeader.textContent;
+                break;
+            }
+            const response = await fetch(`/collections/${collectionId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: collectionName,
+                    description: description
+                })
+            });
+
+            if (response.status === 204) {
+                // Show saved confirmation
+                descriptionSavedIcons.forEach(icon => {
+                    icon.classList.remove('hidden');
+                    setTimeout(() => {
+                        icon.classList.add('hidden');
+                    }, 2000);
+                });
+            } else {
+                // Show error message
+                descriptionErrors.forEach(errorElement => {
+                    errorElement.classList.remove('hidden');
+                    setTimeout(() => {
+                        errorElement.classList.add('hidden');
+                    }, 3000);
+                });
+            }
+        } catch (error) {
+            console.error('Error saving description:', error);
+            // Show error message
+            descriptionErrors.forEach(errorElement => {
+                errorElement.classList.remove('hidden');
+                setTimeout(() => {
+                    errorElement.classList.add('hidden');
+                }, 3000);
+            });
+        }
+    }
+
+    // Handle share links
+    generateShareButtons.forEach(generateShareBtn => {
+        generateShareBtn.addEventListener('click', async (event) => {
+            let collectionId = generateShareBtn.dataset.collectionId;
+            const response = await fetch('/collections/'+collectionId+'/share', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
+            if (response.status === 200) {
+                window.location.reload();
+            }
+        });
+    });
     
-    // Close the modal
-    closeDeleteModal();
-  });
-}
+    shareLinks.forEach(shareLink => {
+        shareLink.textContent = window.location.origin + "/" + shareLink.dataset.sharedCollectionPath + "/" + shareLink.dataset.shareCode;
+    });
+
+    copyShareLinkButtons.forEach(copyShareLinkBtn => {
+        copyShareLinkBtn.addEventListener('click', async (event) => {
+            var result = writeClipboardText(window.location.origin + "/" + copyShareLinkBtn.dataset.sharedCollectionPath + "/" + copyShareLinkBtn.dataset.shareCode);
+            if (result) {
+                copyShareLinkEmptyIcons.forEach(icon => icon.classList.add("hidden"));
+                copyShareLinkCheckIcons.forEach(icon => icon.classList.remove("hidden"));
+            }
+        });
+    });
+    
+    async function writeClipboardText(text) {
+        try {
+            await navigator.clipboard.writeText(text);
+            return true;
+        } catch (error) {
+            console.error(error.message);
+            return false;
+        }
+    }
+
+    unpublishShareButtons.forEach(unpublishShareBtn => {
+        unpublishShareBtn.addEventListener('click', async (event) => {
+            let collectionId = unpublishShareBtn.dataset.collectionId;
+            const response = await fetch('/collections/'+collectionId+'/share', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
+            if (response.status === 204 || response.status === 200) {
+                window.location.reload();
+            }
+        });
+    });
+    
+    collectionItemsRedirectButtons.forEach(collectionItemsRedirectBtn => {
+        collectionItemsRedirectBtn.addEventListener('click', async (event) => {
+            let collectionId = collectionItemsRedirectBtn.dataset.collectionId;
+            window.location.href = "/collections/"+collectionId;
+        });
+    });
+
+    deleteCollectionButtons.forEach(deleteCollectionBtn => {
+        deleteCollectionBtn.addEventListener('click', async (event) => {
+            if (!firstDeleteClickDone) {
+                deleteCollectionConfirmationSpans.forEach(el => el.classList.remove('hidden'));
+                firstDeleteClickDone = true;
+            }
+            else {
+                let trueName;
+                for (const collectionNameHeader of collectionNameHeaders) {
+                    trueName = collectionNameHeader.textContent;
+                    break;
+                }
+                let confirmName;
+                for (const input of deleteCollectionConfirmationInputs) {
+                    if (input.value === trueName) {
+                        confirmName = input.value;
+                        break;
+                    }
+                }
+                if (confirmName === undefined || confirmName === null) {
+                    return;
+                }
+                let collectionId = deleteCollectionBtn.dataset.collectionId;
+                // Fix: Proper format for passing the confirmation name
+                const response = await fetch('/collections/'+collectionId+'?name='+encodeURIComponent(confirmName), {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (response.status === 204) {
+                    window.location.href = response.headers.get("Location") || '/list';
+                }
+            }
+        });
+    });
+
+    function debounce(func, delay) {
+        let timeoutId;
+        return function(...args) {
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+            timeoutId = setTimeout(() => {
+                func.apply(this, args);
+            }, delay);
+        };
+    }
+});
