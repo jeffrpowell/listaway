@@ -495,12 +495,13 @@ func EditCollectionPage(w io.Writer, params editCollectionParams) {
 type collectionDetailPageParams struct {
 	Collection          constants.Collection
 	ListIdsInCollection []uint64
+	ListIdsWithShareCode []uint64
 	AllLists            []constants.List
 	SharedListPath      string
 	globalWebParams
 }
 
-func CollectionDetailPageParams(collection constants.Collection, listIdsInCollection []uint64, allLists []constants.List, showAdmin bool, showInstanceAdmin bool) collectionDetailPageParams {
+func CollectionDetailPageParams(collection constants.Collection, listIdsInCollection []uint64, listIdsWithShareCode []uint64, allLists []constants.List, showAdmin bool, showInstanceAdmin bool) collectionDetailPageParams {
 	return collectionDetailPageParams{
 		globalWebParams: globalWebParams{
 			ShowNavbar:        true,
@@ -510,6 +511,7 @@ func CollectionDetailPageParams(collection constants.Collection, listIdsInCollec
 		},
 		Collection:          collection,
 		ListIdsInCollection: listIdsInCollection,
+		ListIdsWithShareCode: listIdsWithShareCode,
 		AllLists:            allLists,
 		SharedListPath:      constants.SHARED_LIST_PATH,
 	}

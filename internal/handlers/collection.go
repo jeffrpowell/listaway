@@ -136,6 +136,14 @@ func collectionGET(w http.ResponseWriter, r *http.Request) {
 			log.Print(err)
 		}
 	} else {
+		// Get list IDs that have share codes for this user
+		listIdsWithShareCode, err := database.GetListIdsWithShareCode(userId)
+		if err != nil {
+			http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+			log.Print(err)
+			return
+		}
+		
 		admin := helper.IsUserAdmin(r)
 		instanceAdmin := helper.IsUserInstanceAdmin(r)
 
@@ -143,6 +151,7 @@ func collectionGET(w http.ResponseWriter, r *http.Request) {
 		collectionDetailPage := web.CollectionDetailPageParams(
 			collection,
 			listIdsInCollection,
+			listIdsWithShareCode,
 			allLists,
 			admin,
 			instanceAdmin,
@@ -250,6 +259,35 @@ func collectionListPUT(w http.ResponseWriter, r *http.Request) {
 
 	// If not in collection, add it
 	if !inCollection {
+		// First check if the collection has a share code
+		collection, err := database.GetCollection(collectionId)
+		if err != nil {
+			http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+			log.Print(err)
+			return
+		}
+
+		// If collection has a share code, check if list already has a share code
+		if collection.ShareCode.Valid && len(collection.ShareCode.String) > 0 {
+			list, err := database.GetList(listId)
+			if err != nil {
+				http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+				log.Print(err)
+				return
+			}
+
+			// If list doesn't have a share code, generate one
+			if !list.ShareCode.Valid || len(list.ShareCode.String) == 0 {
+				_, err = database.GenerateShareCode(listId)
+				if err != nil {
+					http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+					log.Print(err)
+					return
+				}
+			}
+		}
+
+		// Now add the list to the collection
 		err = database.AddListToCollection(collectionId, listId)
 		if err != nil {
 			http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)

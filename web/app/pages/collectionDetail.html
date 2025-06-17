@@ -37,6 +37,8 @@
               class="form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500 list-collection-checkbox" 
               data-list-id="{{.Id}}" 
               data-collection-id="{{$.Collection.Id}}"
+              data-has-sharecode="{{containsUint64 $.ListIdsWithShareCode .Id}}"
+              data-collection-has-sharecode="{{$.Collection.ShareCode.Valid}}"
               checked
             >
             {{else}}
@@ -45,6 +47,8 @@
               class="form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500 list-collection-checkbox" 
               data-list-id="{{.Id}}" 
               data-collection-id="{{$.Collection.Id}}"
+              data-has-sharecode="{{containsUint64 $.ListIdsWithShareCode .Id}}"
+              data-collection-has-sharecode="{{$.Collection.ShareCode.Valid}}"
             >
             {{end}}
             <span class="request-status" data-list-id="{{.Id}}">
