@@ -3,9 +3,9 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/jeffrpowell/listaway/internal/constants"
@@ -38,10 +38,10 @@ func collectionsPOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var listName string = r.FormValue("name")
+	var collectionName string = r.FormValue("name")
 	//Don't trust client input
 
-	taken, err := database.CollectionNameTaken(userId, listName)
+	taken, err := database.CollectionNameTaken(userId, collectionName)
 	if err != nil {
 		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
 		log.Print(err)
@@ -53,15 +53,15 @@ func collectionsPOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var description string = r.FormValue("description")
-	newId, err := database.CreateCollection(userId, listName, description)
+	newId, err := database.CreateCollection(userId, collectionName, description)
 	if err != nil {
 		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
 		log.Print(err)
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/plain")
-	w.Write([]byte(strconv.Itoa(newId)))
+	w.Header().Add("Location", fmt.Sprintf("/collections/%d", newId))
+	w.WriteHeader(http.StatusOK)
 }
 
 // collectionHandler handles requests for /collections/{collectionId}

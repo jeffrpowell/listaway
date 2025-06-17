@@ -60,7 +60,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
             formReadyToSubmit = false;
         }
     }
-    
     async function sendData(form) {
         if (!formReadyToSubmit) {
             return;
@@ -80,8 +79,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             if (response.status >= 400) {
                 showError(response.status);
             } else if (response.status === 200 || response.status === 201) {
-                const location = response.headers.get("Location") || `/collections/${await response.text()}`;
-                window.location.href = location;
+                window.location.href = response.headers.get("Location");
             }
         } catch (e) {
             console.error(e);
