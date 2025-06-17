@@ -3,12 +3,17 @@ require("../navbar")
 document.addEventListener('DOMContentLoaded', (event) => {
     
     const shareLinks = document.querySelectorAll('.share-link');
+    const collectionShareLinks = document.querySelectorAll('.collection-share-link');
     const copyShareLinkButtons = document.querySelectorAll('.btn-copy-share-link');
     const copyShareLinkEmptyIcons = document.querySelectorAll('.clipboard-empty');
     const copyShareLinkCheckIcons = document.querySelectorAll('.clipboard-check');
     
     shareLinks.forEach(shareLink => {
         shareLink.textContent = window.location.origin + "/" + shareLink.dataset.sharedListPath + "/" + shareLink.dataset.shareCode;
+    });
+    
+    collectionShareLinks.forEach(shareLink => {
+        shareLink.textContent = window.location.origin + "/" + shareLink.dataset.sharedCollectionPath + "/" + shareLink.dataset.shareCode;
     });
 
     copyShareLinkButtons.forEach(copyShareLinkBtn => {

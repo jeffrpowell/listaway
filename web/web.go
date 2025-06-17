@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"path/filepath"
 
+	"slices"
+
 	"github.com/gorilla/mux"
 	"github.com/jeffrpowell/listaway/internal/constants"
 	"github.com/jeffrpowell/listaway/internal/handlers/middleware"
@@ -83,6 +85,9 @@ func minifyTemplates(filenames ...string) (*template.Template, error) {
 		if tmpl == nil {
 			tmpl = template.New(name)
 		}
+		tmpl = tmpl.Funcs(template.FuncMap{
+			"containsUint64": slices.Contains[[]uint64]},
+		)
 
 		b, err := staticFiles.ReadFile(filename)
 		if err != nil {
@@ -100,10 +105,6 @@ func minifyTemplates(filenames ...string) (*template.Template, error) {
 		}
 	}
 	return tmpl, nil
-}
-
-func parseSplitLayout(file string) *template.Template {
-	return template.Must(minifyTemplates("dist/root.html", "dist/splitLayout.html", file))
 }
 
 func parseSingleLayout(file string) *template.Template {
@@ -492,14 +493,15 @@ func EditCollectionPage(w io.Writer, params editCollectionParams) {
 
 // Collection Detail page
 type collectionDetailPageParams struct {
-	Collection        constants.Collection
-	ListsInCollection []constants.CollectionList
-	AvailableLists    []constants.List       // Lists not currently in the collection
-	AllLists          []constants.List       // All lists for fallback
+	Collection           constants.Collection
+	ListIdsInCollection  []uint64
+	AllLists             []constants.List
+	SharedListPath       string
+	SharedCollectionPath string
 	globalWebParams
 }
 
-func CollectionDetailPageParams(collection constants.Collection, listsInCollection []constants.CollectionList, availableLists []constants.List, allLists []constants.List, showAdmin bool, showInstanceAdmin bool) collectionDetailPageParams {
+func CollectionDetailPageParams(collection constants.Collection, listIdsInCollection []uint64, allLists []constants.List, showAdmin bool, showInstanceAdmin bool) collectionDetailPageParams {
 	return collectionDetailPageParams{
 		globalWebParams: globalWebParams{
 			ShowNavbar:        true,
@@ -507,10 +509,11 @@ func CollectionDetailPageParams(collection constants.Collection, listsInCollecti
 			ShowInstanceAdmin: showInstanceAdmin,
 			ChunkName:         "collectionDetail",
 		},
-		Collection:        collection,
-		ListsInCollection: listsInCollection,
-		AvailableLists:    availableLists,
-		AllLists:          allLists,
+		Collection:           collection,
+		ListIdsInCollection:  listIdsInCollection,
+		AllLists:             allLists,
+		SharedListPath:       constants.SHARED_LIST_PATH,
+		SharedCollectionPath: constants.SHARED_COLLECTION_PATH,
 	}
 }
 
@@ -523,12 +526,12 @@ func CollectionDetailPage(w io.Writer, params collectionDetailPageParams) {
 // Shared Collection page
 type sharedCollectionPageParams struct {
 	Collection constants.Collection
-	Lists      []constants.CollectionList
+	Lists      []constants.List
 	ShareCode  string
 	globalWebParams
 }
 
-func SharedCollectionPageParams(shareCode string, collection constants.Collection, lists []constants.CollectionList, showAdmin bool, showInstanceAdmin bool) sharedCollectionPageParams {
+func SharedCollectionPageParams(shareCode string, collection constants.Collection, lists []constants.List, showAdmin bool, showInstanceAdmin bool) sharedCollectionPageParams {
 	return sharedCollectionPageParams{
 		globalWebParams: globalWebParams{
 			ShowNavbar:        true,
