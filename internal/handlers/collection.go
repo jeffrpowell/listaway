@@ -23,7 +23,6 @@ func init() {
 	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}", middleware.Chain(collectionHandler, append(middleware.DefaultMiddlewareSlice, middleware.CollectionIdOwner("collectionId"))...))
 	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}/edit", middleware.Chain(editCollectionGET, append(middleware.DefaultMiddlewareSlice, middleware.CollectionIdOwner("collectionId"))...)).Methods("GET")
 	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}/lists/{listId:[0-9]+}", middleware.Chain(collectionListHandler, append(middleware.DefaultMiddlewareSlice, middleware.CollectionIdOwner("collectionId"), middleware.ListIdOwner("listId"))...))
-	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}/lists", middleware.Chain(collectionListsPOST, append(middleware.DefaultMiddlewareSlice, middleware.CollectionIdOwner("collectionId"))...)).Methods("POST")
 
 	// Collection sharing routes
 	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}/share", middleware.Chain(collectionShareHandler, append(middleware.DefaultMiddlewareSlice, middleware.CollectionIdOwner("collectionId"))...))
