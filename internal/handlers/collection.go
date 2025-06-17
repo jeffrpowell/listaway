@@ -104,7 +104,7 @@ func collectionGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	listsInCollection, err := database.GetCollectionLists(collectionId)
+	listIdsInCollection, err := database.GetCollectionListIds(collectionId)
 	if err != nil {
 		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
 		log.Print(err)
@@ -118,36 +118,17 @@ func collectionGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Calculate available lists that are not in the collection
-	availableLists := make([]constants.List, 0)
-	listIdsInCollection := make(map[int]bool)
-
-	// Create a map of list IDs that are already in the collection
-	for _, collectionList := range listsInCollection {
-		listIdsInCollection[int(collectionList.ListId)] = true
-	}
-
-	// Filter lists to only include those not already in the collection
-	for _, list := range allLists {
-		_, exists := listIdsInCollection[int(list.Id)]
-		if !exists {
-			availableLists = append(availableLists, list)
-		}
-	}
-
 	// Return JSON if requested, otherwise render the HTML page
 	if wantsJSON {
 		// Construct a response with both collection details and lists
 		type CollectionResponse struct {
-			Collection     constants.Collection       `json:"collection"`
-			Lists          []constants.CollectionList `json:"lists"`
-			AvailableLists []constants.List           `json:"availableLists"`
+			Collection constants.Collection `json:"collection"`
+			Lists      []uint64             `json:"lists"`
 		}
 
 		response := CollectionResponse{
-			Collection:     collection,
-			Lists:          listsInCollection,
-			AvailableLists: availableLists,
+			Collection: collection,
+			Lists:      listIdsInCollection,
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -162,8 +143,7 @@ func collectionGET(w http.ResponseWriter, r *http.Request) {
 		// Render the collection detail page
 		collectionDetailPage := web.CollectionDetailPageParams(
 			collection,
-			listsInCollection,
-			availableLists,
+			listIdsInCollection,
 			allLists,
 			admin,
 			instanceAdmin,

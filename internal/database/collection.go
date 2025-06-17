@@ -207,7 +207,7 @@ func RemoveListFromCollection(collectionId int, listId int) error {
 }
 
 // GetCollectionLists retrieves all lists in a collection
-func GetCollectionLists(collectionId int) ([]constants.CollectionList, error) {
+func GetCollectionLists(collectionId int) ([]constants.List, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
 
@@ -224,11 +224,45 @@ func GetCollectionLists(collectionId int) ([]constants.CollectionList, error) {
 	}
 	defer rows.Close()
 
-	var collectionLists []constants.CollectionList
+	var collectionLists []constants.List
 	for rows.Next() {
-		var cl constants.CollectionList
+		var cl constants.List
 
-		err := rows.Scan(&cl.ListId, &cl.Name, &cl.Description, &cl.ShareCode)
+		err := rows.Scan(&cl.Id, &cl.Name, &cl.Description, &cl.ShareCode)
+		if err != nil {
+			return nil, err
+		}
+		collectionLists = append(collectionLists, cl)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return collectionLists, nil
+}
+
+// GetCollectionListIds retrieves all list ids in a collection
+func GetCollectionListIds(collectionId int) ([]uint64, error) {
+	db := getDatabaseConnection()
+	defer db.Close()
+
+	rows, err := db.Query(`
+		SELECT l.id 
+		FROM listaway.list l
+		JOIN listaway.collection_list cl ON l.id = cl.listid
+		WHERE cl.collectionid = $1
+		ORDER BY l.name ASC
+	`, collectionId)
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var collectionLists []uint64
+	for rows.Next() {
+		var cl uint64
+
+		err := rows.Scan(&cl)
 		if err != nil {
 			return nil, err
 		}

@@ -1,9 +1,9 @@
 {{define "all"}}
 <div class="list-form">
     <div class="flex items-center mb-4">
-        <h1 class="list-name-header text-gray-700 font-bold text-2xl">{{.List.Name}}</h1>
+        <h1 class="list-name-header text-gray-800 font-bold text-2xl">{{.List.Name}}</h1>
         <input
-            class="list-name-input hidden shadow-sm appearance-none border rounded-sm py-2 px-3 text-gray-700 leading-tight focus:outline-hidden focus:shadow-outline"
+            class="list-name-input hidden shadow-sm appearance-none border rounded-sm py-2 px-3 text-gray-800 leading-tight focus:outline-hidden focus:shadow-outline"
             type="text" name="name" placeholder="Name" value="{{.List.Name}}">
         <div class="edit-name-actions">
             <span class="edit-name-edit-actions hidden">
@@ -14,7 +14,7 @@
                     </svg>
                 </button>
                 <div class="edit-name-spinner transition-transform hidden">
-                    <svg class="animate-spin h-5 w-5 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <svg class="animate-spin h-5 w-5 text-gray-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
@@ -38,7 +38,7 @@
         </div>
     </div>
     <div class="mb-4">
-        <label class="text-gray-700 text-sm font-bold mb-2 flex">
+        <label class="text-gray-800 text-sm font-bold mb-2 flex">
             Description
             <!-- https://heroicons.com/ check-circle -->
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="description-saved-icon hidden text-green-600 size-6">
@@ -46,7 +46,7 @@
             </svg>              
         </label>
         <input
-            class="list-description-input shadow-sm appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-hidden focus:shadow-outline"
+            class="list-description-input shadow-sm appearance-none border rounded-sm w-full py-2 px-3 text-gray-800 leading-tight focus:outline-hidden focus:shadow-outline"
             type="text" name="description" placeholder="Optional description" data-list-id="{{.List.Id}}" value="{{if .List.Description.Valid}}{{.List.Description.String}}{{end}}">
         <p class="description-error text-red-800 hidden">A problem came up and your change was not saved. Please try again later.</p>
     </div>
@@ -85,7 +85,7 @@
         <button class="list-delete bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-sm focus:outline-hidden focus:shadow-outline" data-list-id="{{.List.Id}}">Delete list</button>
         <div class="mt-2 list-delete-confirmation-span hidden">
             <input
-                class="list-delete-confirmation shadow-sm appearance-none border rounded-sm py-2 px-3 text-gray-700 leading-tight focus:outline-hidden focus:shadow-outline"
+                class="list-delete-confirmation shadow-sm appearance-none border rounded-sm py-2 px-3 text-gray-800 leading-tight focus:outline-hidden focus:shadow-outline"
                 type="text" name="deleteName" placeholder='type "{{.List.Name}}"'>
             Confirm by typing list name + clicking button again
         </div>

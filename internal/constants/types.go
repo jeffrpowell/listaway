@@ -59,10 +59,3 @@ type CollectionPostParams struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 }
-
-type CollectionList struct {
-	ListId       uint64
-	Name         string
-	Description  sql.NullString
-	ShareCode    sql.NullString
-}
