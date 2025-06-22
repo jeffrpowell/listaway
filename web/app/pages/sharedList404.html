@@ -1,14 +1,14 @@
 {{define "all"}}
   <div class="flex flex-col items-center justify-center min-h-10 p-4 text-center">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 text-font-secondary-light mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
-    <h1 class="text-4xl font-bold text-gray-800 mb-4">List Not Found</h1>
-    <p class="text-xl text-gray-600 mb-8">We couldn't find the list you're looking for.</p>
-    <p class="text-gray-500 mb-8">The share code <span class="font-mono bg-gray-100 px-2 py-1 rounded-sm">{{.ShareCode}}</span> doesn't match any shared lists.</p>
+    <h1 class="text-4xl font-bold text-font-light mb-4">List Not Found</h1>
+    <p class="text-xl text-font-secondary-light mb-8">We couldn't find the list you're looking for.</p>
+    <p class="text-font-secondary-light mb-8">The share code <span class="font-mono bg-gray-100 px-2 py-1 rounded-sm">{{.ShareCode}}</span> doesn't match any shared lists.</p>
     <div class="space-y-4">
-      <p class="text-gray-600">This could be because:</p>
-      <ul class="text-gray-600 list-none list-inside">
+      <p class="text-font-secondary-light">This could be because:</p>
+      <ul class="text-font-secondary-light list-none list-inside">
         <li>The list has been deleted</li>
         <li>The owner has unpublished the list</li>
         <li>The share code is incorrect</li>
