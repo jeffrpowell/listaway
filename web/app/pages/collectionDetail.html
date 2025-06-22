@@ -1,40 +1,40 @@
 {{define "all"}}
 <div class="flex flex-col justify-between items-start mb-6">
-  <h1 class="collection-name-header text-font-light font-bold text-2xl relative">{{.Collection.Name}}
+  <h1 class="collection-name-header  font-bold text-2xl relative">{{.Collection.Name}}
       <a href="/collections/{{.Collection.Id}}/edit" class="ml-2 absolute">
           <!-- https://heroicons.com/ cog-6-tooth -->
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-font-secondary-light">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 ">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
               <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
           </svg>
       </a>
   </h1>
-  {{if .Collection.Description.Valid}}<p class="mt-2 text-font-light text-lg">{{.Collection.Description.String}}</p>{{end}}
+  {{if .Collection.Description.Valid}}<p class="mt-2  text-lg">{{.Collection.Description.String}}</p>{{end}}
 </div>
 
 <div class="mb-8">
   <div class="flex justify-between items-center mb-4">
-    <h2 class="text-xl font-semibold text-font-light">Lists in this Collection</h2>
+    <h2 class="text-xl font-semibold ">Lists in this Collection</h2>
   </div>
 
-  <div class="bg-white shadow-sm overflow-hidden rounded-lg">
+  <div class="border-solid border-1 border-primary-light shadow-lg overflow-hidden rounded-lg">
     <table class="min-w-full divide-y divide-gray-200">
-      <thead class="bg-gray-50">
+      <thead class="bg-middleground-light">
         <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-font-secondary-light uppercase tracking-wider">In Collection?</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-font-secondary-light uppercase tracking-wider">List</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-font-secondary-light uppercase tracking-wider">Edit</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-font-secondary-light uppercase tracking-wider">Share</th>
+          <th class="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">In Collection?</th>
+          <th class="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">List</th>
+          <th class="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">Edit</th>
+          <th class="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">Share</th>
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-gray-200">
         {{range .AllLists}}
-        <tr class="hover:bg-gray-50">
+        <tr class="hover:bg-background-light">
           <td class="px-6 py-4 whitespace-nowrap flex items-center">
             {{if containsUint64 $.ListIdsInCollection .Id}}
             <input 
               type="checkbox" 
-              class="form-checkbox h-5 w-5 text-font-link rounded border-gray-300 focus:ring-blue-500 list-collection-checkbox" 
+              class="form-checkbox h-5 w-5 text-font-link rounded bg-background-light focus:ring-primary-hover-light list-collection-checkbox" 
               data-list-id="{{.Id}}" 
               data-collection-id="{{$.Collection.Id}}"
               data-has-sharecode="{{containsUint64 $.ListIdsWithShareCode .Id}}"
@@ -44,7 +44,7 @@
             {{else}}
             <input 
               type="checkbox" 
-              class="form-checkbox h-5 w-5 text-font-link rounded border-gray-300 focus:ring-blue-500 list-collection-checkbox" 
+              class="form-checkbox h-5 w-5 text-font-link rounded bg-background-light focus:ring-primary-hover-light list-collection-checkbox" 
               data-list-id="{{.Id}}" 
               data-collection-id="{{$.Collection.Id}}"
               data-has-sharecode="{{containsUint64 $.ListIdsWithShareCode .Id}}"
@@ -59,18 +59,18 @@
                     </svg>
                 </button>
                 <div class="loading-icon ml-2 hidden">
-                    <svg class="animate-spin h-5 w-5 text-font-light" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <svg class="animate-spin h-5 w-5 " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                 </div>
                 <!-- https://heroicons.com/ x-circle -->
                 <button type="button" class="error-icon ml-2 hidden cursor-default">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-red-900">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-error-hover-light">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                     </svg>
                 </button>
-                <span class="error-message hidden text-red-700 ml-2">Request failed</span>
+                <span class="error-message hidden text-error-light ml-2">Request failed</span>
             </span>
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
@@ -85,7 +85,7 @@
               <span class="mr-2"><a class="share-link text-font-link hover:underline"
                   href="/{{$.SharedListPath}}/{{.ShareCode.String}}" data-shared-list-path="{{$.SharedListPath}}"
                   data-share-code="{{.ShareCode.String}}"></a></span>
-              <button type="button" class="text-font-secondary-light hover:text-font-light btn-copy-share-link"
+              <button type="button" class=" hover: btn-copy-share-link"
                 data-shared-list-path="{{$.SharedListPath}}" data-share-code="{{.ShareCode.String}}">
                 <!-- clipboard-document -->
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -103,7 +103,7 @@
               </button>
             </div>
             {{else}}
-            <span class="text-font-secondary-light">Not shared</span>
+            <span>Not shared</span>
             {{end}}
           </td>
         </tr>

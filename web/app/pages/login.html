@@ -5,39 +5,39 @@
     <!-- Intro Section (Full width on mobile, 2/3 on larger screens) -->
     <div class="w-full md:w-2/3 md:mr-8 text-center md:text-left mb-8 md:mb-0">
         <h1 class="text-3xl md:text-5xl font-bold mb-4">Listaway</h1>
-        <p class="md:text-xl text-font-light">Track, plan, dream—one list at a time.</p>
+        <p class="md:text-xl ">Track, plan, dream—one list at a time.</p>
     </div>
 
     <!-- Form Section (Full width on mobile, 1/3 on larger screens) -->
     <div class="w-full md:w-1/3">
-        <form id="login-form" class="bg-middleground-light shadow-lg rounded-sm px-8 pt-6 pb-8 mb-4" data-mode="login">
+        <form id="login-form" class="bg-middleground-light shadow-lg border-solid border-1 border-primary-light rounded-sm px-8 pt-6 pb-8 mb-4" data-mode="login">
             <div class="mb-4">
-                <label class="block text-font-light text-sm font-bold mb-2" for="email">
+                <label class="block  text-sm font-bold mb-2" for="email">
                     Email
                 </label>
                 <input
-                    class="shadow-sm appearance-none border rounded-sm w-full py-2 px-3 text-font-light leading-tight focus:outline-hidden focus:shadow-outline"
+                    class="shadow-md appearance-none border-solid border-1 border-primary-light rounded-sm w-full py-2 px-3  leading-tight focus:outline-hidden focus:shadow-outline"
                     id="email" type="email" name="email" placeholder="Email" autocomplete="email">
             </div>
 
             <!-- wrap the password block so we can hide/show it easily -->
             <div id="password-group" class="mb-6">
-                <label class="block text-font-light text-sm font-bold mb-2" for="password">
+                <label class="block  text-sm font-bold mb-2" for="password">
                     Password
                 </label>
                 <input
-                    class="shadow-sm appearance-none border rounded-sm w-full py-2 px-3 text-font-light mb-3 leading-tight focus:outline-hidden focus:shadow-outline"
+                    class="shadow-md appearance-none border-solid border-1 border-primary-light rounded-sm w-full py-2 px-3  mb-3 leading-tight focus:outline-hidden focus:shadow-outline"
                     id="password" type="password" name="password" placeholder="******************"
                     autocomplete="current-password">
                 </div>
             <div class="text-right mt-2">
-                <a href="#" id="forgot-link" class="text-secondary-light hover:underline text-sm">
+                <a href="#" id="forgot-link" class="text-font-link hover:underline text-sm">
                     Forgot password?
                 </a>
             </div>
             <div class="flex">
                 <button id="submit-btn" type="submit"
-                    class="flex-none bg-primary-light hover:bg-secondary-light text-white font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:shadow-outline">
+                    class="flex-none bg-primary-light hover:bg-primary-hover-light text-white font-bold py-2 px-4 rounded-sm focus:outline-hidden focus:shadow-outline">
                     Sign In
                 </button>
                 <span id="error-span" class="flex-auto ml-4 text-red-500 italic hidden"></span>
