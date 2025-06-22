@@ -48,14 +48,14 @@ function fetchListItems(listId, container) {
         container.innerHTML = `<p class="text-center text-red-500 py-4">Error loading items. Please try again.</p>`;
       });
   } else {
-    container.innerHTML = `<p class="text-center text-gray-500 py-4">This list is not publicly shared.</p>`;
+    container.innerHTML = `<p class="text-center text-font-secondary-light py-4">This list is not publicly shared.</p>`;
   }
 }
 
 // Render items for a list
 function renderListItems(container, items) {
   if (!items || items.length === 0) {
-    container.innerHTML = `<p class="text-center text-gray-500 py-4">This list has no items.</p>`;
+    container.innerHTML = `<p class="text-center text-font-secondary-light py-4">This list has no items.</p>`;
     return;
   }
   
@@ -76,15 +76,15 @@ function renderListItems(container, items) {
     html += `
       <li class="py-4">
         <div class="flex items-start">
-          ${hasPriority ? `<span class="px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-800 rounded-full mr-2">${item.priority.Int64}</span>` : ''}
+          ${hasPriority ? `<span class="px-2 py-1 text-xs font-semibold bg-blue-100 text-font-link rounded-full mr-2">${item.priority.Int64}</span>` : ''}
           <div class="flex-1">
             <h3 class="text-lg font-medium">
               ${hasUrl 
-                ? `<a href="${item.url.String}" target="_blank" class="text-blue-600 hover:text-blue-800">${item.name} <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a>` 
+                ? `<a href="${item.url.String}" target="_blank" class="text-font-link hover:text-font-link">${item.name} <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a>` 
                 : item.name
               }
             </h3>
-            ${hasNotes ? `<p class="text-gray-600 mt-1">${item.notes.String}</p>` : ''}
+            ${hasNotes ? `<p class="text-font-secondary-light mt-1">${item.notes.String}</p>` : ''}
           </div>
         </div>
       </li>

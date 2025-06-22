@@ -13,8 +13,10 @@
         let FF_FOUC_FIX;
     </script>
 </head>
-<body class="bg-gray-100 font-sans">
-    {{block "content" .}}{{end}}
+<body class="font-sans">
+    <div class="bg-background-light h-screen">
+        {{block "content" .}}{{end}}
+    </div>
     {{block "extrajs" .}}{{end}}
     <script type="text/javascript" src="/static/{{.ChunkName}}.js"></script>
 </body>

@@ -3,38 +3,38 @@
     <h1 class="text-3xl font-bold text-center mb-4">User creation</h1>
     <form class="user-creation-form bg-white shadow-md rounded-sm px-4 pt-3 pb-4">
         <div class="mb-4">
-            <label class="block text-gray-800 text-sm font-bold mb-2">
+            <label class="block text-font-light text-sm font-bold mb-2">
                 Email
             </label>
-            <input class="shadow-sm appearance-none border rounded-sm w-full py-2 px-3 text-gray-800 leading-tight focus:outline-hidden focus:shadow-outline" type="email" name="email" placeholder="Email">
+            <input class="shadow-sm appearance-none border rounded-sm w-full py-2 px-3 text-font-light leading-tight focus:outline-hidden focus:shadow-outline" type="email" name="email" placeholder="Email">
         </div>
         <div class="mb-4">
-            <label class="block text-gray-800 text-sm font-bold mb-2">
+            <label class="block text-font-light text-sm font-bold mb-2">
                 Public Name
             </label>
-            <input class="shadow-sm appearance-none border rounded-sm w-full py-2 px-3 text-gray-800 leading-tight focus:outline-hidden focus:shadow-outline" type="name" name="name" placeholder="Name">
+            <input class="shadow-sm appearance-none border rounded-sm w-full py-2 px-3 text-font-light leading-tight focus:outline-hidden focus:shadow-outline" type="name" name="name" placeholder="Name">
         </div>
         <div class="mb-6">
-            <label class="block text-gray-800 text-sm font-bold mb-2">
+            <label class="block text-font-light text-sm font-bold mb-2">
                 Password
             </label>
-            <input class="shadow-sm appearance-none border rounded-sm w-full py-2 px-3 text-gray-800 mb-3 leading-tight focus:outline-hidden focus:shadow-outline" type="password" name="password" placeholder="******************">
+            <input class="shadow-sm appearance-none border rounded-sm w-full py-2 px-3 text-font-light mb-3 leading-tight focus:outline-hidden focus:shadow-outline" type="password" name="password" placeholder="******************">
         </div>
 
         {{if .ShowInstanceAdmin}}
         <!-- Instance Admin Options -->
         <div class="mb-6 border-t pt-4">
-            <h3 class="text-gray-800 font-bold mb-3">User Creation Options</h3>
+            <h3 class="text-font-light font-bold mb-3">User Creation Options</h3>
             <div class="mb-3">
                 <div class="flex items-center mb-2">
                     <input type="radio" class="newGroup" name="userCreationType" value="newGroup" checked>
-                    <label class="ml-2 text-gray-800 text-sm font-bold" for="newGroup">
+                    <label class="ml-2 text-font-light text-sm font-bold" for="newGroup">
                         Create as Group Administrator (new group)
                     </label>
                 </div>
                 <div class="flex items-center">
                     <input type="radio" class="existingGroup" name="userCreationType" value="existingGroup">
-                    <label class="ml-2 text-gray-800 text-sm font-bold" for="existingGroup">
+                    <label class="ml-2 text-font-light text-sm font-bold" for="existingGroup">
                         Add to existing group
                     </label>
                 </div>
@@ -42,10 +42,10 @@
 
             <!-- Existing Group Admin Selection -->
             <div class="existingGroupSection ml-5 mb-3 hidden">
-                <label class="block text-gray-800 text-sm font-bold mb-2">
+                <label class="block text-font-light text-sm font-bold mb-2">
                     Select Group (by Group Admin)
                 </label>
-                <select name="existingGroupAdmin" class="shadow-sm border rounded-sm w-full py-2 px-3 text-gray-800 leading-tight focus:outline-hidden focus:shadow-outline">
+                <select name="existingGroupAdmin" class="shadow-sm border rounded-sm w-full py-2 px-3 text-font-light leading-tight focus:outline-hidden focus:shadow-outline">
                     <option value="">-- Select a Group Admin --</option>
                     {{range .GroupAdmins}}
                     <option value="{{.Id}}">{{.Name}} (Group {{.GroupId}})</option>
@@ -57,18 +57,18 @@
             <div class="adminCheckboxSection mb-3">
                 <div class="flex items-center">
                     <input type="checkbox" class="adminCheckbox" name="admin" checked disabled>
-                    <label class="ml-2 text-gray-800 text-sm font-bold" for="adminCheckbox">
+                    <label class="ml-2 text-font-light text-sm font-bold" for="adminCheckbox">
                         Admin user (required for new group)
                     </label>
                 </div>
-                <p class="text-sm text-gray-600 mt-1 ml-5">New group creators must be administrators</p>
+                <p class="text-sm text-font-secondary-light mt-1 ml-5">New group creators must be administrators</p>
             </div>
 
             <!-- Regular Admin Checkbox (only shown for existing group) -->
             <div class="regularAdminCheckboxSection mb-3 hidden">
                 <div class="flex items-center">
                     <input type="checkbox" class="regularAdminCheckbox" name="admin">
-                    <label class="ml-2 text-gray-800 text-sm font-bold" for="regularAdminCheckbox">
+                    <label class="ml-2 text-font-light text-sm font-bold" for="regularAdminCheckbox">
                         Admin user
                     </label>
                 </div>
@@ -78,7 +78,7 @@
         <!-- Regular Admin Checkbox for non-instance admins -->
         <div class="mb-6 flex">
             <input type="checkbox" name="admin">
-            <label class="block ml-2 text-gray-800 text-sm font-bold">
+            <label class="block ml-2 text-font-light text-sm font-bold">
                 Admin user
             </label>
         </div>

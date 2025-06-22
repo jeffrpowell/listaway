@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 body: new URLSearchParams({ password }),
             });
             if (res.ok) {
-                form.innerHTML = '<p class="text-green-600">Your password has been reset. You may now <a href="/auth" class="text-blue-500 underline">log in</a>.</p>';
+                form.innerHTML = '<p class="text-green-600">Your password has been reset. You may now <a href="/auth" class="text-font-link underline">log in</a>.</p>';
             } else {
                 const msg = await res.text();
                 errorSpan.textContent = msg || 'Failed to reset password.';
