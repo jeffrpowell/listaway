@@ -48,14 +48,14 @@ function fetchListItems(listId, container) {
         container.innerHTML = `<p class="text-center text-red-500 py-4">Error loading items. Please try again.</p>`;
       });
   } else {
-    container.innerHTML = `<p class="text-center text-font-secondary-light py-4">This list is not publicly shared.</p>`;
+    container.innerHTML = `<p class="text-center  py-4">This list is not publicly shared.</p>`;
   }
 }
 
 // Render items for a list
 function renderListItems(container, items) {
   if (!items || items.length === 0) {
-    container.innerHTML = `<p class="text-center text-font-secondary-light py-4">This list has no items.</p>`;
+    container.innerHTML = `<p class="text-center  py-4">This list has no items.</p>`;
     return;
   }
   
@@ -84,7 +84,7 @@ function renderListItems(container, items) {
                 : item.name
               }
             </h3>
-            ${hasNotes ? `<p class="text-font-secondary-light mt-1">${item.notes.String}</p>` : ''}
+            ${hasNotes ? `<p class=" mt-1">${item.notes.String}</p>` : ''}
           </div>
         </div>
       </li>

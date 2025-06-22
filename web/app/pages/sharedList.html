@@ -5,7 +5,7 @@
 <div class="list-form">
     {{if .HasParentCollection}}
     <div class="mb-6">
-        <a href="/sharedcollection/{{.CollectionShareCode}}" class="inline-flex items-center text-font-link hover:text-font-link">
+        <a href="/sharedcollection/{{.CollectionShareCode}}" class="inline-flex items-center text-font-link hover:underline">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
@@ -14,12 +14,12 @@
     </div>
     {{end}}
     <div class="flex flex-col mb-4">
-        <h1 class="list-name-header text-font-light font-bold text-2xl relative">{{.List.Name}}</h1>
+        <h1 class="list-name-header font-bold text-2xl relative">{{.List.Name}}</h1>
         <div>
             {{if (eq (len .Items) 0)}}
             This list is empty. Whomever shared it with you needs to add some items in it first.
             {{else}}
-            <div class="item-grid mt-6 md:w-1/2" data-share-code="{{.ShareCode}}"></div>
+            <div class="item-grid border-solid border-1 border-primary-light shadow-lg rounded-lg mt-6 md:w-1/2" data-share-code="{{.ShareCode}}"></div>
             {{end}}
         </div>
     </div>

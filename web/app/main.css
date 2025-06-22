@@ -16,13 +16,15 @@
   --color-secondary-light: oklch(0.3887 0.0791 183.15); */
   
   /* Ocean */
-  --color-background-light: oklch(0.9882 0.0121 205.1);/*oklch(0.9764 0.022 205.1);*/
+  --color-background-light: oklch(0.9882 0.0121 205.1);
   --color-middleground-light: oklch(0.9421 0.0395 205.1);
-  --color-primary-light: oklch(0.6825 0.1416 205.8);
-  --color-secondary-light: oklch(0.5265 0.1197 205.8);
+  --color-primary-light: oklch(0.6528 0.149 205.8);
+  --color-primary-hover-light: oklch(0.5265 0.1197 205.8);
   --color-font-light: oklch(0.2753 0.087 243.71);
   --color-font-secondary-light: oklch(0.2166 0.0154 243.71);
   --color-font-link: oklch(0.6467 0.1691 236.6996);
+  --color-error-light: oklch(0.717 0.1932 37.91);
+  --color-error-hover-light: oklch(0.6706 0.2009 37.91);
 }
 
 @layer base {

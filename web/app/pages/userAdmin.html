@@ -26,13 +26,13 @@
                     </td>
                 </tr>
                 <tr class="hidden delete-confirmation-row" data-user-id="{{.Id}}">
-                    <td colspan="4" class="border text-red-900">{{.Name}} has <span class="delete-confirmation-span" data-user-id="{{.Id}}"></span>&nbsp;lists which will also be deleted. Click the delete button again if you're ok with this.</td>
+                    <td colspan="4" class="border text-error-hover-light">{{.Name}} has <span class="delete-confirmation-span" data-user-id="{{.Id}}"></span>&nbsp;lists which will also be deleted. Click the delete button again if you're ok with this.</td>
                 </tr>
             {{end}}
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="4" class="border px-4 py-2"><a href="/admin/users/create" class="underline">Create a new user</a></td>
+                <td colspan="4" class="border px-4 py-2"><a href="/admin/users/create" class="text-font-link hover:underline">Create a new user</a></td>
             </tr>
         </tfoot>
     </table>

@@ -2,19 +2,19 @@
   <div class="container mx-auto px-4 py-8">
     <div class="mb-8">
       <h1 class="text-3xl font-bold">{{.Collection.Name}}</h1>
-      <p class="text-font-secondary-light mt-2">{{if .Collection.Description.Valid}}{{.Collection.Description.String}}{{end}}</p>
+      <p class=" mt-2">{{if .Collection.Description.Valid}}{{.Collection.Description.String}}{{end}}</p>
     </div>
     
     {{if .Lists}}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {{range .Lists}}
-      <div class="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
+      <div class="bg-middleground-light shadow-lg border-solid border-1 border-primary-light rounded-lg overflow-hidden">
         <div class="p-6">
-          <h2 class="text-xl font-semibold mb-2 text-font-light">{{.Name}}</h2>
-          <p class="text-font-secondary-light mb-4 text-sm h-12 overflow-hidden">{{if .Description.Valid}}{{.Description.String}}{{else}}No description provided{{end}}</p>
+          <h2 class="text-xl font-semibold mb-2 ">{{.Name}}</h2>
+          <p class=" mb-4 text-sm h-12 overflow-hidden">{{if .Description.Valid}}{{.Description.String}}{{else}}No description provided{{end}}</p>
           
           <div class="flex items-center justify-between mt-4">
-            <div class="flex items-center text-font-secondary-light text-sm">
+            <div class="flex items-center  text-sm">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
@@ -22,7 +22,7 @@
             </div>
             
             {{if .ShareCode.Valid}}
-            <a href="/sharedcollection/{{$.ShareCode}}/sharedlist/{{.ShareCode.String}}" class="text-font-link hover:text-font-link flex items-center text-sm">
+            <a href="/sharedcollection/{{$.ShareCode}}/sharedlist/{{.ShareCode.String}}" class="text-font-link hover:underline flex items-center text-sm">
               View list
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -35,8 +35,8 @@
       {{end}}
     </div>
     {{else}}
-    <div class="text-center py-12 bg-white shadow-md rounded-lg">
-      <h3 class="text-xl font-medium text-font-secondary-light">This collection has no lists.</h3>
+    <div class="text-center py-12 bg-white shadow-lg rounded-lg">
+      <h3 class="text-xl font-medium ">This collection has no lists.</h3>
     </div>
     {{end}}
   </div>
