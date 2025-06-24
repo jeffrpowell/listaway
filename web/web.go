@@ -108,7 +108,7 @@ func minifyTemplates(filenames ...string) (*template.Template, error) {
 }
 
 func parseSingleLayout(file string) *template.Template {
-	return template.Must(minifyTemplates("dist/root.html", "dist/singleLayout.html", file))
+	return template.Must(minifyTemplates("dist/root.html", file))
 }
 
 func isAuthenticated(r *http.Request) bool {

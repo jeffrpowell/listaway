@@ -16,7 +16,46 @@
 </head>
 <body class="font-sans">
     <div class="bg-background-light text-font-light h-screen">
-        {{block "content" .}}{{end}}
+        {{if .ShowNavbar}}
+        <!-- Top navbar - visible on md screens and up -->
+        <div class="w-full bg-primary-hover-light fixed top-0 left-0 z-50 hidden md:block">
+            <div class="flex justify-between items-center py-2 px-4">
+                <a href="/" class="text-white text-lg font-bold">Listaway</a>
+                <div class="flex items-center space-x-4">
+                    {{if .ShowAdmin}}<a href="/admin/users" class="text-white">User Admin</a>{{end}}
+                    {{if .ShowInstanceAdmin}}<a href="/admin/allusers" class="text-white">All Users</a>{{end}}
+                    {{if .IsAuthenticated}}
+                        <span class="logout text-white cursor-pointer">Logout</span>
+                    {{else}}
+                        <a href="/auth" class="text-white">Login</a>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom navbar - visible only on small screens -->
+        <div class="w-full bg-primary-hover-light fixed bottom-0 left-0 z-50 block md:hidden">
+            <div class="flex justify-between items-center py-2 px-4">
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="text-white text-lg font-bold">Listaway</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    {{if .ShowAdmin}}<a href="/admin/users" class="text-white">User Admin</a>{{end}}
+                    {{if .ShowInstanceAdmin}}<a href="/admin/allusers" class="text-white">All Users</a>{{end}}
+                    {{if .IsAuthenticated}}
+                        <span class="logout text-white cursor-pointer">Logout</span>
+                    {{else}}
+                        <a href="/auth" class="text-white">Login</a>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+        {{end}}
+        
+        <!-- Content with responsive padding -->
+        <div class="container mx-auto px-4 pt-4 md:pt-24 pb-4 z-0">
+            {{block "all" .}}{{end}}
+        </div>
     </div>
     {{block "extrajs" .}}{{end}}
     <script type="text/javascript" src="/static/{{.ChunkName}}.js"></script>
