@@ -3,18 +3,6 @@
 @config '../tailwind.config.js';
 
 @theme {
-  /* Blue on yellow */
-  /* --color-background-light: oklch(0.95 0.03 103);
-  --color-middleground-light: oklch(0.7134 0.0736 100.86);
-  --color-primary-light: oklch(0.67 0.09 236.39);
-  --color-secondary-light: oklch(0.90 0.1 91); */
-
-  /* Forest green and brown */
-  /* --color-background-light: oklch(0.8694 0.0307 122.29);
-  --color-middleground-light: oklch(0.7134 0.0736 100.86);
-  --color-primary-light: oklch(0.4332 0.1054 142.51);
-  --color-secondary-light: oklch(0.3887 0.0791 183.15); */
-  
   /* Ocean */
   --color-background-light: oklch(0.9882 0.0121 205.1);
   --color-middleground-light: oklch(0.9421 0.0395 205.1);
