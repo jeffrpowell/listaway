@@ -55,7 +55,7 @@ function fetchListItems(listId, container) {
 // Render items for a list
 function renderListItems(container, items) {
   if (!items || items.length === 0) {
-    container.innerHTML = `<p class="text-center  py-4">This list has no items.</p>`;
+    container.innerHTML = `<p class="text-center py-4">This list has no items.</p>`;
     return;
   }
   
