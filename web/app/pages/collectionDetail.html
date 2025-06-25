@@ -24,7 +24,7 @@
           <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">In Collection?</th>
           <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">List</th>
           <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Edit</th>
-          <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Share</th>
+          <th class="hidden md:block px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Share</th>
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-gray-200">
@@ -79,7 +79,7 @@
           <td class="px-6 py-4 whitespace-nowrap">
             <a href="/list/{{.Id}}/edit" class="text-font-link hover:underline">Edit list</a>
           </td>
-          <td class="px-6 py-4 whitespace-nowrap">
+          <td class="px-6 py-4 whitespace-nowrap hidden md:block">
             {{if .ShareCode.Valid}}
             <div class="flex items-center">
               <span class="mr-2"><a class="share-link text-font-link hover:underline"

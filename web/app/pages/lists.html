@@ -7,7 +7,7 @@
     <div>
         <div class="flex justify-between items-center mb-4">
             <h1 class="text-2xl  font-bold">My Lists</h1>
-            <a href="/list/create" class="hover:underline text-font-link">New List</a>
+            <a href="/list/create" class="hover:underline text-font-link border-1 border-solid border-primary-light rounded-md px-2">New List</a>
         </div>
 
         {{if (eq (len .Lists) 0)}}
@@ -21,11 +21,11 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-middleground-light">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">List
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">List
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">Edit
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Edit
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">Share
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Share
                         </th>
                     </tr>
                 </thead>
@@ -41,11 +41,11 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             {{if .ShareCode.Valid}}
                             <div class="flex items-center">
-                                <span class="mr-2"><a class="share-link text-font-link hover:underline"
+                                <span class="mr-2 hidden md:block"><a class="share-link text-font-link hover:underline"
                                         href="/{{$.SharedListPath}}/{{.ShareCode.String}}"
                                         data-shared-list-path="{{$.SharedListPath}}"
                                         data-share-code="{{.ShareCode.String}}"></a></span>
-                                <button type="button" class=" hover: btn-copy-share-link"
+                                <button type="button" class="btn-copy-share-link"
                                     data-shared-list-path="{{$.SharedListPath}}"
                                     data-share-code="{{.ShareCode.String}}">
                                     <!-- clipboard-document -->
@@ -81,7 +81,7 @@
     <div>
         <div class="flex justify-between items-center mb-4">
             <h1 class="text-2xl  font-bold">My Collections</h1>
-            <a href="/collections/create" class="text-font-link hover:underline">New Collection</a>
+            <a href="/collections/create" class="text-font-link border-1 border-solid border-primary-light rounded-md px-2 hover:underline">New Collection</a>
         </div>
 
         {{if (lt (len .Lists) 2)}}
@@ -102,11 +102,11 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-middleground-light">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">Collection
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Collection
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">Edit
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Edit
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">Share
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Share
                         </th>
                     </tr>
                 </thead>
@@ -122,11 +122,11 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             {{if .ShareCode.Valid}}
                             <div class="flex items-center">
-                                <span class="mr-2"><a class="collection-share-link text-font-link hover:underline"
+                                <span class="mr-2 hidden md:block"><a class="collection-share-link text-font-link hover:underline"
                                         href="/{{$.SharedCollectionPath}}/{{.ShareCode.String}}"
                                         data-shared-collection-path="{{$.SharedCollectionPath}}"
                                         data-share-code="{{.ShareCode.String}}"></a></span>
-                                <button type="button" class=" hover: btn-copy-share-link"
+                                <button type="button" class="btn-copy-share-link"
                                     data-shared-collection-path="{{$.SharedCollectionPath}}"
                                     data-share-code="{{.ShareCode.String}}">
                                     <!-- clipboard-document -->
