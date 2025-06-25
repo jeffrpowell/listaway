@@ -7,10 +7,6 @@
     "build": "webpack --mode=development --config webpack.development.config.js --watch",
     "build-prod": "webpack --mode=production --config webpack.production.config.js"
   },
-  "dependencies": {
-    "@ag-grid-community/client-side-row-model": "32.3.2",
-    "@ag-grid-community/theming": "32.3.2"
-  },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/postcss": "^4.1.10",
