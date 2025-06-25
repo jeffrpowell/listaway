@@ -90,15 +90,45 @@ func UpdateList(listId int, params constants.ListPostParams) error {
 func DeleteList(listId int, confirmationName string) (bool, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	matches, err := confirmNameMatchesListName(db, listId, confirmationName)
+	
+	// Start a transaction to ensure atomicity
+	tx, err := db.Begin()
 	if err != nil {
 		return false, err
 	}
+	
+	// Verify the list exists and the name matches
+	matches, err := confirmNameMatchesListName(db, listId, confirmationName)
+	if err != nil {
+		tx.Rollback()
+		return false, err
+	}
 	if !matches {
+		tx.Rollback()
 		return false, nil
 	}
-	_, err = db.Exec(`DELETE FROM listaway.list WHERE id = $1 AND name = $2`, listId, confirmationName)
-	return true, err
+	
+	// Delete all items associated with this list first
+	_, err = tx.Exec(`DELETE FROM listaway.item WHERE listid = $1`, listId)
+	if err != nil {
+		tx.Rollback()
+		return false, err
+	}
+	
+	// Then delete the list itself
+	_, err = tx.Exec(`DELETE FROM listaway.list WHERE id = $1 AND name = $2`, listId, confirmationName)
+	if err != nil {
+		tx.Rollback()
+		return false, err
+	}
+	
+	// Commit the transaction
+	err = tx.Commit()
+	if err != nil {
+		return false, err
+	}
+	
+	return true, nil
 }
 
 func confirmNameMatchesListName(db *sql.DB, listId int, confirmationName string) (bool, error) {
