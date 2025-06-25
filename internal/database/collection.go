@@ -12,7 +12,7 @@ import (
 func GetCollections(userId int) ([]constants.Collection, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	rows, err := db.Query("SELECT id, name, description, sharecode FROM listaway.collection WHERE userid = $1", userId)
+	rows, err := db.Query("SELECT id, name, description, sharecode FROM "+constants.DB_TABLE_COLLECTION+" WHERE userid = $1", userId)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +38,7 @@ func GetCollections(userId int) ([]constants.Collection, error) {
 func CollectionNameTaken(userId int, name string) (bool, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	row := db.QueryRow("SELECT COUNT(1) FROM listaway.collection WHERE userid = $1 AND name = $2", userId, name)
+	row := db.QueryRow("SELECT COUNT(1) FROM "+constants.DB_TABLE_COLLECTION+" WHERE userid = $1 AND name = $2", userId, name)
 	var matches int
 	err := row.Scan(&matches)
 	if err != nil {
@@ -63,7 +63,7 @@ func CreateCollection(userId int, name string, description string) (int, error) 
 func UserOwnsCollection(userId int, collectionId int) (bool, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	row := db.QueryRow("SELECT COUNT(1) FROM listaway.collection WHERE userid = $1 AND id = $2", userId, collectionId)
+	row := db.QueryRow("SELECT COUNT(1) FROM "+constants.DB_TABLE_COLLECTION+" WHERE userid = $1 AND id = $2", userId, collectionId)
 	var matches int
 	err := row.Scan(&matches)
 	if err != nil {
@@ -76,7 +76,7 @@ func UserOwnsCollection(userId int, collectionId int) (bool, error) {
 func GetCollection(collectionId int) (constants.Collection, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	row := db.QueryRow("SELECT id, name, description, sharecode FROM listaway.collection WHERE id = $1", collectionId)
+	row := db.QueryRow("SELECT id, name, description, sharecode FROM "+constants.DB_TABLE_COLLECTION+" WHERE id = $1", collectionId)
 	var collection constants.Collection
 	err := row.Scan(&collection.Id, &collection.Name, &collection.Description, &collection.ShareCode)
 	if err != nil {
@@ -104,13 +104,13 @@ func DeleteCollection(collectionId int, confirmationName string) (bool, error) {
 	if !matches {
 		return false, nil
 	}
-	_, err = db.Exec(`DELETE FROM listaway.collection WHERE id = $1 AND name = $2`, collectionId, confirmationName)
+	_, err = db.Exec("DELETE FROM "+constants.DB_TABLE_COLLECTION+" WHERE id = $1 AND name = $2", collectionId, confirmationName)
 	return true, err
 }
 
 // confirmNameMatchesCollectionName verifies the provided name matches the collection name
 func confirmNameMatchesCollectionName(db *sql.DB, collectionId int, confirmationName string) (bool, error) {
-	row := db.QueryRow("SELECT COUNT(1) FROM listaway.collection WHERE id = $1 AND name = $2", collectionId, confirmationName)
+	row := db.QueryRow("SELECT COUNT(1) FROM "+constants.DB_TABLE_COLLECTION+" WHERE id = $1 AND name = $2", collectionId, confirmationName)
 	var matches int
 	err := row.Scan(&matches)
 	if err != nil {
@@ -128,8 +128,8 @@ func GenerateCollectionShareCode(collectionId int) (string, error) {
 	// First, get all lists in this collection that don't have share codes yet
 	rows, err := db.Query(`
 		SELECT l.id 
-		FROM listaway.list l
-		JOIN listaway.collection_list cl ON l.id = cl.listid
+		FROM `+constants.DB_TABLE_LIST+` l
+		JOIN `+constants.DB_TABLE_COLLECTION_LIST+` cl ON l.id = cl.listid
 		WHERE cl.collectionid = $1 AND l.sharecode IS NULL
 	`, collectionId)
 
@@ -180,14 +180,14 @@ func createUniqueCollectionShareCode(db *sql.DB) (string, error) {
 		}
 
 		// Check if the generated code already exists in the database for collections
-		row := db.QueryRow(`SELECT COUNT(1) FROM listaway.collection WHERE sharecode = $1`, code)
+		row := db.QueryRow("SELECT COUNT(1) FROM "+constants.DB_TABLE_COLLECTION+" WHERE sharecode = $1", code)
 		err = row.Scan(&count)
 		if err != nil {
 			return "", err
 		}
 
 		// Also check if the code exists for lists to avoid collisions
-		row = db.QueryRow(`SELECT COUNT(1) FROM listaway.list WHERE sharecode = $1`, code)
+		row = db.QueryRow("SELECT COUNT(1) FROM "+constants.DB_TABLE_LIST+" WHERE sharecode = $1", code)
 		var listCount int
 		err = row.Scan(&listCount)
 		if err != nil {
@@ -207,7 +207,7 @@ func createUniqueCollectionShareCode(db *sql.DB) (string, error) {
 func GetCollectionFromShareCode(shareCode string) (constants.Collection, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	row := db.QueryRow("SELECT id, name, description, sharecode FROM listaway.collection WHERE sharecode = $1", shareCode)
+	row := db.QueryRow("SELECT id, name, description, sharecode FROM "+constants.DB_TABLE_COLLECTION+" WHERE sharecode = $1", shareCode)
 	var collection constants.Collection
 	err := row.Scan(&collection.Id, &collection.Name, &collection.Description, &collection.ShareCode)
 	if err != nil {
@@ -237,7 +237,7 @@ func AddListToCollection(collectionId int, listId int) error {
 func RemoveListFromCollection(collectionId int, listId int) error {
 	db := getDatabaseConnection()
 	defer db.Close()
-	_, err := db.Exec(`DELETE FROM listaway.collection_list WHERE collectionid = $1 AND listid = $2`, collectionId, listId)
+	_, err := db.Exec("DELETE FROM "+constants.DB_TABLE_COLLECTION_LIST+" WHERE collectionid = $1 AND listid = $2", collectionId, listId)
 	return err
 }
 
@@ -246,14 +246,14 @@ func GetCollectionLists(collectionId int) ([]constants.List, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
 
-	rows, err := db.Query(`
+	query := `
 		SELECT l.id, l.name, l.description, l.sharecode, 
-		       (SELECT COUNT(i.id) FROM listaway.item i WHERE i.listid = l.id) as item_count
-		FROM listaway.list l
-		JOIN listaway.collection_list cl ON l.id = cl.listid
+		       (SELECT COUNT(i.id) FROM ` + constants.DB_TABLE_ITEM + ` i WHERE i.listid = l.id) as item_count
+		FROM ` + constants.DB_TABLE_LIST + ` l
+		JOIN ` + constants.DB_TABLE_COLLECTION_LIST + ` cl ON l.id = cl.listid
 		WHERE cl.collectionid = $1
-		ORDER BY l.name ASC
-	`, collectionId)
+		ORDER BY l.name ASC`
+	rows, err := db.Query(query, collectionId)
 
 	if err != nil {
 		return nil, err
@@ -317,7 +317,7 @@ func GetCollectionListIds(collectionId int) ([]uint64, error) {
 func ListInCollection(collectionId int, listId int) (bool, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	row := db.QueryRow("SELECT COUNT(1) FROM listaway.collection_list WHERE collectionid = $1 AND listid = $2", collectionId, listId)
+	row := db.QueryRow("SELECT COUNT(1) FROM "+constants.DB_TABLE_COLLECTION_LIST+" WHERE collectionid = $1 AND listid = $2", collectionId, listId)
 	var matches int
 	err := row.Scan(&matches)
 	if err != nil {

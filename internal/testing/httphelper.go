@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/gorilla/sessions"
-	"github.com/jeffrpowell/listaway/internal/constants"
 )
 
 // MockResponseRecorder extends httptest.ResponseRecorder to include session handling

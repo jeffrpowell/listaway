@@ -22,10 +22,15 @@
 	],
 	// End of Docker-from-Docker recommendations
 	"containerEnv": {
+		"POSTGRES_HOST": "db",
+		"POSTGRES_DB": "listaway",
 		"POSTGRES_USER": "listaway",
 		"POSTGRES_PASSWORD": "password",
-		"POSTGRES_DB": "listaway",
-		"POSTGRES_HOST": "db",
+		"TEST_POSTGRES_HOST": "db",
+		"TEST_POSTGRES_PORT": "5432",
+		"TEST_POSTGRES_DATABASE": "listaway_test",
+		"TEST_POSTGRES_USER": "listaway",
+		"TEST_POSTGRES_PASSWORD": "password",
 		"SMTP_HOST": "",
 		"SMTP_PORT": "587",
 		"SMTP_USER": "",

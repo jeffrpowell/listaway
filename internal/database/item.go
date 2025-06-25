@@ -40,7 +40,7 @@ func CreateItem(item constants.ItemInsert) error {
 func DeleteItem(itemId int) error {
 	db := getDatabaseConnection()
 	defer db.Close()
-	_, err := db.Exec(`DELETE FROM listaway.item WHERE id = $1`, itemId)
+	_, err := db.Exec("DELETE FROM "+constants.DB_TABLE_ITEM+" WHERE id = $1", itemId)
 	return err
 }
 

@@ -15,7 +15,6 @@ CREATE SCHEMA listaway;
 GRANT CREATE, USAGE ON SCHEMA listaway to listaway;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA listaway TO listaway;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA listaway TO listaway;
-
 ```
 2. Make a `docker-compose.yml` file
 ```yaml

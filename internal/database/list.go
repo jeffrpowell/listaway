@@ -109,14 +109,14 @@ func DeleteList(listId int, confirmationName string) (bool, error) {
 	}
 	
 	// Delete all items associated with this list first
-	_, err = tx.Exec(`DELETE FROM listaway.item WHERE listid = $1`, listId)
+	_, err = tx.Exec("DELETE FROM "+constants.DB_TABLE_ITEM+" WHERE listid = $1", listId)
 	if err != nil {
 		tx.Rollback()
 		return false, err
 	}
 	
 	// Then delete the list itself
-	_, err = tx.Exec(`DELETE FROM listaway.list WHERE id = $1 AND name = $2`, listId, confirmationName)
+	_, err = tx.Exec("DELETE FROM "+constants.DB_TABLE_LIST+" WHERE id = $1 AND name = $2", listId, confirmationName)
 	if err != nil {
 		tx.Rollback()
 		return false, err
@@ -165,7 +165,7 @@ func createUniqueShareCode(db *sql.DB) (string, error) {
 		}
 
 		// Check if the generated code already exists in the database
-		row := db.QueryRow(`SELECT COUNT(1) FROM listaway.list WHERE sharecode = $1`, code)
+		row := db.QueryRow("SELECT COUNT(1) FROM "+constants.DB_TABLE_LIST+" WHERE sharecode = $1", code)
 		err = row.Scan(&count)
 		if err != nil {
 			return "", err

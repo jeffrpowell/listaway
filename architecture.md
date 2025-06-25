@@ -71,6 +71,11 @@ listaway/
    - Contains middleware for authentication, authorization, and CORS
    - Organizes routes by functional area (admin, authentication, items, lists, collections, sharing)
 
+5. **Testing** (`internal/testing/`)
+   - Contains test helper functions and test data
+   - Includes test setup and teardown logic for database, templates, and HTTP handlers
+   - Tests are written in the same package as the code they test
+
 ### Frontend (Web)
 
 1. **Web Integration** (`web/web.go`)

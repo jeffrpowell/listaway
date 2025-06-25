@@ -17,7 +17,19 @@ Listaway uses a comprehensive testing approach that includes:
 ### Local Development Testing
 
 1. A running PostgreSQL instance for testing
-2. Environment variables set for test database connection:
+2. Create a separate test database for automated tests:
+    ```sql
+    --connect to your postgres server with an admin role
+    CREATE DATABASE listaway_test;
+    GRANT CONNECT ON DATABASE listaway_test TO listaway; --reusing existing login from plain listaway database setup in README.md
+    GRANT ALL PRIVILEGES ON DATABASE listaway_test TO listaway;
+    --connect to your new listaway_test database with an admin role
+    CREATE SCHEMA listaway;
+    GRANT CREATE, USAGE ON SCHEMA listaway to listaway;
+    GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA listaway TO listaway;
+    GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA listaway TO listaway;
+    ```
+3. Environment variables set for test database connection (already configured in devcontainer):
    ```
    TEST_POSTGRES_HOST=localhost
    TEST_POSTGRES_USER=listaway
@@ -25,7 +37,7 @@ Listaway uses a comprehensive testing approach that includes:
    TEST_POSTGRES_DATABASE=listaway_test
    TEST_POSTGRES_PORT=5432
    ```
-3. For E2E tests: Chrome or Chromium installed
+4. For E2E tests: Chrome or Chromium installed
 
 ### CI/CD Testing
 
@@ -145,11 +157,28 @@ go test -v ./tests/e2e/ -run TestLoginFlow
 
 ## Test Database
 
-Tests that require a database use a separate test database (`listaway_test`). The test helpers automatically:
+Tests that require a database use a completely separate test database (`listaway_test`). This approach provides several benefits:
 
-1. Connect to the test database
-2. Run necessary setup
-3. Clean up after tests complete
+1. Complete isolation between development and test environments
+2. Independent schema management without risk of cross-contamination
+3. Ability to run tests without affecting development data
+4. Prevention of duplicate SQL schema definitions
+
+### Test Database Management
+
+The test environment is configured as follows:
+
+1. A separate dedicated PostgreSQL database (`listaway_test`)
+2. Using the same schema structure as the main application (`listaway` schema)
+3. Test helpers handle connections and clean up automatically
+
+Test helpers in `internal/testing/testhelper.go` manage the database connection:
+
+- `SetupTestDB()`: Connects to the test database and prepares it for testing
+- `TeardownTestDB()`: Cleans up by closing connections
+- `CleanupTables()`: Truncates tables to provide a clean slate between tests
+
+The database initialization SQL is run during tests in the test database, ensuring consistent schema structure with production.
 
 ## Best Practices
 

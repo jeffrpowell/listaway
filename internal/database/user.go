@@ -90,6 +90,22 @@ func GetUserByEmail(email string) (int, error) {
 	return userId, nil
 }
 
+// GetUser returns the complete user object given an email address
+func GetUser(email string) (*constants.UserRead, error) {
+	db := getDatabaseConnection()
+	defer db.Close()
+	row := db.QueryRow("SELECT id, groupid, email, name, admin, instanceadmin FROM "+constants.DB_TABLE_USER+" WHERE email = $1", email)
+	var user constants.UserRead
+	err := row.Scan(&user.Id, &user.GroupId, &user.Email, &user.Name, &user.Admin, &user.InstanceAdmin)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &user, nil
+}
+
 // UpdateUserPassword updates a user's password given their email
 func UpdateUserPassword(email, newPassword string) error {
 	db := getDatabaseConnection()
@@ -156,7 +172,7 @@ func GetAllUsers() ([]constants.UserRead, error) {
 func GetUsersInSameGroupAsUser(userId int) ([]constants.UserRead, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	rows, err := db.Query("SELECT id, groupid, email, name, admin, instanceadmin FROM "+constants.DB_TABLE_USER+" WHERE groupid = (SELECT groupid FROM listaway.user WHERE id = $1)", userId)
+	rows, err := db.Query("SELECT id, groupid, email, name, admin, instanceadmin FROM "+constants.DB_TABLE_USER+" WHERE groupid = (SELECT groupid FROM "+constants.DB_TABLE_USER+" WHERE id = $1)", userId)
 	if err != nil {
 		return nil, err
 	}
@@ -193,21 +209,21 @@ func GetUserGroupId(userId int) (int, error) {
 func DeleteUser(userId int) error {
 	db := getDatabaseConnection()
 	defer db.Close()
-	_, err := db.Exec(`DELETE FROM listaway.user WHERE id = $1`, userId)
+	_, err := db.Exec("DELETE FROM "+constants.DB_TABLE_USER+" WHERE id = $1", userId)
 	return err
 }
 
 func SetUserAdmin(userId int, admin bool) error {
 	db := getDatabaseConnection()
 	defer db.Close()
-	_, err := db.Exec(`UPDATE listaway.user SET admin = $1 WHERE id = $2`, admin, userId)
+	_, err := db.Exec("UPDATE "+constants.DB_TABLE_USER+" SET admin = $1 WHERE id = $2", admin, userId)
 	return err
 }
 
 func SetUserInstanceAdmin(userId int, instanceAdmin bool) error {
 	db := getDatabaseConnection()
 	defer db.Close()
-	_, err := db.Exec(`UPDATE listaway.user SET instanceadmin = $1 WHERE id = $2`, instanceAdmin, userId)
+	_, err := db.Exec("UPDATE "+constants.DB_TABLE_USER+" SET instanceadmin = $1 WHERE id = $2", instanceAdmin, userId)
 	return err
 }
 

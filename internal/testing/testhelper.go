@@ -3,11 +3,9 @@ package testing
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
 	"testing"
 
-	"github.com/jeffrpowell/listaway/internal/constants"
 	_ "github.com/lib/pq"
 )
 
@@ -56,8 +54,9 @@ func (tdb *TestDB) TeardownTestDB(t *testing.T) {
 
 // CleanupTables truncates all tables to start with a clean state
 func (tdb *TestDB) CleanupTables(t *testing.T) {
+	// The test database was created with the 'listaway' schema just like the main database
 	_, err := tdb.DB.Exec(`
-		TRUNCATE TABLE listaway.list, listaway.item, listaway.user, listaway.reset_tokens CASCADE
+		TRUNCATE TABLE listaway.list, listaway.item, listaway.user, listaway.reset_tokens, listaway.collection, listaway.collection_list CASCADE
 	`)
 	if err != nil {
 		t.Fatalf("Failed to clean up tables: %v", err)
