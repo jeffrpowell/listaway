@@ -1,19 +1,53 @@
-package testing
+package dbtest
 
 import (
 	"database/sql"
 	"fmt"
 	"log"
 	"os"
+	"sync"
 	"testing"
 
-	"github.com/jeffrpowell/listaway/internal/dbtest"
 	_ "github.com/lib/pq"
 )
 
 // TestDB provides a database connection for testing
 type TestDB struct {
 	DB *sql.DB
+}
+
+// Global variable to store the test database connection
+var (
+	testDbConnection *sql.DB
+	testDbMutex      sync.RWMutex
+)
+
+// SetTestDatabase sets the test database connection to be used by all database functions during tests
+func SetTestDatabase(db *sql.DB) {
+	testDbMutex.Lock()
+	defer testDbMutex.Unlock()
+	testDbConnection = db
+}
+
+// ClearTestDatabase clears the test database connection
+func ClearTestDatabase() {
+	testDbMutex.Lock()
+	defer testDbMutex.Unlock()
+	testDbConnection = nil
+}
+
+// IsUsingTestDatabase returns true if a test database connection is currently set
+func IsUsingTestDatabase() bool {
+	testDbMutex.RLock()
+	defer testDbMutex.RUnlock()
+	return testDbConnection != nil
+}
+
+// GetTestDatabaseConnection returns the current test database connection if available
+func GetTestDatabaseConnection() *sql.DB {
+	testDbMutex.RLock()
+	defer testDbMutex.RUnlock()
+	return testDbConnection
 }
 
 // SetupTestDB creates a test database connection and returns a TestDB instance
@@ -51,8 +85,8 @@ func SetupTestDB(t *testing.T, initSQL string) *TestDB {
 
 	fmt.Println("Test database initialized successfully")
 
-	// Set this connection as the test database connection for all database functions
-	dbtest.SetTestDatabase(db)
+	// Set this connection as the test database connection
+	SetTestDatabase(db)
 
 	return &TestDB{DB: db}
 }
@@ -60,7 +94,7 @@ func SetupTestDB(t *testing.T, initSQL string) *TestDB {
 // TeardownTestDB cleans up the database connection
 func (tdb *TestDB) TeardownTestDB(t *testing.T) {
 	// Clear the test database connection first
-	dbtest.ClearTestDatabase()
+	ClearTestDatabase()
 
 	// Then close the connection
 	if tdb.DB != nil {
@@ -72,7 +106,7 @@ func (tdb *TestDB) TeardownTestDB(t *testing.T) {
 
 // CleanupTables truncates all tables to start with a clean state
 func (tdb *TestDB) CleanupTables(t *testing.T) {
-	// The test database was created with the 'listaway' schema just like the main database
+	// The test database was created with the 'listaway' schema
 	_, err := tdb.DB.Exec(`
 		TRUNCATE TABLE listaway.list, listaway.item, listaway.user, listaway.reset_tokens, listaway.collection, listaway.collection_list CASCADE
 	`)
@@ -81,13 +115,7 @@ func (tdb *TestDB) CleanupTables(t *testing.T) {
 	}
 }
 
-// SetupTestRouter creates a router for HTTP handler testing
-func SetupTestRouter() {
-	// This will be filled in as we understand more about how the router is configured
-	// It might need to use a different router than the production one
-}
-
-// helper function to get environment variable with default fallback
+// Helper function to get environment variable with default fallback
 func getEnvOrDefault(key, defaultValue string) string {
 	if value, exists := os.LookupEnv(key); exists {
 		return value

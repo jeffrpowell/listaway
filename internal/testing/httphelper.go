@@ -65,7 +65,7 @@ func CreateTestRequest(method, path string, body interface{}) (*http.Request, er
 
 // SetupTestHandler creates a test handler environment
 func SetupTestHandler(t *testing.T) (*TestDB, *MockResponseRecorder) {
-	db := SetupTestDB(t)
+	db := SetupTestDB(t, "initSQL")
 	recorder := &MockResponseRecorder{
 		ResponseRecorder: httptest.NewRecorder(),
 	}

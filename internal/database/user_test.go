@@ -4,12 +4,12 @@ import (
 	"testing"
 
 	"github.com/jeffrpowell/listaway/internal/constants"
-	testhelper "github.com/jeffrpowell/listaway/internal/testing"
+	"github.com/jeffrpowell/listaway/internal/dbtest"
 )
 
 func TestCreateUser(t *testing.T) {
 	// Setup test database
-	db := testhelper.SetupTestDB(t)
+	db := dbtest.SetupTestDB(t, GetInitSQL())
 	defer db.TeardownTestDB(t)
 
 	// Clean up tables before test
@@ -75,7 +75,7 @@ func TestCreateUser(t *testing.T) {
 
 func TestGetUserByEmail(t *testing.T) {
 	// Setup test database
-	db := testhelper.SetupTestDB(t)
+	db := dbtest.SetupTestDB(t, GetInitSQL())
 	defer db.TeardownTestDB(t)
 
 	// Clean up tables before test
