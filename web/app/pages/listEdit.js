@@ -153,13 +153,22 @@ document.addEventListener('DOMContentLoaded', (event) => {
         });
     });
 
-    listDescriptionInputs.forEach(listDescriptionInput => 
+    listDescriptionInputs.forEach(listDescriptionInput => {
         listDescriptionInput.addEventListener('input', async (event) => {
             descriptionSavedIcons.forEach(descriptionSavedIcon => descriptionSavedIcon.classList.add('hidden'));
             descriptionErrors.forEach(descriptionError => descriptionError.classList.add('hidden'));
             debouncedSaveDescription(listDescriptionInput.dataset.listId, listDescriptionInput.value.trim());
-        })
-    );
+        });
+        
+        // Save immediately when user leaves the field to ensure changes aren't lost
+        listDescriptionInput.addEventListener('blur', async (event) => {
+            // Cancel any pending debounced save and save immediately
+            if (debouncedSaveDescription.timeoutId) {
+                clearTimeout(debouncedSaveDescription.timeoutId);
+            }
+            await saveDescription(listDescriptionInput.dataset.listId, listDescriptionInput.value.trim());
+        });
+    });
 
     var debouncedSaveDescription = debounce(saveDescription, 500);
     async function saveDescription(listId, description) {
@@ -177,7 +186,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 body: JSON.stringify({name: listName, description: description})
             });
             
-            if (!response.status === 204 && !response.status === 200) {
+            if (response.status !== 204 && response.status !== 200) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             descriptionSavedIcons.forEach(descriptionSavedIcon => descriptionSavedIcon.classList.remove('hidden'));
@@ -289,7 +298,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     function debounce(func, delay) {
         let timeoutId;
-        return function(...args) {
+        const debouncedFunc = function(...args) {
             if (timeoutId) {
                 clearTimeout(timeoutId);
             }
@@ -297,5 +306,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 func.apply(this, args);
             }, delay);
         };
+        // Expose timeoutId for external access
+        Object.defineProperty(debouncedFunc, 'timeoutId', {
+            get: () => timeoutId,
+            set: (value) => { timeoutId = value; }
+        });
+        return debouncedFunc;
     }
 });

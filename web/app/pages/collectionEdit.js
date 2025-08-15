@@ -162,13 +162,21 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     // Auto-save description on input changes with debounce
+    var debouncedSaveDescription = debounce(saveDescription, 500);
     collectionDescriptionInputs.forEach(descriptionInput => {
-        let saveTimeout;
         descriptionInput.addEventListener('input', (event) => {
-            clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(() => {
-                saveDescription(descriptionInput.dataset.collectionId, descriptionInput.value);
-            }, 1000);
+            descriptionSavedIcons.forEach(icon => icon.classList.add('hidden'));
+            descriptionErrors.forEach(error => error.classList.add('hidden'));
+            debouncedSaveDescription(descriptionInput.dataset.collectionId, descriptionInput.value.trim());
+        });
+        
+        // Save immediately when user leaves the field to ensure changes aren't lost
+        descriptionInput.addEventListener('blur', async (event) => {
+            // Cancel any pending debounced save and save immediately
+            if (debouncedSaveDescription.timeoutId) {
+                clearTimeout(debouncedSaveDescription.timeoutId);
+            }
+            await saveDescription(descriptionInput.dataset.collectionId, descriptionInput.value.trim());
         });
     });
 
@@ -190,31 +198,22 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 })
             });
 
-            if (response.status === 204) {
-                // Show saved confirmation
-                descriptionSavedIcons.forEach(icon => {
-                    icon.classList.remove('hidden');
-                    setTimeout(() => {
-                        icon.classList.add('hidden');
-                    }, 2000);
-                });
-            } else {
-                // Show error message
-                descriptionErrors.forEach(errorElement => {
-                    errorElement.classList.remove('hidden');
-                    setTimeout(() => {
-                        errorElement.classList.add('hidden');
-                    }, 3000);
-                });
+            if (response.status !== 204 && response.status !== 200) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
+            // Show saved confirmation
+            descriptionSavedIcons.forEach(icon => {
+                icon.classList.remove('hidden');
+                setTimeout(() => {
+                    icon.classList.add('hidden');
+                }, 2000);
+            });
+            collectionDescriptionInputs.forEach(input => input.value = description);
         } catch (error) {
             console.error('Error saving description:', error);
             // Show error message
             descriptionErrors.forEach(errorElement => {
                 errorElement.classList.remove('hidden');
-                setTimeout(() => {
-                    errorElement.classList.add('hidden');
-                }, 3000);
             });
         }
     }
@@ -320,7 +319,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     function debounce(func, delay) {
         let timeoutId;
-        return function(...args) {
+        const debouncedFunc = function(...args) {
             if (timeoutId) {
                 clearTimeout(timeoutId);
             }
@@ -328,5 +327,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 func.apply(this, args);
             }, delay);
         };
+        // Expose timeoutId for external access
+        Object.defineProperty(debouncedFunc, 'timeoutId', {
+            get: () => timeoutId,
+            set: (value) => { timeoutId = value; }
+        });
+        return debouncedFunc;
     }
 });
