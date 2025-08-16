@@ -4,6 +4,23 @@ This self-hostable application allows authenticated users to publish one or more
 
 <img src="https://files.jeffpowell.dev/listawaysample.jpg" alt="Listaway sample" title="Listaway sample" height="400" width="550">
 
+## Feature inventory
+* Application access
+  * Authentication / Authorization
+  * Password reset
+  * Group administration (manage group of users, including creation)
+  * Instance administration (manage all groups and all users)
+* List management
+  * CRUD lists
+  * Optional list description string
+  * CRUD items (Name, optional URL, optional Priority, optional Notes)
+    * Table sortable by Name and Priority
+  * Opt-in public read-only access with randomized URL
+* Collection management
+  * CRUD collections (group of lists)
+  * Optional collection description string
+  * Opt-in public read-only access with randomized URL
+
 ## Quick start
 
 1. Configure your PostgresDB instance
