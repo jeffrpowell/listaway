@@ -2,6 +2,8 @@
 
 This self-hostable application allows authenticated users to publish one or more lists of items publicly. These lists can either be for tracking purposes (e.g. a list of books to read, a list of components in a custom computer build, a list of favorite local places, etc.) or for wishlist purposes (e.g. a gift wishlist, a list of tasks you need help with, etc.). The items can be freeform text or a URL to details about the item. Shared lists incorporate a random string in the URL to give a little protection against guessing (thus allowing you to share the link and access it without requiring authentication).
 
+<img src="https://files.jeffpowell.dev/listawaysample.jpg" alt="Listaway sample" title="Listaway sample" height="400" width="550">
+
 ## Quick start
 
 1. Configure your PostgresDB instance
@@ -31,6 +33,7 @@ services:
 3. Make a `.env` file
 ```
 # Required configuration
+
 LISTAWAY_AUTH_KEY=[random alphanumeric 128-character string]
 PORT=8080
 POSTGRES_USER=listaway
@@ -39,13 +42,14 @@ POSTGRES_HOST=[pghost]
 POSTGRES_DATABASE=listaway
 
 # Optional SMTP configuration for password reset emails (defaults will cause email bodies to be logged instead of sent outbound)
-# SMTP_HOST=smtp.example.com        # SMTP server hostname (default "")
-# SMTP_PORT=587                     # SMTP server port (typically 25, 465, or 587, default 587)
-# SMTP_USER=username               # SMTP authentication username (default "")
-# SMTP_PASSWORD=password           # SMTP authentication password (default "")
-# SMTP_FROM=noreply@example.com    # Sender email address (default "noreply@listaway.dev)
-# SMTP_SECURE=true                 # Use TLS/SSL (true/false, default true)
-# APP_URL=https://listaway.your-domain.com     # Base URL of your application (for reset links, default "http://localhost:8080")
+
+# SMTP_HOST=smtp.example.com # default ""
+# SMTP_PORT=587              # typically 25, 465, or 587, default 587
+# SMTP_USER=username         # default ""
+# SMTP_PASSWORD=password     # default ""
+# SMTP_FROM=noreply@example.com # default "noreply@listaway.dev"
+# SMTP_SECURE=true           # default true
+# APP_URL=https://listaway.your-domain.com # for reset links, default "http://localhost:8080"
 ```
 4. `docker compose up`
 5. [https://localhost:8080/](https://localhost:8080/) (All paths will 303 to [https://localhost:8080/admin/register](https://localhost:8080/admin/register))
