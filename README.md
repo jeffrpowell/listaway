@@ -1,4 +1,4 @@
-<img src="./web/app/images/ListawayWordmarkDark.png" alt="Listaway logo" title="Listaway" height="300">
+<img src="./web/app/images/ListawayWordmarkLight.png" alt="Listaway logo" title="Listaway" height="300">
 
 This self-hostable application allows authenticated users to publish one or more lists of items publicly. These lists can either be for tracking purposes (e.g. a list of books to read, a list of components in a custom computer build, a list of favorite local places, etc.) or for wishlist purposes (e.g. a gift wishlist, a list of tasks you need help with, etc.). The items can be freeform text or a URL to details about the item. Shared lists incorporate a random string in the URL to give a little protection against guessing (thus allowing you to share the link and access it without requiring authentication).
 
