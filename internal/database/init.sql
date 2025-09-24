@@ -35,7 +35,10 @@ CREATE TABLE IF NOT EXISTS listaway.user (
     name VARCHAR,
     passwordhash VARCHAR NOT NULL,
     admin BOOLEAN NOT NULL,
-    instanceAdmin BOOLEAN NOT NULL
+    instanceAdmin BOOLEAN NOT NULL,
+    oidc_provider VARCHAR NULL,
+    oidc_subject VARCHAR NULL,
+    oidc_email VARCHAR NULL
 );
 
 -- Migration from 1.6.0 to 1.7.0
@@ -67,7 +70,49 @@ BEGIN
     
 END $$;
 
+-- Migration from 1.14.0 to 1.15.0 to add OIDC support to user table
+DO $$
+BEGIN
+    -- Add OIDC provider column
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'listaway'
+        AND table_name = 'user'
+        AND column_name = 'oidc_provider'
+    ) THEN
+        ALTER TABLE listaway.user
+        ADD COLUMN oidc_provider VARCHAR NULL;
+    END IF;
+    
+    -- Add OIDC subject column
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'listaway'
+        AND table_name = 'user'
+        AND column_name = 'oidc_subject'
+    ) THEN
+        ALTER TABLE listaway.user
+        ADD COLUMN oidc_subject VARCHAR NULL;
+    END IF;
+    
+    -- Add OIDC email column (may differ from primary email)
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'listaway'
+        AND table_name = 'user'
+        AND column_name = 'oidc_email'
+    ) THEN
+        ALTER TABLE listaway.user
+        ADD COLUMN oidc_email VARCHAR NULL;
+    END IF;
+END $$;
+
 CREATE INDEX IF NOT EXISTS user_groupid_idx ON listaway.user (groupid);
+CREATE INDEX IF NOT EXISTS user_oidc_provider_subject_idx ON listaway.user (oidc_provider, oidc_subject);
+CREATE INDEX IF NOT EXISTS user_oidc_email_idx ON listaway.user (oidc_email);
 
 ----------------------------------------------------
 --          listaway.reset_tokens table
@@ -105,4 +150,4 @@ CREATE TABLE IF NOT EXISTS listaway.collection_list (
 );
 
 CREATE INDEX IF NOT EXISTS collection_list_collectionid_idx ON listaway.collection_list (collectionid);
-CREATE INDEX IF NOT EXISTS collection_list_listid_idx ON listaway.collection_list (listid)
+CREATE INDEX IF NOT EXISTS collection_list_listid_idx ON listaway.collection_list (listid);

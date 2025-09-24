@@ -5,6 +5,9 @@ const pwdInput = document.getElementById("password");
 const submitBtn = document.getElementById("submit-btn");
 const forgotLink = document.getElementById("forgot-link");
 const errorSpan = document.getElementById("error-span");
+const oidcSection = document.getElementById("oidc-section");
+const oidcLoginBtn = document.getElementById("oidc-login-btn");
+const oidcProviderText = document.getElementById("oidc-provider-text");
 
 async function sendData(form) {
     const formData = new FormData(form);
@@ -89,3 +92,53 @@ function showError(statusCode) {
     }
     errorSpan.classList.remove("hidden");
 }
+
+// OIDC functionality
+async function checkOIDCStatus() {
+    try {
+        const response = await fetch("/api/oidc/status");
+        if (response.ok) {
+            const data = await response.json();
+            if (data.enabled) {
+                oidcSection.classList.remove("hidden");
+                
+                // Update button text based on provider
+                if (data.provider) {
+                    const providerName = data.provider.charAt(0).toUpperCase() + data.provider.slice(1);
+                    oidcProviderText.innerText = `Continue with ${providerName}`;
+                }
+            }
+        }
+    } catch (e) {
+        console.log("OIDC status check failed:", e);
+        // OIDC not available, keep section hidden
+    }
+}
+
+// Handle OIDC login
+function handleOIDCLogin() {
+    // Redirect to OIDC login endpoint
+    window.location.href = "/auth/oidc/login";
+}
+
+// Add OIDC event listener
+if (oidcLoginBtn) {
+    oidcLoginBtn.addEventListener("click", handleOIDCLogin);
+}
+
+// Check URL parameters for OIDC errors
+function checkOIDCErrors() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    
+    if (error === 'oidc_failed') {
+        showError(500);
+        errorSpan.innerText = "Authentication failed. Please try again.";
+    }
+}
+
+// Initialize OIDC functionality
+document.addEventListener("DOMContentLoaded", () => {
+    checkOIDCStatus();
+    checkOIDCErrors();
+});
