@@ -6,7 +6,7 @@ This self-hostable application allows authenticated users to publish one or more
 
 ## Feature inventory
 * Application access
-  * Authentication / Authorization
+  * Authentication / Authorization (Email/Password + OIDC/OAuth2)
   * Password reset
   * Group administration (manage group of users, including creation)
   * Instance administration (manage all groups and all users)
@@ -67,6 +67,15 @@ POSTGRES_DATABASE=listaway
 # SMTP_FROM=noreply@example.com # default "noreply@listaway.dev"
 # SMTP_SECURE=true           # default true
 # APP_URL=https://listaway.your-domain.com # for reset links, default "http://localhost:8080"
+
+# Optional OIDC/OAuth2 configuration for single sign-on authentication
+
+# OIDC_ENABLED=true          # default false
+# OIDC_PROVIDER_URL=https://accounts.google.com # OIDC provider URL
+# OIDC_CLIENT_ID=your-client-id # OAuth2 client ID from provider
+# OIDC_CLIENT_SECRET=your-client-secret # OAuth2 client secret from provider
+# OIDC_REDIRECT_URL=https://listaway.your-domain.com/auth/oidc/callback # OAuth2 redirect URL
+# OIDC_SCOPES="openid profile email" # OAuth2 scopes, default "openid profile email"
 ```
 4. `docker compose up`
 5. [https://localhost:8080/](https://localhost:8080/) (All paths will 303 to [https://localhost:8080/admin/register](https://localhost:8080/admin/register))
@@ -81,6 +90,40 @@ Listaway includes a password reset feature that allows users to reset their pass
 3. The link is valid for 1 hour and can only be used once.
 
 To enable email delivery for password resets, configure the SMTP settings in your `.env` file as shown above. If SMTP is not configured, the application will log the reset emails to the console instead of sending them.
+
+## OIDC/OAuth2 Authentication
+
+Listaway supports OIDC (OpenID Connect) authentication alongside traditional email/password authentication. This allows users to sign in with popular providers like Google, GitHub, Microsoft, Auth0, and others.
+
+### Features
+
+- **Dual Authentication**: Users can choose between email/password or OIDC authentication
+- **Account Linking**: Existing users can link their OIDC accounts to their email/password accounts
+- **Automatic Account Creation**: New users are automatically created when they sign in via OIDC
+- **Secure Implementation**: Includes CSRF protection, token verification, and secure session management
+
+### Configuration
+
+To enable OIDC authentication, configure the OIDC settings in your `.env` file:
+
+```bash
+OIDC_ENABLED=true
+OIDC_PROVIDER_URL=https://accounts.google.com
+OIDC_CLIENT_ID=your-client-id
+OIDC_CLIENT_SECRET=your-client-secret
+OIDC_REDIRECT_URL=https://your-domain.com/auth/oidc/callback
+OIDC_SCOPES="openid profile email"
+```
+
+### Supported Providers
+
+- **Google**: `https://accounts.google.com`
+- **GitHub**: `https://github.com` (requires GitHub OAuth App)
+- **Microsoft**: `https://login.microsoftonline.com/{tenant-id}/v2.0`
+- **Auth0**: `https://your-domain.auth0.com`
+- **Any OIDC-compliant provider**
+
+For detailed setup instructions and provider-specific configuration, see [OIDC_SETUP.md](./OIDC_SETUP.md).
 
 ## Build from source
 This repository is provided with a configured devcontainer that is available to assist in quickly bootstrapping a local development environment suitable to build and run this application locally. 

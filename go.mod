@@ -5,9 +5,11 @@ go 1.24
 toolchain go1.24.1
 
 require (
+	github.com/coreos/go-oidc/v3 v3.11.0
 	github.com/gorilla/sessions v1.3.0
 	github.com/lib/pq v1.10.9
 	github.com/tdewolff/minify v2.3.6+incompatible
+	golang.org/x/oauth2 v0.24.0
 )
 
 require (

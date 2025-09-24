@@ -26,6 +26,14 @@ const (
 	ENV_SMTP_FROM     string = "SMTP_FROM"
 	ENV_SMTP_SECURE   string = "SMTP_SECURE" // true for TLS/SSL, false for unencrypted
 	ENV_APP_URL       string = "APP_URL"     // base URL for the application (for reset links)
+
+	// OIDC configuration
+	ENV_OIDC_ENABLED        string = "OIDC_ENABLED"        // true/false to enable OIDC authentication
+	ENV_OIDC_PROVIDER_URL   string = "OIDC_PROVIDER_URL"   // OIDC provider URL (e.g., https://accounts.google.com)
+	ENV_OIDC_CLIENT_ID      string = "OIDC_CLIENT_ID"      // OAuth2 client ID
+	ENV_OIDC_CLIENT_SECRET  string = "OIDC_CLIENT_SECRET"  // OAuth2 client secret
+	ENV_OIDC_REDIRECT_URL   string = "OIDC_REDIRECT_URL"   // OAuth2 redirect URL
+	ENV_OIDC_SCOPES         string = "OIDC_SCOPES"         // OAuth2 scopes (space-separated)
 )
 
 // Database consts
@@ -53,6 +61,16 @@ var (
 	SMTP_FROM     string = loadEnvWithDefault(ENV_SMTP_FROM, "noreply@listaway.dev")
 	SMTP_SECURE   string = loadEnvWithDefault(ENV_SMTP_SECURE, "true")
 	APP_URL       string = loadEnvWithDefault(ENV_APP_URL, "http://localhost:8080")
+)
+
+// OIDC configuration with defaults
+var (
+	OIDC_ENABLED        string = loadEnvWithDefault(ENV_OIDC_ENABLED, "false")
+	OIDC_PROVIDER_URL   string = loadEnvWithDefault(ENV_OIDC_PROVIDER_URL, "")
+	OIDC_CLIENT_ID      string = loadEnvWithDefault(ENV_OIDC_CLIENT_ID, "")
+	OIDC_CLIENT_SECRET  string = loadEnvWithDefault(ENV_OIDC_CLIENT_SECRET, "")
+	OIDC_REDIRECT_URL   string = loadEnvWithDefault(ENV_OIDC_REDIRECT_URL, "")
+	OIDC_SCOPES         string = loadEnvWithDefault(ENV_OIDC_SCOPES, "openid profile email")
 )
 
 // Handler consts
