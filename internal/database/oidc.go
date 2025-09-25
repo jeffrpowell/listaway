@@ -12,7 +12,8 @@ import (
 func GetUserByOIDC(provider, subject string) (int, error) {
 	var userId int
 	query := fmt.Sprintf("SELECT id FROM %s WHERE oidc_provider = $1 AND oidc_subject = $2", constants.DB_TABLE_USER)
-	
+	db := getDatabaseConnection()
+	defer db.Close()
 	err := db.QueryRow(query, provider, subject).Scan(&userId)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -20,7 +21,7 @@ func GetUserByOIDC(provider, subject string) (int, error) {
 		}
 		return -1, fmt.Errorf("error querying user by OIDC: %v", err)
 	}
-	
+
 	return userId, nil
 }
 
@@ -31,12 +32,13 @@ func CreateOIDCUser(email, name, provider, subject, oidcEmail string) (int, erro
 		INSERT INTO %s (email, name, passwordhash, admin, instanceadmin, oidc_provider, oidc_subject, oidc_email) 
 		VALUES ($1, $2, '', false, false, $3, $4, $5) 
 		RETURNING id`, constants.DB_TABLE_USER)
-	
+	db := getDatabaseConnection()
+	defer db.Close()
 	err := db.QueryRow(query, email, name, provider, subject, oidcEmail).Scan(&userId)
 	if err != nil {
 		return -1, fmt.Errorf("error creating OIDC user: %v", err)
 	}
-	
+
 	log.Printf("Created new OIDC user with ID %d for provider %s", userId, provider)
 	return userId, nil
 }
@@ -47,21 +49,22 @@ func LinkOIDCToExistingUser(userID int, provider, subject, oidcEmail string) err
 		UPDATE %s 
 		SET oidc_provider = $1, oidc_subject = $2, oidc_email = $3 
 		WHERE id = $4`, constants.DB_TABLE_USER)
-	
+	db := getDatabaseConnection()
+	defer db.Close()
 	result, err := db.Exec(query, provider, subject, oidcEmail, userID)
 	if err != nil {
 		return fmt.Errorf("error linking OIDC to user: %v", err)
 	}
-	
+
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return fmt.Errorf("error checking rows affected: %v", err)
 	}
-	
+
 	if rowsAffected == 0 {
 		return fmt.Errorf("user not found for linking")
 	}
-	
+
 	log.Printf("Linked OIDC provider %s to user ID %d", provider, userID)
 	return nil
 }
@@ -75,7 +78,8 @@ func GetUserByEmailForOIDCLinking(email string) (int, bool, error) {
 		       CASE WHEN oidc_provider IS NOT NULL AND oidc_subject IS NOT NULL THEN true ELSE false END as has_oidc
 		FROM %s 
 		WHERE email = $1`, constants.DB_TABLE_USER)
-	
+	db := getDatabaseConnection()
+	defer db.Close()
 	err := db.QueryRow(query, email).Scan(&userId, &hasOIDC)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -83,7 +87,7 @@ func GetUserByEmailForOIDCLinking(email string) (int, bool, error) {
 		}
 		return -1, false, fmt.Errorf("error querying user by email: %v", err)
 	}
-	
+
 	return userId, hasOIDC, nil
 }
 
@@ -94,29 +98,30 @@ func CreateOrUpdateOIDCUser(email, name, provider, subject, oidcEmail string) (i
 	if err != nil {
 		return -1, fmt.Errorf("error checking existing OIDC user: %v", err)
 	}
-	
+	db := getDatabaseConnection()
+	defer db.Close()
 	if existingUserID != -1 {
 		// User exists with this OIDC identity, update their info
 		query := fmt.Sprintf(`
 			UPDATE %s 
 			SET name = $1, oidc_email = $2 
 			WHERE id = $3`, constants.DB_TABLE_USER)
-		
+
 		_, err := db.Exec(query, name, oidcEmail, existingUserID)
 		if err != nil {
 			return -1, fmt.Errorf("error updating existing OIDC user: %v", err)
 		}
-		
+
 		log.Printf("Updated existing OIDC user with ID %d", existingUserID)
 		return existingUserID, nil
 	}
-	
+
 	// Check if user exists with this email but no OIDC
 	emailUserID, hasOIDC, err := GetUserByEmailForOIDCLinking(email)
 	if err != nil {
 		return -1, fmt.Errorf("error checking user by email: %v", err)
 	}
-	
+
 	if emailUserID != -1 && !hasOIDC {
 		// User exists with email but no OIDC, link the accounts
 		err := LinkOIDCToExistingUser(emailUserID, provider, subject, oidcEmail)
@@ -125,7 +130,7 @@ func CreateOrUpdateOIDCUser(email, name, provider, subject, oidcEmail string) (i
 		}
 		return emailUserID, nil
 	}
-	
+
 	// Create new user
 	return CreateOIDCUser(email, name, provider, subject, oidcEmail)
 }
@@ -136,21 +141,22 @@ func UnlinkOIDCFromUser(userID int) error {
 		UPDATE %s 
 		SET oidc_provider = NULL, oidc_subject = NULL, oidc_email = NULL 
 		WHERE id = $1`, constants.DB_TABLE_USER)
-	
+	db := getDatabaseConnection()
+	defer db.Close()
 	result, err := db.Exec(query, userID)
 	if err != nil {
 		return fmt.Errorf("error unlinking OIDC from user: %v", err)
 	}
-	
+
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
 		return fmt.Errorf("error checking rows affected: %v", err)
 	}
-	
+
 	if rowsAffected == 0 {
 		return fmt.Errorf("user not found for unlinking")
 	}
-	
+
 	log.Printf("Unlinked OIDC from user ID %d", userID)
 	return nil
 }
@@ -162,7 +168,8 @@ func GetUserOIDCInfo(userID int) (string, string, string, error) {
 		SELECT oidc_provider, oidc_subject, oidc_email 
 		FROM %s 
 		WHERE id = $1`, constants.DB_TABLE_USER)
-	
+	db := getDatabaseConnection()
+	defer db.Close()
 	err := db.QueryRow(query, userID).Scan(&provider, &subject, &oidcEmail)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -170,6 +177,6 @@ func GetUserOIDCInfo(userID int) (string, string, string, error) {
 		}
 		return "", "", "", fmt.Errorf("error querying user OIDC info: %v", err)
 	}
-	
+
 	return provider.String, subject.String, oidcEmail.String, nil
 }
