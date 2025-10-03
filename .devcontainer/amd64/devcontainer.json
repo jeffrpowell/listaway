@@ -31,6 +31,12 @@
 		"SMTP_USER": "",
 		"SMTP_FROM": "",
 		"SMTP_PASSWORD": "",
+		// "OIDC_ENABLED": "true",
+		// "OIDC_PROVIDER_URL": "https://accounts.google.com",
+		// "OIDC_CLIENT_ID": "redacted.apps.googleusercontent.com",
+		// "OIDC_CLIENT_SECRET": "redacted",
+		// "OIDC_REDIRECT_URL": "http://localhost:8080/auth/oidc/callback",
+		// "OIDC_SCOPES": "openid profile email",
 		"LISTAWAY_AUTH_KEY": "zjVzypwJaRyIAz9blNPAmSiKoXb92NW9lgiVNgbHeAD0TRHPhicIh7YVzg4s6JBbjUZVQTaF5JIepCiMqQrUqe1Vs0bLwhrVbdHh03GCXuwbTjuXVYAZuGZ1XN4cHXpitySaRVO95Dxlv27crLpvJEYC3RJu0U7Hw85jkgidDvHjXpB16dLSqW60lfq9EAvPFWjT"
 	},
 	"postAttachCommand": "yarn --cwd /workspaces/listaway/web install && yarn --cwd /workspaces/listaway/web run build",
