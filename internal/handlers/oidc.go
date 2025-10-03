@@ -9,7 +9,7 @@ import (
 	"github.com/jeffrpowell/listaway/internal/constants"
 	"github.com/jeffrpowell/listaway/internal/database"
 	"github.com/jeffrpowell/listaway/internal/handlers/middleware"
-	"github.com/jeffrpowell/listaway/internal/oidc"
+	"github.com/jeffrpowell/listaway/internal/handlers/oidc"
 )
 
 func init() {
@@ -24,7 +24,6 @@ func init() {
 		constants.ROUTER.HandleFunc("/auth/oidc/callback", middleware.DefaultPublicMiddlewareChain(oidcCallbackHandler)).Methods("GET")
 		constants.ROUTER.HandleFunc("/auth/oidc/link", middleware.DefaultMiddlewareChain(oidcLinkHandler)).Methods("POST")
 		constants.ROUTER.HandleFunc("/auth/oidc/unlink", middleware.DefaultMiddlewareChain(oidcUnlinkHandler)).Methods("POST")
-		log.Println("OIDC authentication routes registered")
 	}
 }
 
