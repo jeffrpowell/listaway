@@ -27,19 +27,25 @@ func GetUserByOIDC(provider, subject string) (int, error) {
 
 // CreateOIDCUser creates a new user with OIDC authentication
 func CreateOIDCUser(email, name, provider, subject, oidcEmail string) (int, error) {
+	// Get next available group ID for new OIDC user
+	groupId, err := GetNextAvailableGroupId()
+	if err != nil {
+		return -1, fmt.Errorf("error getting next group ID: %v", err)
+	}
+
 	var userId int
 	query := fmt.Sprintf(`
-		INSERT INTO %s (email, name, passwordhash, admin, instanceadmin, oidc_provider, oidc_subject, oidc_email) 
-		VALUES ($1, $2, '', false, false, $3, $4, $5) 
+		INSERT INTO %s (groupid, email, name, passwordhash, admin, instanceadmin, oidc_provider, oidc_subject, oidc_email) 
+		VALUES ($1, $2, $3, '', true, false, $4, $5, $6) 
 		RETURNING id`, constants.DB_TABLE_USER)
 	db := getDatabaseConnection()
 	defer db.Close()
-	err := db.QueryRow(query, email, name, provider, subject, oidcEmail).Scan(&userId)
+	err = db.QueryRow(query, groupId, email, name, provider, subject, oidcEmail).Scan(&userId)
 	if err != nil {
 		return -1, fmt.Errorf("error creating OIDC user: %v", err)
 	}
 
-	log.Printf("Created new OIDC user with ID %d for provider %s", userId, provider)
+	log.Printf("Created new OIDC user with ID %d (group %d) for provider %s", userId, groupId, provider)
 	return userId, nil
 }
 
