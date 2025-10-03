@@ -4,10 +4,10 @@ This guide explains how to configure and use OIDC (OpenID Connect) authenticatio
 
 ## Overview
 
-Listaway now supports OIDC/OAuth2 authentication alongside traditional email/password authentication. Users can:
+Listaway supports OIDC/OAuth2 authentication alongside traditional email/password authentication. Users can:
 
 - Sign in with OIDC providers (Google, GitHub, Microsoft, Auth0, etc.)
-- Link OIDC accounts to existing email/password accounts
+- Link OIDC accounts to existing email/password accounts (NOT vice versa)
 - Use both authentication methods interchangeably
 
 ## Configuration
@@ -135,65 +135,6 @@ volumes:
   postgres_data:
 ```
 
-## Database Schema Changes
-
-The implementation automatically adds the following columns to the `listaway.user` table:
-
-- `oidc_provider` (VARCHAR): The OIDC provider name (e.g., "google", "github")
-- `oidc_subject` (VARCHAR): The unique subject identifier from the OIDC provider
-- `oidc_email` (VARCHAR): The email address from the OIDC provider (may differ from primary email)
-
-## API Endpoints
-
-### OIDC Authentication Endpoints
-
-- `GET /auth/oidc/login` - Initiates OIDC authentication flow
-- `GET /auth/oidc/callback` - Handles OIDC callback and completes authentication
-- `POST /auth/oidc/link` - Links OIDC account to existing user (requires authentication)
-- `POST /auth/oidc/unlink` - Removes OIDC authentication from user account (requires authentication)
-- `GET /api/oidc/status` - Returns OIDC configuration status for frontend
-
-### Traditional Authentication Endpoints (Unchanged)
-
-- `GET /auth` - Login page
-- `POST /auth` - Email/password login
-- `DELETE /auth` - Logout
-- `POST /reset` - Request password reset
-- `GET /reset/{token}` - Password reset form
-- `POST /reset/{token}` - Complete password reset
-
-## User Experience
-
-### New User Flow
-
-1. User visits `/auth` (login page)
-2. If OIDC is enabled, they see both email/password form and OIDC button
-3. Clicking OIDC button redirects to provider
-4. After successful authentication, user is redirected to `/list`
-5. New user account is automatically created
-
-### Existing User Flow
-
-1. Existing users can continue using email/password authentication
-2. They can optionally link their OIDC account for future convenience
-3. Once linked, they can use either authentication method
-
-### Account Linking
-
-- Users with existing email/password accounts can link OIDC accounts
-- If OIDC email matches existing account email, accounts are automatically linked
-- Users can unlink OIDC accounts if needed
-
-## Security Features
-
-- **State Parameter**: CSRF protection using cryptographically secure random state
-- **Nonce Validation**: ID token replay protection
-- **Token Verification**: Full OIDC ID token signature and claims validation
-- **Session Management**: Consistent session handling with existing authentication
-- **Account Linking**: Secure linking based on email verification
-
-## Troubleshooting
-
 ### Common Issues
 
 1. **"OIDC not configured" error**
@@ -216,20 +157,6 @@ The implementation automatically adds the following columns to the `listaway.use
    - Check database connectivity
    - Verify user table permissions
 
-### Logs
-
-Enable debug logging to troubleshoot issues:
-
-```bash
-# Check application logs for OIDC-related messages
-docker logs listaway-container
-
-# Look for messages like:
-# "OIDC authentication routes registered"
-# "OIDC authentication successful for user ID X"
-# "Failed to initialize OIDC client: ..."
-```
-
 ## Development
 
 ### Adding New Providers
@@ -247,31 +174,3 @@ To add support for additional OIDC providers:
 3. Test authentication flow end-to-end
 4. Verify account linking functionality
 5. Test error scenarios (invalid tokens, network issues, etc.)
-
-## Production Considerations
-
-1. **HTTPS Required**: Most OIDC providers require HTTPS in production
-2. **Secure Secrets**: Store client secrets securely (environment variables, secrets management)
-3. **Session Security**: Use secure session configuration (HTTPS, secure cookies)
-4. **Rate Limiting**: Consider rate limiting on authentication endpoints
-5. **Monitoring**: Monitor authentication success/failure rates
-6. **Backup Authentication**: Always maintain email/password as backup authentication method
-
-## Migration Guide
-
-### Existing Installations
-
-1. Update to the latest version with OIDC support
-2. Run database migrations (automatic on startup)
-3. Configure OIDC environment variables
-4. Test authentication flows
-5. Communicate changes to users
-
-### Rollback Plan
-
-If issues occur:
-
-1. Set `OIDC_ENABLED=false`
-2. Restart application
-3. OIDC features will be disabled, traditional auth continues working
-4. OIDC data in database remains intact for future re-enablement

@@ -38,7 +38,6 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA listaway TO listaway;
 ```
 2. Make a `docker-compose.yml` file
 ```yaml
-version: "3.9"
 services:
   listaway:
     image: "ghcr.io/jeffrpowell/listaway:v1.14.0"
@@ -70,12 +69,12 @@ POSTGRES_DATABASE=listaway
 
 # Optional OIDC/OAuth2 configuration for single sign-on authentication
 
-# OIDC_ENABLED=true          # default false
+# OIDC_ENABLED=true                             # default false
 # OIDC_PROVIDER_URL=https://accounts.google.com # OIDC provider URL
-# OIDC_CLIENT_ID=your-client-id # OAuth2 client ID from provider
-# OIDC_CLIENT_SECRET=your-client-secret # OAuth2 client secret from provider
+# OIDC_CLIENT_ID=your-client-id                 # OAuth2 client ID from provider
+# OIDC_CLIENT_SECRET=your-client-secret         # OAuth2 client secret from provider
 # OIDC_REDIRECT_URL=https://listaway.your-domain.com/auth/oidc/callback # OAuth2 redirect URL
-# OIDC_SCOPES="openid profile email" # OAuth2 scopes, default "openid profile email"
+# OIDC_SCOPES="openid profile email"            # OAuth2 scopes, default "openid profile email"
 ```
 4. `docker compose up`
 5. [https://localhost:8080/](https://localhost:8080/) (All paths will 303 to [https://localhost:8080/admin/register](https://localhost:8080/admin/register))
@@ -91,18 +90,7 @@ Listaway includes a password reset feature that allows users to reset their pass
 
 To enable email delivery for password resets, configure the SMTP settings in your `.env` file as shown above. If SMTP is not configured, the application will log the reset emails to the console instead of sending them.
 
-## OIDC/OAuth2 Authentication
-
-Listaway supports OIDC (OpenID Connect) authentication alongside traditional email/password authentication. This allows users to sign in with popular providers like Google, GitHub, Microsoft, Auth0, and others.
-
-### Features
-
-- **Dual Authentication**: Users can choose between email/password or OIDC authentication
-- **Account Linking**: Existing users can link their OIDC accounts to their email/password accounts
-- **Automatic Account Creation**: New users are automatically created when they sign in via OIDC
-- **Secure Implementation**: Includes CSRF protection, token verification, and secure session management
-
-### Configuration
+## OIDC Configuration
 
 To enable OIDC authentication, configure the OIDC settings in your `.env` file:
 
