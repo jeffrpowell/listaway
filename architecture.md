@@ -69,6 +69,7 @@ listaway/
      - Items: List items management
      - Collections: Grouping and sharing related sets of lists
      - Reset Tokens: Password reset tokens
+     - Group Settings: Settings that apply to an entire group
 
 4. **Handlers** (`internal/handlers/`)
    - Implements HTTP request handlers for all application endpoints
@@ -126,7 +127,7 @@ Listaway is a web application for managing lists, with the following key feature
 3. **List Management**: Creating, editing, and organizing lists
 4. **Item Management**: Adding, updating, and removing items within lists
 5. **Collections**: Grouping related lists together and managing them as a unit
-6. **Sharing Functionality**: Ability to share lists and collections with other users
+6. **Sharing Functionality**: Ability to share lists and collections to the internet or with other users
 7. **Admin Features**: Administrative capabilities for user and instance management
 
 The application follows a clean separation between backend (Go) and frontend (JavaScript) with a well-structured organization of code by functional domains. The backend is organized using a layered architecture with database operations, business logic, and HTTP handlers clearly separated.

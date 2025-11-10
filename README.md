@@ -1,6 +1,6 @@
 <img src="./web/app/images/ListawayWordmarkLight.png" alt="Listaway logo" title="Listaway" height="300">
 
-This self-hostable application allows authenticated users to publish one or more lists of items publicly. These lists can either be for tracking purposes (e.g. a list of books to read, a list of components in a custom computer build, a list of favorite local places, etc.) or for wishlist purposes (e.g. a gift wishlist, a list of tasks you need help with, etc.). The items can be freeform text or a URL to details about the item. Shared lists incorporate a random string in the URL to give a little protection against guessing (thus allowing you to share the link and access it without requiring authentication).
+This self-hostable application allows authenticated users (individuals or a team) to publish one or more lists of items publicly. These lists can either be for tracking purposes (e.g. a list of books to read, a list of components in a custom computer build, a list of favorite local places, etc.) or for wishlist purposes (e.g. a gift wishlist, a list of tasks you need help with, etc.). The items can be freeform text or a URL to details about the item. Shared lists incorporate a random string in the URL to give a little protection against guessing (thus allowing you to share the link and access it without requiring authentication).
 
 <img src="https://files.jeffpowell.dev/listawaysample.jpg" alt="Listaway sample" title="Listaway sample" height="400" width="550">
 
@@ -16,6 +16,7 @@ This self-hostable application allows authenticated users to publish one or more
   * CRUD items (Name, optional URL, optional Priority, optional Notes)
     * Table sortable by Name and Priority
   * Opt-in public read-only access with randomized URL
+  * Share read-only or edit access with other group members
 * Collection management
   * CRUD collections (group of lists)
   * Optional collection description string
