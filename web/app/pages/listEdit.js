@@ -24,6 +24,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const deleteListButtons = document.querySelectorAll('.list-delete');
     const deleteListConfirmationSpans = document.querySelectorAll('.list-delete-confirmation-span');
     const deleteListConfirmationInputs = document.querySelectorAll('.list-delete-confirmation');
+    const shareWithGroupCheckboxes = document.querySelectorAll('.checkbox-share-with-group');
+    const groupCanEditCheckboxes = document.querySelectorAll('.checkbox-group-can-edit');
+    const groupSharingStatus = document.querySelectorAll('.group-sharing-status');
+    const groupSharingError = document.querySelectorAll('.group-sharing-error');
     var formReadyToSubmit = false;
     var firstDeleteClickDone = false;
 
@@ -121,6 +125,19 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 description = listDescriptionInput.value;
                 break;
             }
+            
+            let shareWithGroup = false;
+            for (const checkbox of shareWithGroupCheckboxes) {
+                shareWithGroup = checkbox.checked;
+                break;
+            }
+            
+            let groupCanEdit = false;
+            for (const checkbox of groupCanEditCheckboxes) {
+                groupCanEdit = checkbox.checked;
+                break;
+            }
+            
             let listId = saveNameBtn.dataset.listId;
             try {
                 const response = await fetch('/list/'+listId, {
@@ -128,7 +145,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({name: newName, description: description})
+                    body: JSON.stringify({
+                        name: newName, 
+                        description: description,
+                        shareWithGroup: shareWithGroup,
+                        groupCanEdit: groupCanEdit
+                    })
                 });
                 
                 if (!response.ok) {
@@ -177,13 +199,31 @@ document.addEventListener('DOMContentLoaded', (event) => {
             listName = listNameHeader.textContent;
             break;
         }
+        
+        let shareWithGroup = false;
+        for (const checkbox of shareWithGroupCheckboxes) {
+            shareWithGroup = checkbox.checked;
+            break;
+        }
+        
+        let groupCanEdit = false;
+        for (const checkbox of groupCanEditCheckboxes) {
+            groupCanEdit = checkbox.checked;
+            break;
+        }
+        
         try {
             const response = await fetch('/list/'+listId, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({name: listName, description: description})
+                body: JSON.stringify({
+                    name: listName, 
+                    description: description,
+                    shareWithGroup: shareWithGroup,
+                    groupCanEdit: groupCanEdit
+                })
             });
             
             if (response.status !== 204 && response.status !== 200) {
@@ -295,6 +335,86 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
         });
     });
+
+    // Group sharing checkboxes
+    shareWithGroupCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', async (event) => {
+            const isChecked = checkbox.checked;
+            const listId = checkbox.dataset.listId;
+            
+            // Enable/disable the group can edit checkbox based on share with group
+            groupCanEditCheckboxes.forEach(editCheckbox => {
+                if (isChecked) {
+                    editCheckbox.disabled = false;
+                } else {
+                    editCheckbox.disabled = true;
+                    editCheckbox.checked = false;
+                }
+            });
+            
+            await saveGroupSharingSettings(listId);
+        });
+    });
+    
+    groupCanEditCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', async (event) => {
+            const listId = checkbox.dataset.listId;
+            await saveGroupSharingSettings(listId);
+        });
+    });
+    
+    async function saveGroupSharingSettings(listId) {
+        groupSharingStatus.forEach(el => el.classList.add('hidden'));
+        groupSharingError.forEach(el => el.classList.add('hidden'));
+        
+        let listName;
+        for (const listNameHeader of listNameHeaders) {
+            listName = listNameHeader.textContent;
+            break;
+        }
+        
+        let description;
+        for (const listDescriptionInput of listDescriptionInputs) {
+            description = listDescriptionInput.value;
+            break;
+        }
+        
+        let shareWithGroup = false;
+        for (const checkbox of shareWithGroupCheckboxes) {
+            shareWithGroup = checkbox.checked;
+            break;
+        }
+        
+        let groupCanEdit = false;
+        for (const checkbox of groupCanEditCheckboxes) {
+            groupCanEdit = checkbox.checked;
+            break;
+        }
+        
+        try {
+            const response = await fetch('/list/' + listId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: listName,
+                    description: description,
+                    shareWithGroup: shareWithGroup,
+                    groupCanEdit: groupCanEdit
+                })
+            });
+            
+            if (response.status !== 204 && response.status !== 200) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            groupSharingStatus.forEach(el => el.classList.remove('hidden'));
+            setTimeout(() => groupSharingStatus.forEach(el => el.classList.add('hidden')), 3000);
+        } catch (error) {
+            groupSharingError.forEach(el => el.classList.remove('hidden'));
+        }
+    }
 
     function debounce(func, delay) {
         let timeoutId;

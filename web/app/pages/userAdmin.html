@@ -1,5 +1,6 @@
 {{define "all"}}
-    <table class="table-auto">
+    <h2 class="text-xl font-bold mb-2">User list</h2>
+    <table class="table-auto mb-2">
         <thead>
             <tr>
                 <th class="px-4 py-2">Name</th>
@@ -36,4 +37,16 @@
             </tr>
         </tfoot>
     </table>
+    <div class="mb-6">
+        <h2 class="text-xl font-bold mb-2">Group Settings</h2>
+        <div class="flex items-center space-x-2">
+            <label class="flex items-center">
+                <input type="checkbox" id="group-sharing-toggle" class="mr-2">
+                <span>Enable list sharing among other group members</span>
+            </label>
+        </div>
+        <p class="text-sm text-gray-600 mt-2">When enabled, users in your group can choose to share their lists privately with the group (view-only or edit access) instead of relying on public share links.</p>
+        <p class="group-sharing-status text-sm text-green-600 hidden mt-2">Settings saved</p>
+        <p class="group-sharing-error text-sm text-error-light hidden mt-2">A problem came up. Please try again later.</p>
+    </div>
 {{end}}

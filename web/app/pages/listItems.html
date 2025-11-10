@@ -2,6 +2,7 @@
 <div class="list-form">
     <div class="flex flex-col mb-4">
         <h1 class="list-name-header font-bold text-2xl relative">{{.List.Name}}
+            {{if .CanEdit}}
             <a href="/list/{{.List.Id}}/edit" class="ml-2 absolute">
                 <!-- https://heroicons.com/ cog-6-tooth -->
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -9,13 +10,14 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                 </svg>
             </a>
+            {{end}}
         </h1>
         {{if .List.Description.Valid}}<p class="mt-2 text-lg">{{.List.Description.String}}</p>{{end}}
         <div class="mt-4">
             {{if (eq (len .Items) 0)}}
-            This list is empty. <a href="/list/{{.List.Id}}/item/create" class="text-font-link hover:underline">Add an item to the list</a>.
+            This list is empty.{{if .CanEdit}} <a href="/list/{{.List.Id}}/item/create" class="text-font-link hover:underline">Add an item to the list</a>.{{end}}
             {{else}}
-            <a href="/list/{{.List.Id}}/item/create" class="text-font-link hover:underline">Add a new item to the list</a>
+            {{if .CanEdit}}<a href="/list/{{.List.Id}}/item/create" class="text-font-link hover:underline">Add a new item to the list</a>{{end}}
             <p class="mt-2">Click on a row to see any detailed notes for the item.</p>
             <div class="item-grid border-solid border-1 border-primary-light shadow-lg rounded-lg mt-6 md:w-1/2" data-list-id="{{.List.Id}}">
                 <table class="w-full border-collapse">
@@ -41,7 +43,7 @@
                                     </span>
                                 </div>
                             </th>
-                            <th class="p-2" style="width:100px;">Actions</th>
+                            {{if .CanEdit}}<th class="p-2" style="width:100px;">Actions</th>{{end}}
                         </tr>
                     </thead>
                     <tbody>
@@ -57,6 +59,7 @@
                             <td class="p-2 priority-cell">
                                 {{if .Priority.Valid}}{{.Priority.Int64}}{{end}}
                             </td>
+                            {{if $.CanEdit}}
                             <td class="p-2">
                                 <div class="flex">
                                     <a href="/list/{{$.List.Id}}/item/{{.Id}}/edit" class="mr-2">
@@ -71,9 +74,10 @@
                                     </button>
                                 </div>
                             </td>
+                            {{end}}
                         </tr>
                         <tr class="detail-row detail-row-enter" data-parent-id="{{.Id}}">
-                            <td colspan="3" class="p-0">
+                            <td colspan="{{if $.CanEdit}}3{{else}}2{{end}}" class="p-0">
                                 <div class="detail-content p-3 bg-white">
                                     <div class="py-2">
                                         <div class="mb-1 font-medium text-font-secondary-light">Notes:</div>

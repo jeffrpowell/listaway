@@ -11,7 +11,7 @@ import (
 func GetLists(userId int) ([]constants.List, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	rows, err := db.Query("SELECT id, name, description, shareCode FROM "+constants.DB_TABLE_LIST+" WHERE userId = $1", userId)
+	rows, err := db.Query("SELECT id, name, description, shareCode, share_with_group, group_can_edit FROM "+constants.DB_TABLE_LIST+" WHERE userId = $1", userId)
 	if err != nil {
 		return nil, err
 	}
@@ -21,7 +21,7 @@ func GetLists(userId int) ([]constants.List, error) {
 	for rows.Next() {
 		var l constants.List
 
-		err := rows.Scan(&l.Id, &l.Name, &l.Description, &l.ShareCode)
+		err := rows.Scan(&l.Id, &l.Name, &l.Description, &l.ShareCode, &l.ShareWithGroup, &l.GroupCanEdit)
 		if err != nil {
 			return nil, err
 		}
@@ -71,9 +71,9 @@ func UserOwnsList(userId int, listId int) (bool, error) {
 func GetList(listId int) (constants.List, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	row := db.QueryRow("SELECT id, name, description, sharecode FROM "+constants.DB_TABLE_LIST+" WHERE id = $1", listId)
+	row := db.QueryRow("SELECT id, name, description, sharecode, share_with_group, group_can_edit FROM "+constants.DB_TABLE_LIST+" WHERE id = $1", listId)
 	var list constants.List
-	err := row.Scan(&list.Id, &list.Name, &list.Description, &list.ShareCode)
+	err := row.Scan(&list.Id, &list.Name, &list.Description, &list.ShareCode, &list.ShareWithGroup, &list.GroupCanEdit)
 	if err != nil {
 		return constants.List{}, err
 	}
@@ -83,7 +83,8 @@ func GetList(listId int) (constants.List, error) {
 func UpdateList(listId int, params constants.ListPostParams) error {
 	db := getDatabaseConnection()
 	defer db.Close()
-	_, err := db.Exec(`UPDATE listaway.list SET name = $1, description = $2 WHERE id = $3`, params.Name, params.Description, listId)
+	_, err := db.Exec(`UPDATE listaway.list SET name = $1, description = $2, share_with_group = $3, group_can_edit = $4 WHERE id = $5`, 
+		params.Name, params.Description, params.ShareWithGroup, params.GroupCanEdit, listId)
 	return err
 }
 
@@ -183,9 +184,9 @@ func createUniqueShareCode(db *sql.DB) (string, error) {
 func GetListFromShareCode(shareCode string) (constants.List, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
-	row := db.QueryRow("SELECT id, name, description, sharecode FROM "+constants.DB_TABLE_LIST+" WHERE sharecode = $1", shareCode)
+	row := db.QueryRow("SELECT id, name, description, sharecode, share_with_group, group_can_edit FROM "+constants.DB_TABLE_LIST+" WHERE sharecode = $1", shareCode)
 	var list constants.List
-	err := row.Scan(&list.Id, &list.Name, &list.Description, &list.ShareCode)
+	err := row.Scan(&list.Id, &list.Name, &list.Description, &list.ShareCode, &list.ShareWithGroup, &list.GroupCanEdit)
 	if err != nil {
 		return constants.List{}, err
 	}

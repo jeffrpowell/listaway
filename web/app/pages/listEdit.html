@@ -51,6 +51,7 @@
         <p class="description-error text-error-light hidden">A problem came up and your change was not saved. Please try again later.</p>
     </div>
     <div class="mb-4">
+        <h2 class="text-lg font-bold mb-2">Public Sharing</h2>
         <button class="btn-generate-share bg-primary-light hover:bg-primary-hover-light text-white py-2 px-4 rounded-sm focus:outline-hidden focus:shadow-outline" data-list-id="{{.List.Id}}">Generate Share Link</button>
         {{if .List.ShareCode.Valid}}
         <div class="mt-2">
@@ -76,11 +77,47 @@
         </div>
         {{end}}
     </div>
+    {{if and .IsOwner .GroupSharingEnabled}}
+    <div class="mb-4">
+        <h2 class="text-lg font-bold mb-2">Group Sharing</h2>
+        <div class="mb-2">
+            <label class="flex items-center">
+                {{if .List.ShareWithGroup}}
+                <input type="checkbox" class="checkbox-share-with-group mr-2" data-list-id="{{.List.Id}}" checked>
+                {{else}}
+                <input type="checkbox" class="checkbox-share-with-group mr-2" data-list-id="{{.List.Id}}">
+                {{end}}
+                <span>Share this list with your entire group</span>
+            </label>
+        </div>
+        <div class="mb-2">
+            <label class="flex items-center">
+                {{if .List.GroupCanEdit}}
+                    {{if .List.ShareWithGroup}}
+                    <input type="checkbox" class="checkbox-group-can-edit mr-2" data-list-id="{{.List.Id}}" checked>
+                    {{else}}
+                    <input type="checkbox" class="checkbox-group-can-edit mr-2" data-list-id="{{.List.Id}}" checked disabled>
+                    {{end}}
+                {{else}}
+                    {{if .List.ShareWithGroup}}
+                    <input type="checkbox" class="checkbox-group-can-edit mr-2" data-list-id="{{.List.Id}}">
+                    {{else}}
+                    <input type="checkbox" class="checkbox-group-can-edit mr-2" data-list-id="{{.List.Id}}" disabled>
+                    {{end}}
+                {{end}}
+                <span>Allow others in the group to edit this list</span>
+            </label>
+        </div>
+        <p class="group-sharing-status text-sm text-green-600 hidden">Group sharing settings saved</p>
+        <p class="group-sharing-error text-sm text-error-light hidden">A problem came up and your changes were not saved. Please try again later.</p>
+    </div>
+    {{end}}
     <div class="mb-4">
         <button type="button" class="list-items-redirect bg-primary-light hover:bg-primary-hover-light text-white py-2 px-4 rounded-sm focus:outline-hidden focus:shadow-outline" data-list-id="{{.List.Id}}">
           View list items
         </button>
     </div>
+    {{if .IsOwner}}
     <div>
         <button class="list-delete bg-error-light hover:bg-error-hover-light text-white py-2 px-4 rounded-sm focus:outline-hidden focus:shadow-outline" data-list-id="{{.List.Id}}">Delete list</button>
         <div class="mt-2 list-delete-confirmation-span hidden">
@@ -90,5 +127,6 @@
             Confirm by typing list name + clicking button again
         </div>
     </div>
+    {{end}}
 </div>
 {{end}}

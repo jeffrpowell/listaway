@@ -4,6 +4,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
     
     const adminToggles = document.querySelectorAll('.admin-toggle');
     const deleteUserButtons = document.querySelectorAll('.btn-delete-user');
+    const groupSharingToggle = document.getElementById('group-sharing-toggle');
+    const groupSharingStatus = document.querySelectorAll('.group-sharing-status');
+    const groupSharingError = document.querySelectorAll('.group-sharing-error');
 
     adminToggles.forEach(adminToggle => {
         adminToggle.addEventListener('click', async (event) => {
@@ -56,4 +59,44 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
         });
     });
+
+    // Initialize group sharing toggle checkbox state
+    if (groupSharingToggle) {
+        // Fetch the current group sharing status
+        fetch('/admin/groupsharing', {
+            method: 'GET'
+        })
+        .then(response => response.text())
+        .then(data => {
+            groupSharingToggle.checked = data === 'true';
+        })
+        .catch(error => {
+            console.error('Error fetching group sharing status:', error);
+        });
+
+        // Handle group sharing toggle changes
+        groupSharingToggle.addEventListener('change', async (event) => {
+            groupSharingStatus.forEach(el => el.classList.add('hidden'));
+            groupSharingError.forEach(el => el.classList.add('hidden'));
+            
+            try {
+                const response = await fetch('/admin/groupsharing', {
+                    method: 'POST'
+                });
+                
+                if (response.status === 200) {
+                    const newValue = await response.text();
+                    groupSharingToggle.checked = newValue === 'true';
+                    groupSharingStatus.forEach(el => el.classList.remove('hidden'));
+                    setTimeout(() => groupSharingStatus.forEach(el => el.classList.add('hidden')), 3000);
+                } else {
+                    throw new Error('Failed to toggle group sharing');
+                }
+            } catch (error) {
+                groupSharingError.forEach(el => el.classList.remove('hidden'));
+                // Revert checkbox state on error
+                groupSharingToggle.checked = !groupSharingToggle.checked;
+            }
+        });
+    }
 });

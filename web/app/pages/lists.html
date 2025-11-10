@@ -154,5 +154,45 @@
         </div>
         {{end}}
     </div>
+
+    <!-- Group Shared Lists Section -->
+    {{if and .GroupSharingEnabled (gt (len .GroupSharedLists) 0)}}
+    <div>
+        <div class="flex justify-between items-center mb-4">
+            <h1 class="text-2xl font-bold">Group Shared Lists</h1>
+        </div>
+
+        <div class="border-solid border-1 border-primary-light shadow-lg overflow-hidden rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-middleground-light">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">List</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Owner</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Access</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {{range .GroupSharedLists}}
+                    <tr class="hover:bg-background-light">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <a href="/list/{{.Id}}" class="text-font-link hover:underline">{{.Name}}</a>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span>{{.OwnerName}}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {{if .GroupCanEdit}}
+                            <span class="text-sm text-green-600">Can Edit</span>
+                            {{else}}
+                            <span class="text-sm text-gray-600">View Only</span>
+                            {{end}}
+                        </td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {{end}}
 </div>
 {{end}}

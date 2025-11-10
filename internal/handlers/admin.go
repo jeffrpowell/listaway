@@ -21,6 +21,8 @@ func init() {
 	constants.ROUTER.HandleFunc("/admin/user/{userId:[0-9]+}/listscount", middleware.Chain(userListCountGET, append([]middleware.Middleware{middleware.RequireGroupAdmin("userId")}, middleware.DefaultMiddlewareSlice...)...)).Methods("GET")
 	constants.ROUTER.HandleFunc("/admin/user/{userId:[0-9]+}", middleware.Chain(deleteUser, append([]middleware.Middleware{middleware.RequireGroupAdmin("userId")}, middleware.DefaultMiddlewareSlice...)...)).Methods("DELETE")
 	constants.ROUTER.HandleFunc("/admin/user/{userId:[0-9]+}/toggleadmin", middleware.Chain(toggleUserAdmin, append([]middleware.Middleware{middleware.RequireGroupAdmin("userId")}, middleware.DefaultMiddlewareSlice...)...)).Methods("POST")
+	constants.ROUTER.HandleFunc("/admin/groupsharing", middleware.Chain(toggleGroupSharing, append([]middleware.Middleware{middleware.RequireAdmin()}, middleware.DefaultMiddlewareSlice...)...)).Methods("POST")
+	constants.ROUTER.HandleFunc("/admin/groupsharing", middleware.Chain(getGroupSharing, append([]middleware.Middleware{middleware.RequireAdmin()}, middleware.DefaultMiddlewareSlice...)...)).Methods("GET")
 }
 
 func registerAdminHandler(w http.ResponseWriter, r *http.Request) {
@@ -308,6 +310,71 @@ func toggleUserAdmin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if admin {
+		w.Write([]byte("false"))
+	} else {
+		w.Write([]byte("true"))
+	}
+}
+
+func getGroupSharing(w http.ResponseWriter, r *http.Request) {
+	selfId, err := helper.GetUserId(r)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	
+	groupId, err := database.GetUserGroupId(selfId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	
+	enabled, err := database.GetGroupSharingEnabled(groupId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	
+	if enabled {
+		w.Write([]byte("true"))
+	} else {
+		w.Write([]byte("false"))
+	}
+}
+
+func toggleGroupSharing(w http.ResponseWriter, r *http.Request) {
+	selfId, err := helper.GetUserId(r)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	
+	groupId, err := database.GetUserGroupId(selfId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	
+	enabled, err := database.GetGroupSharingEnabled(groupId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	
+	err = database.SetGroupSharingEnabled(groupId, !enabled)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	
+	if enabled {
 		w.Write([]byte("false"))
 	} else {
 		w.Write([]byte("true"))
