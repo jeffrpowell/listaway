@@ -48,6 +48,7 @@ const (
 	DB_TABLE_RESET           string = "listaway.reset_tokens"
 	DB_TABLE_COLLECTION      string = "listaway.collection"
 	DB_TABLE_COLLECTION_LIST string = "listaway.collection_list"
+	DB_TABLE_GROUP_SETTINGS  string = "listaway.group_settings"
 )
 
 var DB_CONNECTION_STRING string = getDbConnectionString()

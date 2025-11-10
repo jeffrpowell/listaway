@@ -48,7 +48,27 @@ func createItemGET(w http.ResponseWriter, r *http.Request) {
 
 /* Create item */
 func itemPUT(w http.ResponseWriter, r *http.Request) {
+	userId, err := helper.GetUserId(r)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	
 	listId, _ := helper.GetPathVarInt(r, "listId") //err will trip in listIdOwner middleware first
+	
+	// Check if user can edit this list
+	canEdit, err := database.UserCanEditList(userId, listId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	if !canEdit {
+		http.Error(w, "Forbidden - you don't have permission to edit this list", http.StatusForbidden)
+		return
+	}
+	
 	var itemName string = r.FormValue("name")
 	var url string = r.FormValue("url")
 	priority, err := strconv.ParseInt(r.FormValue("priority"), 10, 64)
@@ -97,7 +117,27 @@ func itemEditGET(w http.ResponseWriter, r *http.Request) {
 
 /* Update item */
 func itemPOST(w http.ResponseWriter, r *http.Request) {
+	userId, err := helper.GetUserId(r)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	
 	listId, _ := helper.GetPathVarInt(r, "listId") //err will trip in listIdOwner middleware first
+	
+	// Check if user can edit this list
+	canEdit, err := database.UserCanEditList(userId, listId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	if !canEdit {
+		http.Error(w, "Forbidden - you don't have permission to edit this list", http.StatusForbidden)
+		return
+	}
+	
 	itemId, err := helper.GetPathVarInt(r, "itemId")
 	if err != nil {
 		http.Error(w, "Invalid itemId supplied", http.StatusBadRequest)
@@ -126,6 +166,27 @@ func itemPOST(w http.ResponseWriter, r *http.Request) {
 
 /* Delete item */
 func itemDELETE(w http.ResponseWriter, r *http.Request) {
+	userId, err := helper.GetUserId(r)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	
+	listId, _ := helper.GetPathVarInt(r, "listId") //err will trip in listIdOwner middleware first
+	
+	// Check if user can edit this list
+	canEdit, err := database.UserCanEditList(userId, listId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	if !canEdit {
+		http.Error(w, "Forbidden - you don't have permission to edit this list", http.StatusForbidden)
+		return
+	}
+	
 	itemId, err := helper.GetPathVarInt(r, "itemId")
 	if err != nil {
 		http.Error(w, "Invalid itemId supplied in path", http.StatusBadRequest)

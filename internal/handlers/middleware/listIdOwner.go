@@ -28,13 +28,15 @@ func ListIdOwner(pathVarName string) Middleware {
 				log.Print(err)
 				return
 			}
-			granted, err := database.UserOwnsList(userId, listId)
+			
+			// Check if user owns the list OR if the list is shared with their group
+			canView, err := database.UserCanViewList(userId, listId)
 			if err != nil {
 				http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
 				log.Print(err)
 				return
 			}
-			if !granted {
+			if !canView {
 				http.Error(w, "Forbidden", http.StatusForbidden)
 				return
 			}

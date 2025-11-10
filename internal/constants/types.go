@@ -21,16 +21,20 @@ type UserRegister struct {
 }
 
 type List struct {
-	Id          uint64
-	Name        string
-	Description sql.NullString
-	ShareCode   sql.NullString
-	ItemCount   int        // Number of items in the list
+	Id             uint64
+	Name           string
+	Description    sql.NullString
+	ShareCode      sql.NullString
+	ShareWithGroup bool
+	GroupCanEdit   bool
+	ItemCount      int // Number of items in the list
 }
 
 type ListPostParams struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
+	Name           string `json:"name"`
+	Description    string `json:"description"`
+	ShareWithGroup bool   `json:"shareWithGroup"`
+	GroupCanEdit   bool   `json:"groupCanEdit"`
 }
 
 type ItemInsert struct {
@@ -59,4 +63,13 @@ type Collection struct {
 type CollectionPostParams struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
+}
+
+type ListSharedWithGroup struct {
+	Id           uint64
+	Name         string
+	Description  sql.NullString
+	OwnerId      uint64
+	OwnerName    string
+	GroupCanEdit bool
 }

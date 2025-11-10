@@ -6,11 +6,41 @@ CREATE TABLE IF NOT EXISTS listaway.list (
     userid BIGINT NOT NULL,
     name VARCHAR NOT NULL,
     description VARCHAR NULL,
-    sharecode VARCHAR
+    sharecode VARCHAR,
+    share_with_group BOOLEAN NOT NULL,
+    group_can_edit BOOLEAN NOT NULL
 );
+
+-- Migration from 1.15.0 to 1.16.0 to add group sharing columns
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'listaway'
+        AND table_name = 'list'
+        AND column_name = 'share_with_group'
+    ) THEN
+        ALTER TABLE listaway.list
+        ADD COLUMN share_with_group BOOLEAN NOT NULL DEFAULT false;
+    END IF;
+    
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_schema = 'listaway'
+        AND table_name = 'list'
+        AND column_name = 'group_can_edit'
+    ) THEN
+        ALTER TABLE listaway.list
+        ADD COLUMN group_can_edit BOOLEAN NOT NULL DEFAULT false;
+    END IF;
+END $$;
 
 CREATE INDEX IF NOT EXISTS list_userid_idx ON listaway.list (userid);
 CREATE INDEX IF NOT EXISTS list_sharecode_idx ON listaway.list (sharecode);
+CREATE INDEX IF NOT EXISTS list_share_with_group_idx ON listaway.list (share_with_group) WHERE share_with_group = true;
+CREATE INDEX IF NOT EXISTS list_userid_share_with_group_idx ON listaway.list (userid, share_with_group) WHERE share_with_group = true;
 
 ----------------------------------------------------
 --          listaway.item table
@@ -151,3 +181,11 @@ CREATE TABLE IF NOT EXISTS listaway.collection_list (
 
 CREATE INDEX IF NOT EXISTS collection_list_collectionid_idx ON listaway.collection_list (collectionid);
 CREATE INDEX IF NOT EXISTS collection_list_listid_idx ON listaway.collection_list (listid);
+
+----------------------------------------------------
+--          listaway.group_settings table
+----------------------------------------------------
+CREATE TABLE IF NOT EXISTS listaway.group_settings (
+    groupid INTEGER PRIMARY KEY,
+    group_sharing_enabled BOOLEAN NOT NULL DEFAULT false
+);

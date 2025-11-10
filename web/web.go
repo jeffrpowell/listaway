@@ -196,16 +196,20 @@ func ResetFormPage(w io.Writer, tokenValid bool) {
 type listsPageParams struct {
 	Lists                []constants.List
 	Collections          []constants.Collection
+	GroupSharedLists     []constants.ListSharedWithGroup
+	GroupSharingEnabled  bool
 	SharedListPath       string
 	SharedCollectionPath string
 	globalWebParams
 }
 
-func ListsPageParams(r *http.Request, lists []constants.List, collections []constants.Collection, showAdmin bool, showInstanceAdmin bool) listsPageParams {
+func ListsPageParams(r *http.Request, lists []constants.List, collections []constants.Collection, groupSharedLists []constants.ListSharedWithGroup, groupSharingEnabled bool, showAdmin bool, showInstanceAdmin bool) listsPageParams {
 	return listsPageParams{
 		globalWebParams:      newGlobalWebParams(r, true, showAdmin, showInstanceAdmin, "lists"),
 		Lists:                lists,
 		Collections:          collections,
+		GroupSharedLists:     groupSharedLists,
+		GroupSharingEnabled:  groupSharingEnabled,
 		SharedListPath:       constants.SHARED_LIST_PATH,
 		SharedCollectionPath: constants.SHARED_COLLECTION_PATH,
 	}
@@ -232,16 +236,20 @@ func CreateListPage(w io.Writer, params globalWebParams) {
 // Edit List page
 
 type editListParams struct {
-	List           constants.List
-	SharedListPath string
+	List                constants.List
+	IsOwner             bool
+	GroupSharingEnabled bool
+	SharedListPath      string
 	globalWebParams
 }
 
-func EditListParams(r *http.Request, list constants.List, showAdmin bool, showInstanceAdmin bool) editListParams {
+func EditListParams(r *http.Request, list constants.List, isOwner bool, groupSharingEnabled bool, showAdmin bool, showInstanceAdmin bool) editListParams {
 	return editListParams{
-		globalWebParams: newGlobalWebParams(r, true, showAdmin, showInstanceAdmin, "listEdit"),
-		List:            list,
-		SharedListPath:  constants.SHARED_LIST_PATH,
+		globalWebParams:     newGlobalWebParams(r, true, showAdmin, showInstanceAdmin, "listEdit"),
+		List:                list,
+		IsOwner:             isOwner,
+		GroupSharingEnabled: groupSharingEnabled,
+		SharedListPath:      constants.SHARED_LIST_PATH,
 	}
 }
 
@@ -254,16 +262,18 @@ func EditListPage(w io.Writer, params editListParams) {
 // List Items page
 
 type listItemsPageParams struct {
-	List  constants.List
-	Items []constants.Item
+	List    constants.List
+	Items   []constants.Item
+	CanEdit bool
 	globalWebParams
 }
 
-func ListItemsPageParams(r *http.Request, list constants.List, items []constants.Item, showAdmin bool, showInstanceAdmin bool) listItemsPageParams {
+func ListItemsPageParams(r *http.Request, list constants.List, items []constants.Item, canEdit bool, showAdmin bool, showInstanceAdmin bool) listItemsPageParams {
 	return listItemsPageParams{
 		globalWebParams: newGlobalWebParams(r, true, showAdmin, showInstanceAdmin, "listItems"),
 		List:            list,
 		Items:           items,
+		CanEdit:         canEdit,
 	}
 }
 
