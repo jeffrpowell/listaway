@@ -317,6 +317,16 @@ document.addEventListener('DOMContentLoaded', (event) => {
         });
     });
 
+    // Handle Enter key in delete confirmation input
+    deleteCollectionConfirmationInputs.forEach(input => {
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                deleteCollectionButtons.forEach(btn => btn.click());
+            }
+        });
+    });
+
     function debounce(func, delay) {
         let timeoutId;
         const debouncedFunc = function(...args) {
