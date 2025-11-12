@@ -43,13 +43,13 @@ func SetGroupSharingEnabled(groupId int, enabled bool) error {
 }
 
 // GetListsSharedWithGroup returns all lists shared with a user's group
-// Returns list ID, list name, owner user ID, owner name, and whether the group can edit
+// Returns list ID, list name, sharecode, owner user ID, owner name, and whether the group can edit
 func GetListsSharedWithGroup(userId int) ([]constants.ListSharedWithGroup, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
 	
 	rows, err := db.Query(`
-		SELECT l.id, l.name, l.description, l.userid, u.name, l.group_can_edit
+		SELECT l.id, l.name, l.description, l.sharecode, l.userid, u.name, l.group_can_edit
 		FROM `+constants.DB_TABLE_LIST+` l
 		JOIN `+constants.DB_TABLE_USER+` u ON l.userid = u.id
 		WHERE l.share_with_group = true
@@ -66,7 +66,7 @@ func GetListsSharedWithGroup(userId int) ([]constants.ListSharedWithGroup, error
 	var lists []constants.ListSharedWithGroup
 	for rows.Next() {
 		var list constants.ListSharedWithGroup
-		err := rows.Scan(&list.Id, &list.Name, &list.Description, &list.OwnerId, &list.OwnerName, &list.GroupCanEdit)
+		err := rows.Scan(&list.Id, &list.Name, &list.Description, &list.ShareCode, &list.OwnerId, &list.OwnerName, &list.GroupCanEdit)
 		if err != nil {
 			return nil, err
 		}

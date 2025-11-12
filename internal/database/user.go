@@ -190,6 +190,19 @@ func GetUserGroupId(userId int) (int, error) {
 	return groupId, nil
 }
 
+// GetUser returns user information by user ID
+func GetUser(userId int) (constants.UserRead, error) {
+	db := getDatabaseConnection()
+	defer db.Close()
+	row := db.QueryRow("SELECT id, groupid, email, name, admin, instanceadmin FROM "+constants.DB_TABLE_USER+" WHERE id = $1", userId)
+	var user constants.UserRead
+	err := row.Scan(&user.Id, &user.GroupId, &user.Email, &user.Name, &user.Admin, &user.InstanceAdmin)
+	if err != nil {
+		return constants.UserRead{}, err
+	}
+	return user, nil
+}
+
 func DeleteUser(userId int) error {
 	db := getDatabaseConnection()
 	defer db.Close()

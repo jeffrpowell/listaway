@@ -241,16 +241,18 @@ func RemoveListFromCollection(collectionId int, listId int) error {
 	return err
 }
 
-// GetCollectionLists retrieves all lists in a collection with item counts
-func GetCollectionLists(collectionId int) ([]constants.List, error) {
+// GetCollectionLists retrieves all lists in a collection with item counts and author information
+func GetCollectionLists(collectionId int) ([]constants.ListWithAuthor, error) {
 	db := getDatabaseConnection()
 	defer db.Close()
 
 	rows, err := db.Query(`
 		SELECT l.id, l.name, l.description, l.sharecode, 
-		       (SELECT COUNT(i.id) FROM listaway.item i WHERE i.listid = l.id) as item_count
+		       (SELECT COUNT(i.id) FROM listaway.item i WHERE i.listid = l.id) as item_count,
+		       l.userid, u.name as author_name
 		FROM listaway.list l
 		JOIN listaway.collection_list cl ON l.id = cl.listid
+		JOIN listaway.user u ON l.userid = u.id
 		WHERE cl.collectionid = $1
 		ORDER BY l.name ASC
 	`, collectionId)
@@ -260,17 +262,14 @@ func GetCollectionLists(collectionId int) ([]constants.List, error) {
 	}
 	defer rows.Close()
 
-	var collectionLists []constants.List
+	var collectionLists []constants.ListWithAuthor
 	for rows.Next() {
-		var cl constants.List
-		var itemCount int
+		var cl constants.ListWithAuthor
 
-		err := rows.Scan(&cl.Id, &cl.Name, &cl.Description, &cl.ShareCode, &itemCount)
+		err := rows.Scan(&cl.Id, &cl.Name, &cl.Description, &cl.ShareCode, &cl.ItemCount, &cl.AuthorId, &cl.AuthorName)
 		if err != nil {
 			return nil, err
 		}
-		// Add item count to the list
-		cl.ItemCount = itemCount
 		collectionLists = append(collectionLists, cl)
 	}
 	if err := rows.Err(); err != nil {

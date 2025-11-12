@@ -69,7 +69,20 @@ type ListSharedWithGroup struct {
 	Id           uint64
 	Name         string
 	Description  sql.NullString
+	ShareCode    sql.NullString
 	OwnerId      uint64
 	OwnerName    string
 	GroupCanEdit bool
+}
+
+// ListWithAuthor extends List with author information for collection displays
+type ListWithAuthor struct {
+	Id          uint64
+	Name        string
+	Description sql.NullString
+	ShareCode   sql.NullString
+	ItemCount   int
+	AuthorId    uint64
+	AuthorName  string
+	CanEdit     bool // Whether the current user can edit this list
 }

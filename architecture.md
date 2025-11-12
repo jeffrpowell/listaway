@@ -126,7 +126,7 @@ Listaway is a web application for managing lists, with the following key feature
 2. **Authentication**: Dual support for traditional email/password and OIDC/OAuth2
 3. **List Management**: Creating, editing, and organizing lists
 4. **Item Management**: Adding, updating, and removing items within lists
-5. **Collections**: Grouping related lists together and managing them as a unit
+5. **Collections**: Grouping related lists together and managing them as a unit (including lists shared from the user group)
 6. **Sharing Functionality**: Ability to share lists and collections to the internet or with other users
 7. **Admin Features**: Administrative capabilities for user and instance management
 

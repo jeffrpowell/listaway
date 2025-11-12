@@ -18,7 +18,7 @@ This self-hostable application allows authenticated users (individuals or a team
   * Opt-in public read-only access with randomized URL
   * Share read-only or edit access with other group members
 * Collection management
-  * CRUD collections (group of lists)
+  * CRUD collections (group of lists, including shared lists)
   * Optional collection description string
   * Opt-in public read-only access with randomized URL
 
