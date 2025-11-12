@@ -87,6 +87,9 @@ func minifyTemplates(filenames ...string) (*template.Template, error) {
 		}
 		tmpl = tmpl.Funcs(template.FuncMap{
 			"containsUint64": slices.Contains[[]uint64],
+			"add": func(a, b int) int {
+				return a + b
+			},
 		})
 
 		b, err := staticFiles.ReadFile(filename)
@@ -482,12 +485,12 @@ type collectionDetailPageParams struct {
 	Collection           constants.Collection
 	ListIdsInCollection  []uint64
 	ListIdsWithShareCode []uint64
-	AllLists             []constants.List
+	AllLists             []constants.ListWithAuthor
 	SharedListPath       string
 	globalWebParams
 }
 
-func CollectionDetailPageParams(r *http.Request, collection constants.Collection, listIdsInCollection []uint64, listIdsWithShareCode []uint64, allLists []constants.List, showAdmin bool, showInstanceAdmin bool) collectionDetailPageParams {
+func CollectionDetailPageParams(r *http.Request, collection constants.Collection, listIdsInCollection []uint64, listIdsWithShareCode []uint64, allLists []constants.ListWithAuthor, showAdmin bool, showInstanceAdmin bool) collectionDetailPageParams {
 	return collectionDetailPageParams{
 		globalWebParams:      newGlobalWebParams(r, true, showAdmin, showInstanceAdmin, "collectionDetail"),
 		Collection:           collection,
@@ -507,12 +510,12 @@ func CollectionDetailPage(w io.Writer, params collectionDetailPageParams) {
 // Shared Collection page
 type sharedCollectionPageParams struct {
 	Collection constants.Collection
-	Lists      []constants.List
+	Lists      []constants.ListWithAuthor
 	ShareCode  string
 	globalWebParams
 }
 
-func SharedCollectionPageParams(r *http.Request, shareCode string, collection constants.Collection, lists []constants.List, showAdmin bool, showInstanceAdmin bool) sharedCollectionPageParams {
+func SharedCollectionPageParams(r *http.Request, shareCode string, collection constants.Collection, lists []constants.ListWithAuthor, showAdmin bool, showInstanceAdmin bool) sharedCollectionPageParams {
 	return sharedCollectionPageParams{
 		globalWebParams: newGlobalWebParams(r, true, showAdmin, showInstanceAdmin, "sharedCollection"),
 		Collection:      collection,

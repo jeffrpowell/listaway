@@ -22,7 +22,8 @@ func init() {
 	constants.ROUTER.HandleFunc("/collections/namecheck", middleware.DefaultMiddlewareChain(collectionNameCheckGET)).Methods("GET")
 	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}", middleware.Chain(collectionHandler, append([]middleware.Middleware{middleware.CollectionIdOwner("collectionId")}, middleware.DefaultMiddlewareSlice...)...))
 	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}/edit", middleware.Chain(editCollectionGET, append([]middleware.Middleware{middleware.CollectionIdOwner("collectionId")}, middleware.DefaultMiddlewareSlice...)...)).Methods("GET")
-	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}/lists/{listId:[0-9]+}", middleware.Chain(collectionListHandler, append([]middleware.Middleware{middleware.ListIdOwner("listId"), middleware.CollectionIdOwner("collectionId")}, middleware.DefaultMiddlewareSlice...)...))
+	// Allow users to add lists they can view (owned or shared) to collections they own
+	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}/lists/{listId:[0-9]+}", middleware.Chain(collectionListHandler, append([]middleware.Middleware{middleware.ListIdViewer("listId"), middleware.CollectionIdOwner("collectionId")}, middleware.DefaultMiddlewareSlice...)...))
 
 	// Collection sharing routes
 	constants.ROUTER.HandleFunc("/collections/{collectionId:[0-9]+}/share", middleware.Chain(collectionShareHandler, append(middleware.DefaultMiddlewareSlice, middleware.CollectionIdOwner("collectionId"))...))
@@ -110,11 +111,57 @@ func collectionGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	allLists, err := database.GetLists(userId)
+	// Get lists owned by the user
+	ownedLists, err := database.GetLists(userId)
 	if err != nil {
 		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
 		log.Print(err)
 		return
+	}
+	
+	// Get lists shared with the user's group
+	sharedLists, err := database.GetListsSharedWithGroup(userId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	
+	// Combine both lists - convert to a common type that includes author info
+	allLists := make([]constants.ListWithAuthor, 0, len(ownedLists)+len(sharedLists))
+	
+	// Add owned lists with current user as author
+	user, err := database.GetUser(userId)
+	if err != nil {
+		http.Error(w, "Unexpected error occurred", http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	for _, list := range ownedLists {
+		allLists = append(allLists, constants.ListWithAuthor{
+			Id:          list.Id,
+			Name:        list.Name,
+			Description: list.Description,
+			ShareCode:   list.ShareCode,
+			ItemCount:   list.ItemCount,
+			AuthorId:    uint64(userId),
+			AuthorName:  user.Name,
+			CanEdit:     true, // User owns this list
+		})
+	}
+	
+	// Add shared lists with their original authors
+	for _, list := range sharedLists {
+		allLists = append(allLists, constants.ListWithAuthor{
+			Id:          list.Id,
+			Name:        list.Name,
+			Description: list.Description,
+			ShareCode:   list.ShareCode,
+			ItemCount:   0, // We don't fetch item count for shared lists currently
+			AuthorId:    list.OwnerId,
+			AuthorName:  list.OwnerName,
+			CanEdit:     list.GroupCanEdit, // User can edit if group sharing allows it
+		})
 	}
 
 	// Return JSON if requested, otherwise render the HTML page

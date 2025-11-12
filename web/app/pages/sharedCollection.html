@@ -11,6 +11,7 @@
       <div class="bg-middleground-light shadow-lg border-solid border-1 border-primary-light rounded-lg overflow-hidden">
         <div class="p-6">
           <h2 class="text-xl font-semibold mb-2 ">{{.Name}}</h2>
+          <p class="text-xs text-gray-600 mb-2">By {{.AuthorName}}</p>
           <p class=" mb-4 text-sm h-12 overflow-hidden">{{if .Description.Valid}}{{.Description.String}}{{else}}No description provided{{end}}</p>
           
           <div class="flex items-center justify-between mt-4">

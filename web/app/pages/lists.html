@@ -81,7 +81,7 @@
             <a href="/collections/create" class="text-font-link border-1 border-solid border-primary-light rounded-md px-2 hover:underline">New Collection</a>
         </div>
 
-        {{if (lt (len .Lists) 2)}}
+        {{if (lt (add (len .Lists) (len .GroupSharedLists)) 2)}}
         <div class="bg-middleground-light border-solid border-1 border-primary-light shadow-lg rounded-lg p-6 text-center">
             <p class="">You need to create at least two lists before leveraging the collections feature.
             </p>
