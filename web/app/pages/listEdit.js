@@ -336,6 +336,16 @@ document.addEventListener('DOMContentLoaded', (event) => {
         });
     });
 
+    // Handle Enter key in delete confirmation input
+    deleteListConfirmationInputs.forEach(input => {
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                deleteListButtons.forEach(btn => btn.click());
+            }
+        });
+    });
+
     // Group sharing checkboxes
     shareWithGroupCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', async (event) => {
