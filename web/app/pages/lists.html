@@ -22,7 +22,9 @@
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Edit
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Share
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Group Sharing
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Public Share Link
                         </th>
                     </tr>
                 </thead>
@@ -34,6 +36,17 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <a href="/list/{{.Id}}/edit" class="text-font-link hover:underline">Edit</a>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {{if .ShareWithGroup}}
+                                {{if .GroupCanEdit}}
+                                <span class="text-sm text-green-600">Can Edit</span>
+                                {{else}}
+                                <span class="text-sm text-gray-600">View Only</span>
+                                {{end}}
+                            {{else}}
+                            <span class="text-sm text-gray-400">Not Shared</span>
+                            {{end}}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             {{if .ShareCode.Valid}}
@@ -103,7 +116,7 @@
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Edit
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Share
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Public Share Link
                         </th>
                     </tr>
                 </thead>
