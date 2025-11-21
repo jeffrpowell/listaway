@@ -41,7 +41,7 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA listaway TO listaway;
 ```yaml
 services:
   listaway:
-    image: "ghcr.io/jeffrpowell/listaway:v1.17.0"
+    image: "ghcr.io/jeffrpowell/listaway:v1.17.1"
     ports:
       - "8080:8080"
     env_file:
