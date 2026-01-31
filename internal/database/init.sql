@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS listaway.list (
     name VARCHAR NOT NULL,
     description VARCHAR NULL,
     sharecode VARCHAR,
-    share_with_group BOOLEAN NOT NULL,
-    group_can_edit BOOLEAN NOT NULL
+    share_with_group BOOLEAN NOT NULL DEFAULT false,
+    group_can_edit BOOLEAN NOT NULL DEFAULT false
 );
 
 -- Migration from 1.15.0 to 1.16.0 to add group sharing columns
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS listaway.user (
     name VARCHAR,
     passwordhash VARCHAR NOT NULL,
     admin BOOLEAN NOT NULL,
-    instanceAdmin BOOLEAN NOT NULL,
+    instanceAdmin BOOLEAN NOT NULL DEFAULT false,
     oidc_provider VARCHAR NULL,
     oidc_subject VARCHAR NULL,
     oidc_email VARCHAR NULL
