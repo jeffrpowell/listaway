@@ -1,8 +1,6 @@
 module github.com/jeffrpowell/listaway
 
-go 1.24.0
-
-toolchain go1.24.1
+go 1.25.0
 
 require (
 	github.com/coreos/go-oidc/v3 v3.11.0
@@ -22,5 +20,5 @@ require (
 	github.com/gorilla/mux v1.8.1
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/rs/cors v1.11.0
-	golang.org/x/crypto v0.45.0
+	golang.org/x/crypto v0.52.0
 )
