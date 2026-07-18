@@ -42,7 +42,7 @@
 	"postAttachCommand": "yarn --cwd /workspaces/listaway/web install && yarn --cwd /workspaces/listaway/web run build",
 	"customizations": {
 		"vscode": {
-			"extensions": ["golang.go", "cweijan.vscode-postgresql-client2", "bradlc.vscode-tailwindcss"],
+			"extensions": ["golang.go", "cweijan.vscode-postgresql-client2", "bradlc.vscode-tailwindcss", "pflannery.vscode-versionlens"],
 			"settings": {
 				"workbench.editor.customLabels.patterns": {
 					"**/*.go": "${dirname}/${filename}.${extname}"
